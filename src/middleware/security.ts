@@ -7,13 +7,14 @@ export function securityHeaders(request: NextRequest) {
   // HTTPS Enforcement - Redirect HTTP to HTTPS in production
   // Railway and Vercel both provide automatic HTTPS with free SSL certificates
   // This middleware ensures all traffic uses HTTPS
-  if (process.env.NODE_ENV === 'production' &&
-      request.headers.get('x-forwarded-proto') === 'http') {
-    // Use the Host header from the request to preserve the external URL
-    const host = request.headers.get('host') || request.headers.get('x-forwarded-host');
-    const httpsUrl = new URL(`https://${host}${request.nextUrl.pathname}${request.nextUrl.search}`);
-    return NextResponse.redirect(httpsUrl, 301);
-  }
+  // TODO: Re-enable after setting up SSL certificate on load balancer
+  // if (process.env.NODE_ENV === 'production' &&
+  //     request.headers.get('x-forwarded-proto') === 'http') {
+  //   // Use the Host header from the request to preserve the external URL
+  //   const host = request.headers.get('host') || request.headers.get('x-forwarded-host');
+  //   const httpsUrl = new URL(`https://${host}${request.nextUrl.pathname}${request.nextUrl.search}`);
+  //   return NextResponse.redirect(httpsUrl, 301);
+  // }
 
   const response = NextResponse.next();
 
