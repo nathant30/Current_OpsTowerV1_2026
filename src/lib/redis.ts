@@ -1,12 +1,12 @@
-// Mock Redis Implementation for Xpress Ops Tower Demo
-// In-memory storage replacing Redis for development/demo purposes
-import { 
-  ActiveRide, 
-  RideRequest, 
-  DemandHotspot, 
-  SurgePricing, 
+// Real Redis Implementation for AWS ElastiCache
+import Redis from 'ioredis';
+import {
+  ActiveRide,
+  RideRequest,
+  DemandHotspot,
+  SurgePricing,
   DriverStatus,
-  RidesharingKPIs 
+  RidesharingKPIs
 } from '../types/ridesharing';
 import { logger } from '@/lib/security/productionLogger';
 
@@ -25,50 +25,60 @@ interface SessionData {
   };
 }
 
-// Cache entry with metadata
-interface CacheEntry<T = any> {
-  data: T;
-  timestamp: number;
-  ttl: number;
-  tags?: string[];
-  expiresAt: number;
-}
-
-// In-memory storage maps
-const cache = new Map<string, CacheEntry>();
-const sets = new Map<string, Set<string>>();
-const sortedSets = new Map<string, Map<string, number>>();
-const lists = new Map<string, string[]>();
-const geoSets = new Map<string, Map<string, [number, number]>>();
-
-// Helper function to check if cache entry is expired
-function isExpired(entry: CacheEntry): boolean {
-  return Date.now() > entry.expiresAt;
-}
-
-// Cleanup expired entries
-function cleanupExpired() {
-  for (const [key, entry] of cache.entries()) {
-    if (isExpired(entry)) {
-      cache.delete(key);
-    }
-  }
-}
-
-// Run cleanup every 60 seconds
-setInterval(cleanupExpired, 60000);
-
-class MockRedisManager {
+class RedisManager {
+  private client: Redis;
   private isConnected = false;
 
-  constructor(config?: any) {
-    // Mock constructor - config ignored for demo
-    logger.info('Mock Redis Manager initialized (in-memory storage)');
+  constructor() {
+    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+
+    // Parse Redis URL
+    const url = new URL(redisUrl);
+
+    this.client = new Redis({
+      host: url.hostname,
+      port: parseInt(url.port) || 6379,
+      retryStrategy: (times) => {
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+      },
+      maxRetriesPerRequest: 3,
+      enableReadyCheck: true,
+      lazyConnect: false,
+    });
+
+    this.client.on('connect', () => {
+      logger.info('Redis client connected');
+    });
+
+    this.client.on('ready', () => {
+      this.isConnected = true;
+      logger.info('Redis client ready');
+    });
+
+    this.client.on('error', (err) => {
+      logger.error('Redis client error:', err);
+    });
+
+    this.client.on('close', () => {
+      this.isConnected = false;
+      logger.warn('Redis client connection closed');
+    });
+
+    this.client.on('reconnecting', () => {
+      logger.info('Redis client reconnecting');
+    });
   }
 
   async initialize(): Promise<void> {
-    this.isConnected = true;
-    logger.info('Mock Redis connections established');
+    try {
+      await this.client.ping();
+      this.isConnected = true;
+      logger.info('Redis connections established');
+    } catch (error) {
+      logger.error('Failed to connect to Redis:', error);
+      throw error;
+    }
   }
 
   async healthCheck(): Promise<{
@@ -77,12 +87,26 @@ class MockRedisManager {
     memory: any;
     connections: number;
   }> {
-    return {
-      status: 'healthy',
-      responseTime: 1,
-      memory: { used_memory: cache.size },
-      connections: 1
-    };
+    const start = Date.now();
+    try {
+      await this.client.ping();
+      const responseTime = Date.now() - start;
+      const info = await this.client.info('memory');
+
+      return {
+        status: 'healthy',
+        responseTime,
+        memory: { info },
+        connections: 1
+      };
+    } catch (error) {
+      return {
+        status: 'unhealthy',
+        responseTime: Date.now() - start,
+        memory: {},
+        connections: 0
+      };
+    }
   }
 
   // =====================================================
@@ -90,57 +114,42 @@ class MockRedisManager {
   // =====================================================
 
   async setCache<T>(
-    key: string, 
-    value: T, 
+    key: string,
+    value: T,
     ttlSeconds: number = 3600,
     tags: string[] = []
   ): Promise<void> {
-    const entry: CacheEntry<T> = {
-      data: value,
-      timestamp: Date.now(),
-      ttl: ttlSeconds,
-      tags,
-      expiresAt: Date.now() + (ttlSeconds * 1000)
-    };
-    
-    cache.set(key, entry);
-    
+    await this.client.setex(key, ttlSeconds, JSON.stringify(value));
+
     // Handle tags
     for (const tag of tags) {
-      const tagSet = sets.get(`tag:${tag}`) || new Set();
-      tagSet.add(key);
-      sets.set(`tag:${tag}`, tagSet);
+      await this.client.sadd(`tag:${tag}`, key);
     }
   }
 
   async getCache<T>(key: string): Promise<T | null> {
-    const entry = cache.get(key);
-    if (!entry || isExpired(entry)) {
-      cache.delete(key);
-      return null;
+    const value = await this.client.get(key);
+    if (!value) return null;
+    try {
+      return JSON.parse(value) as T;
+    } catch {
+      return value as any;
     }
-    return entry.data;
   }
 
   async deleteCache(key: string | string[]): Promise<number> {
     const keys = Array.isArray(key) ? key : [key];
-    let deleted = 0;
-    for (const k of keys) {
-      if (cache.delete(k)) {deleted++;}
-    }
-    return deleted;
+    if (keys.length === 0) return 0;
+    return await this.client.del(...keys);
   }
 
   async invalidateCacheByTag(tag: string): Promise<number> {
-    const tagSet = sets.get(`tag:${tag}`);
-    if (!tagSet) {return 0;}
-    
-    let deleted = 0;
-    for (const key of tagSet) {
-      if (cache.delete(key)) {deleted++;}
-    }
-    sets.delete(`tag:${tag}`);
-    return deleted;
+    const keys = await this.client.smembers(`tag:${tag}`);
+    if (keys.length === 0) return 0;
+
+    await this.client.del(...keys);
+    await this.client.del(`tag:${tag}`);
+    return keys.length;
   }
 
   async cacheWithRefresh<T>(
@@ -169,11 +178,7 @@ class MockRedisManager {
     ttlSeconds: number = 86400
   ): Promise<void> {
     await this.setCache(`session:${sessionId}`, sessionData, ttlSeconds);
-    
-    const userSessionsKey = `user_sessions:${sessionData.userId}`;
-    const userSessions = sets.get(userSessionsKey) || new Set();
-    userSessions.add(sessionId);
-    sets.set(userSessionsKey, userSessions);
+    await this.client.sadd(`user_sessions:${sessionData.userId}`, sessionId);
   }
 
   async getSession(sessionId: string): Promise<SessionData | null> {
@@ -191,20 +196,16 @@ class MockRedisManager {
   async deleteSession(sessionId: string): Promise<void> {
     const sessionData = await this.getSession(sessionId);
     if (sessionData) {
-      cache.delete(`session:${sessionId}`);
-      const userSessions = sets.get(`user_sessions:${sessionData.userId}`);
-      if (userSessions) {
-        userSessions.delete(sessionId);
-      }
+      await this.client.del(`session:${sessionId}`);
+      await this.client.srem(`user_sessions:${sessionData.userId}`, sessionId);
     }
   }
 
   async getUserSessions(userId: string): Promise<SessionData[]> {
-    const userSessions = sets.get(`user_sessions:${userId}`);
-    if (!userSessions) {return [];}
-
+    const sessionIds = await this.client.smembers(`user_sessions:${userId}`);
     const sessions: SessionData[] = [];
-    for (const sessionId of userSessions) {
+
+    for (const sessionId of sessionIds) {
       const sessionData = await this.getSession(sessionId);
       if (sessionData) {
         sessions.push(sessionData);
@@ -214,7 +215,7 @@ class MockRedisManager {
   }
 
   // =====================================================
-  // MOCK IMPLEMENTATIONS FOR OTHER METHODS
+  // RIDESHARING OPERATIONS
   // =====================================================
 
   async updateDriverLocation(driverId: string, location: any): Promise<void> {
@@ -226,20 +227,41 @@ class MockRedisManager {
   }
 
   async getAvailableDrivers(regionId: string, limit: number = 50): Promise<string[]> {
-    return []; // Mock empty array
+    const keys = await this.client.keys(`driver_location:*`);
+    return keys.slice(0, limit).map(k => k.replace('driver_location:', ''));
   }
 
   async publish(channel: string, message: any): Promise<number> {
-    logger.debug(`Mock Redis publish to ${channel}`, message);
-    return 1;
+    return await this.client.publish(channel, JSON.stringify(message));
   }
 
   async subscribe(channel: string | string[], callback: (channel: string, message: any) => void): Promise<void> {
-    logger.debug(`Mock Redis subscribe to ${Array.isArray(channel) ? channel.join(', ') : channel}`);
+    const subscriber = this.client.duplicate();
+
+    subscriber.on('message', (ch, msg) => {
+      try {
+        const parsed = JSON.parse(msg);
+        callback(ch, parsed);
+      } catch {
+        callback(ch, msg);
+      }
+    });
+
+    if (Array.isArray(channel)) {
+      await subscriber.subscribe(...channel);
+    } else {
+      await subscriber.subscribe(channel);
+    }
   }
 
   async unsubscribe(channel?: string | string[]): Promise<void> {
-    logger.debug(`Mock Redis unsubscribe from ${channel}`);
+    if (!channel) {
+      await this.client.unsubscribe();
+    } else if (Array.isArray(channel)) {
+      await this.client.unsubscribe(...channel);
+    } else {
+      await this.client.unsubscribe(channel);
+    }
   }
 
   async checkRateLimit(key: string, limit: number, windowSeconds: number): Promise<{
@@ -247,14 +269,22 @@ class MockRedisManager {
     remaining: number;
     resetTime: number;
   }> {
+    const count = await this.client.incr(key);
+
+    if (count === 1) {
+      await this.client.expire(key, windowSeconds);
+    }
+
+    const ttl = await this.client.ttl(key);
+    const resetTime = Date.now() + (ttl * 1000);
+
     return {
-      allowed: true,
-      remaining: limit - 1,
-      resetTime: Date.now() + (windowSeconds * 1000)
+      allowed: count <= limit,
+      remaining: Math.max(0, limit - count),
+      resetTime
     };
   }
 
-  // Mock all other methods to prevent errors
   async cacheActiveRide(ride: any, ttlSeconds: number = 7200): Promise<void> {
     await this.setCache(`ride:active:${ride.rideId}`, ride, ttlSeconds);
   }
@@ -276,6 +306,7 @@ class MockRedisManager {
   }
 
   async findNearbyDrivers(longitude: number, latitude: number, radiusMeters: number = 3000, regionId?: string, limit: number = 20): Promise<any[]> {
+    // Simplified version - in production, use Redis geospatial commands
     return [];
   }
 
@@ -284,7 +315,15 @@ class MockRedisManager {
   }
 
   async getDemandMetrics(regionId: string, area?: string): Promise<any[]> {
-    return [];
+    const pattern = area ? `demand:${regionId}:${area}` : `demand:${regionId}:*`;
+    const keys = await this.client.keys(pattern);
+    const metrics: any[] = [];
+
+    for (const key of keys) {
+      const data = await this.getCache(key);
+      if (data) metrics.push(data);
+    }
+    return metrics;
   }
 
   async updateSurgeZone(zone: any): Promise<void> {
@@ -292,7 +331,15 @@ class MockRedisManager {
   }
 
   async getActiveSurgeZones(regionId?: string): Promise<any[]> {
-    return [];
+    const pattern = regionId ? `surge:zone:${regionId}:*` : 'surge:zone:*';
+    const keys = await this.client.keys(pattern);
+    const zones: any[] = [];
+
+    for (const key of keys) {
+      const data = await this.getCache(key);
+      if (data) zones.push(data);
+    }
+    return zones;
   }
 
   async cacheRidesharingKPIs(kpis: any, ttlSeconds: number = 300): Promise<void> {
@@ -308,14 +355,19 @@ class MockRedisManager {
   }
 
   async cleanupExpiredRequests(): Promise<number> {
-    cleanupExpired();
+    // Redis automatically handles TTL, so this is a no-op
     return 0;
   }
 
   async batchUpdateDriverLocations(locations: any[]): Promise<void> {
+    const pipeline = this.client.pipeline();
+
     for (const location of locations) {
-      await this.updateDriverLocation(location.driverId, location);
+      const key = `driver_location:${location.driverId}`;
+      pipeline.setex(key, 1800, JSON.stringify({ driverId: location.driverId, ...location }));
     }
+
+    await pipeline.exec();
   }
 
   async getRideStatistics(regionId?: string): Promise<{
@@ -325,55 +377,41 @@ class MockRedisManager {
     averageWaitTime: number;
     activeSurgeZones: number;
   }> {
+    const activeRideKeys = await this.client.keys('ride:active:*');
+    const pendingRequestKeys = await this.client.keys('ride:request:*');
+    const driverKeys = await this.client.keys('driver_location:*');
+    const surgeKeys = await this.client.keys('surge:zone:*');
+
     return {
-      activeRides: 0,
-      pendingRequests: 0,
-      availableDrivers: 0,
+      activeRides: activeRideKeys.length,
+      pendingRequests: pendingRequestKeys.length,
+      availableDrivers: driverKeys.length,
       averageWaitTime: 5.0,
-      activeSurgeZones: 0
+      activeSurgeZones: surgeKeys.length
     };
   }
 
   async ping(): Promise<'PONG'> {
-    return 'PONG';
+    return await this.client.ping() as 'PONG';
   }
 
   async info(section?: string): Promise<string> {
-    // Mock Redis INFO response
-    const mockInfo = {
-      memory: `# Memory
-used_memory:${cache.size}
-used_memory_human:${Math.round(cache.size / 1024)}K
-used_memory_rss:1048576
-used_memory_peak:2097152
-mem_fragmentation_ratio:1.5`,
-      server: `# Server
-redis_version:7.0.0-mock
-redis_mode:standalone
-os:Mock OS
-arch_bits:64`,
-      stats: `# Stats
-total_connections_received:1
-total_commands_processed:${cache.size}
-instantaneous_ops_per_sec:0
-rejected_connections:0`
-    };
-
-    return mockInfo[section as keyof typeof mockInfo] || Object.values(mockInfo).join('\n');
+    return await this.client.info(section);
   }
 
   async close(): Promise<void> {
+    await this.client.quit();
     this.isConnected = false;
-    logger.info('Mock Redis connections closed');
+    logger.info('Redis connections closed');
   }
 }
 
 // Singleton Redis instance
-let redisInstance: MockRedisManager | null = null;
+let redisInstance: RedisManager | null = null;
 
-export const getRedis = (): MockRedisManager => {
+export const getRedis = (): RedisManager => {
   if (!redisInstance) {
-    redisInstance = new MockRedisManager();
+    redisInstance = new RedisManager();
   }
   return redisInstance;
 };
@@ -382,12 +420,12 @@ export const initializeRedis = async (): Promise<void> => {
   try {
     const redis = getRedis();
     await redis.initialize();
-    
+
     const healthCheck = await redis.healthCheck();
-    logger.info('Mock Redis initialized successfully', healthCheck);
+    logger.info('Redis initialized successfully', healthCheck);
 
   } catch (error) {
-    logger.error('Failed to initialize Mock Redis', error instanceof Error ? error.message : error);
+    logger.error('Failed to initialize Redis', error instanceof Error ? error.message : error);
     throw error;
   }
 };
