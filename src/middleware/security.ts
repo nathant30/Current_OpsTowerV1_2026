@@ -4,13 +4,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export function securityHeaders(request: NextRequest) {
-  // HTTPS Enforcement disabled - no ALB/CloudFront with SSL configured
-  // Re-enable when proper domain and SSL certificate are set up
-  // if (process.env.NODE_ENV === 'production' && request.nextUrl.protocol === 'http:') {
-  //   const httpsUrl = new URL(request.url);
-  //   httpsUrl.protocol = 'https:';
-  //   return NextResponse.redirect(httpsUrl, 301);
-  // }
+  // HTTPS Enforcement - Redirect HTTP to HTTPS in production
+  // Railway and Vercel both provide automatic HTTPS with free SSL certificates
+  // This middleware ensures all traffic uses HTTPS
+  if (process.env.NODE_ENV === 'production' &&
+      request.headers.get('x-forwarded-proto') === 'http') {
+    const httpsUrl = new URL(request.url);
+    httpsUrl.protocol = 'https:';
+    return NextResponse.redirect(httpsUrl, 301);
+  }
 
   const response = NextResponse.next();
 

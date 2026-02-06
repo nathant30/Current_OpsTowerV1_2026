@@ -44,8 +44,8 @@ const nextConfig = {
       },
     ]
   },
-  // HTTPS redirect disabled - no ALB/CloudFront configured yet
-  // Re-enable when HTTPS is set up with proper domain and SSL certificate
+  // HTTPS redirect handled by middleware for production
+  // Railway and Vercel provide automatic SSL certificates
   async redirects() {
     return []
   },
