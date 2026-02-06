@@ -391,6 +391,83 @@ class RedisManager {
     };
   }
 
+  // =====================================================
+  // RAW REDIS COMMANDS (for compatibility with existing code)
+  // =====================================================
+
+  async get(key: string): Promise<string | null> {
+    return await this.client.get(key);
+  }
+
+  async set(key: string, value: string): Promise<'OK'> {
+    return await this.client.set(key, value) as 'OK';
+  }
+
+  async setex(key: string, seconds: number, value: string): Promise<'OK'> {
+    return await this.client.setex(key, seconds, value) as 'OK';
+  }
+
+  async del(...keys: string[]): Promise<number> {
+    if (keys.length === 0) return 0;
+    return await this.client.del(...keys);
+  }
+
+  async keys(pattern: string): Promise<string[]> {
+    return await this.client.keys(pattern);
+  }
+
+  async expire(key: string, seconds: number): Promise<number> {
+    return await this.client.expire(key, seconds);
+  }
+
+  async ttl(key: string): Promise<number> {
+    return await this.client.ttl(key);
+  }
+
+  async incr(key: string): Promise<number> {
+    return await this.client.incr(key);
+  }
+
+  async decr(key: string): Promise<number> {
+    return await this.client.decr(key);
+  }
+
+  async hget(key: string, field: string): Promise<string | null> {
+    return await this.client.hget(key, field);
+  }
+
+  async hset(key: string, field: string, value: string): Promise<number> {
+    return await this.client.hset(key, field, value);
+  }
+
+  async hgetall(key: string): Promise<Record<string, string>> {
+    return await this.client.hgetall(key);
+  }
+
+  async sadd(key: string, ...members: string[]): Promise<number> {
+    return await this.client.sadd(key, ...members);
+  }
+
+  async smembers(key: string): Promise<string[]> {
+    return await this.client.smembers(key);
+  }
+
+  async srem(key: string, ...members: string[]): Promise<number> {
+    return await this.client.srem(key, ...members);
+  }
+
+  async lpush(key: string, ...values: string[]): Promise<number> {
+    return await this.client.lpush(key, ...values);
+  }
+
+  async rpush(key: string, ...values: string[]): Promise<number> {
+    return await this.client.rpush(key, ...values);
+  }
+
+  async lrange(key: string, start: number, stop: number): Promise<string[]> {
+    return await this.client.lrange(key, start, stop);
+  }
+
   async ping(): Promise<'PONG'> {
     return await this.client.ping() as 'PONG';
   }
