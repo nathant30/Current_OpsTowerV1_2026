@@ -9,8 +9,9 @@ export function securityHeaders(request: NextRequest) {
   // This middleware ensures all traffic uses HTTPS
   if (process.env.NODE_ENV === 'production' &&
       request.headers.get('x-forwarded-proto') === 'http') {
-    const httpsUrl = new URL(request.url);
-    httpsUrl.protocol = 'https:';
+    // Use the Host header from the request to preserve the external URL
+    const host = request.headers.get('host') || request.headers.get('x-forwarded-host');
+    const httpsUrl = new URL(`https://${host}${request.nextUrl.pathname}${request.nextUrl.search}`);
     return NextResponse.redirect(httpsUrl, 301);
   }
 
