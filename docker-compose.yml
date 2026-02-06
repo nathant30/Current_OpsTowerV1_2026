@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  xpress-ops-tower:
+    build: .
+    ports:
+      - "4001:4001"
+    environment:
+      - NODE_ENV=production
+      - JWT_SECRET=production-jwt-secret-change-in-production
+      - PORT=4001
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4001/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - xpress-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - xpress-network
+    depends_on:
+      - xpress-ops-tower
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./monitoring/grafana:/etc/grafana/provisioning
+    networks:
+      - xpress-network
+    depends_on:
+      - prometheus
+
+volumes:
+  grafana-storage:
+
+networks:
+  xpress-network:
+    driver: bridge

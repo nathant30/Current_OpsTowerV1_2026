@@ -1,0 +1,477 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Xpress Operations Dashboard CSS Custom Properties */
+:root {
+  /* Xpress Brand Colors - Official Design Guide */
+  --xpress-rose: 235 29 37;           /* Primary: Xpress Rose (#EB1D25) */
+  --xpress-rose-50: 254 242 242;      /* Ultra light rose */
+  --xpress-rose-100: 254 226 226;     /* Very light rose */
+  --xpress-rose-200: 252 165 165;     /* Light rose */
+  --xpress-rose-300: 248 113 113;     /* Medium light rose */
+  --xpress-rose-400: 239 68 68;       /* Medium rose */
+  --xpress-rose-500: 235 29 37;       /* Primary rose */
+  --xpress-rose-600: 220 26 34;       /* Medium dark rose */
+  --xpress-rose-700: 185 22 29;       /* Dark rose */
+  --xpress-rose-800: 153 18 24;       /* Very dark rose */
+  --xpress-rose-900: 127 15 20;       /* Ultra dark rose */
+
+  --xpress-navy: 3 35 58;             /* Secondary: Xpress Navy Blue (#03233A) */
+  --xpress-navy-50: 239 246 252;      /* Ultra light navy */
+  --xpress-navy-100: 219 234 247;     /* Very light navy */
+  --xpress-navy-200: 191 219 240;     /* Light navy */
+  --xpress-navy-300: 147 197 230;     /* Medium light navy */
+  --xpress-navy-400: 96 165 215;      /* Medium navy */
+  --xpress-navy-500: 10 64 96;        /* Medium navy */
+  --xpress-navy-600: 3 35 58;         /* Primary navy */
+  --xpress-navy-700: 2 28 46;         /* Dark navy */
+  --xpress-navy-800: 2 21 35;         /* Very dark navy */
+  --xpress-navy-900: 1 14 23;         /* Ultra dark navy */
+
+  --xpress-digital-blue: 10 64 96;    /* Accent: Xpress Digital Blue (#0A4060) */
+  --xpress-digital-blue-50: 239 246 252;
+  --xpress-digital-blue-100: 219 234 247;
+  --xpress-digital-blue-200: 191 219 240;
+  --xpress-digital-blue-300: 147 197 230;
+  --xpress-digital-blue-400: 96 165 215;
+  --xpress-digital-blue-500: 10 64 96;
+  --xpress-digital-blue-600: 8 51 77;
+  --xpress-digital-blue-700: 7 38 58;
+  --xpress-digital-blue-800: 5 26 38;
+  --xpress-digital-blue-900: 3 13 19;
+
+  /* Legacy Colors (maintained for compatibility) */
+  --xpress-50: 239 246 252;
+  --xpress-100: 219 234 247;
+  --xpress-200: 191 219 240;
+  --xpress-300: 147 197 230;
+  --xpress-400: 96 165 215;
+  --xpress-500: 10 64 96;
+  --xpress-600: 8 51 77;
+  --xpress-700: 7 38 58;
+  --xpress-800: 5 26 38;
+  --xpress-900: 3 13 19;
+  --xpress-950: 3 35 58;
+
+  /* Operational Status Colors */
+  --status-success: 16 185 129;        /* Green - available drivers, completed trips */
+  --status-warning: 245 158 11;        /* Orange - demand hotspots, moderate alerts */  
+  --status-danger: 235 29 37;          /* Xpress Rose - surge areas, emergency incidents */
+  --status-info: 10 64 96;             /* Xpress Digital Blue - general information */
+  --sidebar-bg: 3 35 58;               /* Xpress Navy - sidebar background */
+  --sidebar-hover: 10 64 96;           /* Xpress Digital Blue - sidebar hover */
+  
+  /* Surge and Demand Colors */
+  --surge-low: 34 197 94;              /* Green - no surge */
+  --surge-medium: 245 158 11;          /* Orange - moderate surge */
+  --surge-high: 239 68 68;             /* Red - high surge */
+  --demand-heat-1: 34 197 94;          /* Low demand */
+  --demand-heat-2: 245 158 11;         /* Medium demand */
+  --demand-heat-3: 239 68 68;          /* High demand */
+  
+  /* Map Status Colors */
+  --driver-available: 16 185 129;      /* Green pulsing dots */
+  --driver-busy: 245 158 11;           /* Orange dots for active rides */
+  --driver-offline: 156 163 175;       /* Gray for offline */
+  --trip-active: 59 130 246;           /* Blue route paths */
+  --pickup-point: 59 130 246;          /* Blue pickup pins */
+  --dropoff-point: 139 92 246;         /* Purple dropoff pins */
+
+  /* Semantic Colors */
+  --color-success: 16 185 129;
+  --color-warning: 245 158 11;
+  --color-danger: 239 68 68;
+  --color-info: 59 130 246;
+
+  /* Neutral Colors */
+  --color-neutral-0: 255 255 255;
+  --color-neutral-50: 249 250 251;
+  --color-neutral-100: 243 244 246;
+  --color-neutral-200: 229 231 235;
+  --color-neutral-300: 209 213 219;
+  --color-neutral-400: 156 163 175;
+  --color-neutral-500: 107 114 128;
+  --color-neutral-600: 75 85 99;
+  --color-neutral-700: 55 65 81;
+  --color-neutral-800: 31 41 55;
+  --color-neutral-900: 17 24 39;
+  --color-neutral-950: 3 7 18;
+
+  /* Typography - Xpress Design Guide */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Poppins', system-ui, sans-serif;  
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Spacing Scale */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Animation Durations */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  /* Z-Index Scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+}
+
+/* Dark mode support for future implementation */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-neutral-0: 3 7 18;
+    --color-neutral-50: 17 24 39;
+    --color-neutral-100: 31 41 55;
+    --color-neutral-200: 55 65 81;
+    --color-neutral-300: 75 85 99;
+    --color-neutral-400: 107 114 128;
+    --color-neutral-500: 156 163 175;
+    --color-neutral-600: 209 213 219;
+    --color-neutral-700: 229 231 235;
+    --color-neutral-800: 243 244 246;
+    --color-neutral-900: 249 250 251;
+    --color-neutral-950: 255 255 255;
+  }
+}
+
+/* XPRESS Base Styles */
+@layer base {
+  * {
+    @apply border-neutral-200;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-neutral-0 text-neutral-900 antialiased;
+    font-family: var(--font-sans);
+  }
+
+  /* Typography Defaults */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-neutral-900;
+  }
+
+  h1 {
+    @apply text-4xl lg:text-5xl;
+  }
+
+  h2 {
+    @apply text-3xl lg:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl lg:text-3xl;
+  }
+
+  h4 {
+    @apply text-xl lg:text-2xl;
+  }
+
+  h5 {
+    @apply text-lg;
+  }
+
+  h6 {
+    @apply text-base;
+  }
+
+  p {
+    @apply text-neutral-600 leading-relaxed;
+  }
+
+  /* Focus Styles */
+  *:focus {
+    @apply outline-none ring-2 ring-xpress-500 ring-offset-2;
+  }
+
+  /* Selection Styles */
+  ::selection {
+    @apply bg-xpress-100 text-xpress-900;
+  }
+}
+
+/* XPRESS Component Layer */
+@layer components {
+  /* Button Base Styles - Xpress Design Guide */
+  .xpress-btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .xpress-btn-primary {
+    background-color: rgb(var(--xpress-rose));
+    @apply text-white hover:shadow-lg focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+  }
+
+  .xpress-btn-primary:hover {
+    background-color: rgb(var(--xpress-rose-600));
+  }
+
+  .xpress-btn-secondary {
+    @apply bg-white text-blue-900 hover:bg-blue-50 focus:ring-2 focus:ring-blue-500 border-2;
+    border-color: rgb(var(--xpress-digital-blue));
+    color: rgb(var(--xpress-digital-blue));
+  }
+
+  .xpress-btn-danger {
+    background-color: rgb(var(--status-danger));
+    @apply text-white hover:shadow-lg focus:ring-2 focus:ring-red-500;
+  }
+
+  /* Card Base Styles */
+  .xpress-card {
+    @apply bg-white rounded-xpress-lg shadow-xpress border border-neutral-200 p-6;
+  }
+
+  /* Badge Base Styles */
+  .xpress-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .xpress-badge-success {
+    @apply bg-success-100 text-success-800;
+  }
+
+  .xpress-badge-warning {
+    @apply bg-warning-100 text-warning-800;
+  }
+
+  .xpress-badge-danger {
+    @apply bg-danger-100 text-danger-800;
+  }
+
+  .xpress-badge-info {
+    @apply bg-info-100 text-info-800;
+  }
+
+  /* Input Base Styles */
+  .xpress-input {
+    @apply block w-full px-3 py-2 border border-neutral-300 rounded-xpress shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-xpress-500 focus:border-xpress-500 sm:text-sm;
+  }
+
+  /* Utility Classes for Ridesharing Operations Dashboard */
+  .dashboard-grid {
+    @apply grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  .metric-card {
+    @apply xpress-card hover:shadow-xpress-md transition-shadow duration-normal;
+  }
+
+  /* Ridesharing Sidebar Styles */
+  .rideshare-sidebar {
+    background: rgb(var(--rideshare-sidebar));
+    @apply text-white;
+  }
+
+  .rideshare-sidebar-item {
+    @apply flex items-center px-4 py-3 text-gray-300 hover:bg-neutral-700 hover:text-white transition-all duration-200 cursor-pointer;
+  }
+
+  .rideshare-sidebar-item.active {
+    @apply bg-blue-600 text-white;
+  }
+
+  .rideshare-sidebar-item:hover {
+    background: rgb(var(--rideshare-sidebar-hover));
+  }
+
+  /* Status Indicators */
+  .status-indicator {
+    @apply w-3 h-3 rounded-full;
+  }
+
+  .status-online {
+    background: rgb(var(--rideshare-success));
+    @apply animate-pulse;
+  }
+
+  .status-warning {
+    background: rgb(var(--rideshare-warning));
+    @apply animate-pulse;
+  }
+
+  .status-offline {
+    background: rgb(var(--rideshare-danger));
+  }
+
+  .status-busy {
+    background: rgb(var(--rideshare-warning));
+    @apply animate-pulse;
+  }
+
+  /* Map Status Colors */
+  .driver-available {
+    background: rgb(var(--driver-available));
+  }
+
+  .driver-busy {
+    background: rgb(var(--driver-busy));
+  }
+
+  .driver-offline {
+    background: rgb(var(--driver-offline));
+  }
+
+  /* Surge Zone Indicators */
+  .surge-low {
+    background: rgba(var(--surge-low), 0.2);
+    border: 2px solid rgb(var(--surge-low));
+  }
+
+  .surge-medium {
+    background: rgba(var(--surge-medium), 0.2);
+    border: 2px solid rgb(var(--surge-medium));
+  }
+
+  .surge-high {
+    background: rgba(var(--surge-high), 0.2);
+    border: 2px solid rgb(var(--surge-high));
+  }
+
+  /* Demand Heatmap Colors */
+  .demand-low {
+    background: rgba(var(--demand-heat-1), 0.3);
+  }
+
+  .demand-medium {
+    background: rgba(var(--demand-heat-2), 0.4);
+  }
+
+  .demand-high {
+    background: rgba(var(--demand-heat-3), 0.5);
+  }
+
+  /* Real-time Animation Classes */
+  .pulse-data {
+    @apply animate-pulse;
+  }
+
+  .pulse-available {
+    animation: pulse-available 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .slide-in-bottom {
+    @apply animate-slide-up;
+  }
+
+  .fade-in {
+    @apply animate-fade-in;
+  }
+
+  /* Trip Status Indicators */
+  .trip-pending {
+    @apply bg-yellow-100 text-yellow-800 border border-yellow-300;
+  }
+
+  .trip-active {
+    @apply bg-blue-100 text-blue-800 border border-blue-300;
+  }
+
+  .trip-completed {
+    @apply bg-green-100 text-green-800 border border-green-300;
+  }
+
+  /* Emergency Alert Styles */
+  .emergency-alert {
+    @apply bg-red-50 border-l-4 border-red-500 p-4;
+    animation: emergency-pulse 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse-available {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes emergency-pulse {
+    0% {
+      background-color: rgb(254 242 242);
+    }
+    100% {
+      background-color: rgb(254 226 226);
+    }
+  }
+}
+
+/* XPRESS Utilities Layer */
+@layer utilities {
+  /* Text Utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Layout Utilities */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 
+      [full-width-start] minmax(1rem, 1fr) 
+      [content-start] min(calc(100% - 2rem), 75rem) 
+      [content-end] minmax(1rem, 1fr) 
+      [full-width-end];
+  }
+
+  .content-grid > * {
+    grid-column: content;
+  }
+
+  .content-grid > .full-width {
+    grid-column: full-width;
+  }
+
+  /* Custom Scrollbars */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--color-neutral-400)) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-neutral-400));
+    border-radius: 2px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-neutral-500));
+  }
+}
