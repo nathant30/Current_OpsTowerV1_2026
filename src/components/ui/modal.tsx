@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/xpress/button';
 import { cn } from '@/components/xpress/utils';

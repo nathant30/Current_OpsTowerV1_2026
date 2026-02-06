@@ -1,0 +1,1275 @@
+openapi: 3.0.3
+
+info:
+  title: OpsTower API
+  description: |
+    OpsTower is a comprehensive ridesharing platform operations API for the Philippine market.
+
+    This API provides endpoints for:
+    - Authentication & Authorization (RBAC with MFA)
+    - Booking Management
+    - Payment Processing (Maya, GCash)
+    - Compliance Reporting (BSP, LTFRB, BIR)
+    - Real-time Operations
+    - Administrative Functions
+
+    ## Authentication
+
+    All API requests require authentication using JWT (JSON Web Token).
+    Include the token in the Authorization header:
+
+    ```
+    Authorization: Bearer <your_jwt_token>
+    ```
+
+    ## Rate Limiting
+
+    - **Standard**: 1000 requests per hour
+    - **Authenticated**: 5000 requests per hour
+    - **Admin**: Unlimited
+
+    ## Error Codes
+
+    See [Error Codes Reference](./ERROR_CODES.md) for complete list.
+
+    ## Regions
+
+    Philippine Timezone: Asia/Manila (UTC+8)
+
+  version: 1.0.0
+  contact:
+    name: OpsTower API Support
+    email: api@opstower.com
+    url: https://docs.opstower.com
+  license:
+    name: Proprietary
+    url: https://opstower.com/license
+
+servers:
+  - url: https://api.opstower.com
+    description: Production server
+  - url: https://staging-api.opstower.com
+    description: Staging server
+  - url: http://localhost:4000
+    description: Local development server
+
+tags:
+  - name: Authentication
+    description: User authentication, MFA, and session management
+  - name: RBAC
+    description: Role-Based Access Control management
+  - name: Bookings
+    description: Ride booking operations
+  - name: Payments
+    description: Payment processing and transaction management
+  - name: Maya
+    description: Maya (PayMaya) payment integration
+  - name: GCash
+    description: GCash payment integration
+  - name: Compliance
+    description: Regulatory compliance and reporting
+  - name: Users
+    description: User profile and account management
+  - name: Admin
+    description: Administrative operations
+  - name: Metrics
+    description: System metrics and monitoring
+  - name: Pricing
+    description: Dynamic pricing and surge management
+  - name: Health
+    description: System health and status checks
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT token obtained from /api/auth/login endpoint.
+        Format: Bearer <token>
+
+  schemas:
+    # Common Schemas
+    Error:
+      type: object
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              example: "UNAUTHORIZED"
+            message:
+              type: string
+              example: "Authentication required"
+            details:
+              type: object
+              additionalProperties: true
+
+    Success:
+      type: object
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          additionalProperties: true
+        message:
+          type: string
+
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 150
+        totalPages:
+          type: integer
+          example: 8
+
+    # Authentication Schemas
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "driver@example.com"
+        password:
+          type: string
+          format: password
+          example: "SecureP@ssw0rd"
+
+    LoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            refreshToken:
+              type: string
+            user:
+              $ref: '#/components/schemas/User'
+            mfaRequired:
+              type: boolean
+              example: false
+            sessionId:
+              type: string
+
+    MFASetupResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            secret:
+              type: string
+              example: "JBSWY3DPEHPK3PXP"
+            qrCode:
+              type: string
+              description: Base64 encoded QR code image
+            backupCodes:
+              type: array
+              items:
+                type: string
+              example: ["12345678", "87654321", "11223344"]
+
+    # User Schemas
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "usr_1234567890"
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          type: string
+          enum: [passenger, driver, operator, admin, super_admin]
+        userType:
+          type: string
+          enum: [passenger, driver, operator]
+        phone:
+          type: string
+        verified:
+          type: boolean
+        mfaEnabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # Booking Schemas
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "bkg_1234567890"
+        passengerId:
+          type: string
+        driverId:
+          type: string
+          nullable: true
+        pickupLocation:
+          $ref: '#/components/schemas/Location'
+        dropoffLocation:
+          $ref: '#/components/schemas/Location'
+        status:
+          type: string
+          enum: [pending, accepted, in_progress, completed, cancelled]
+        fare:
+          type: object
+          properties:
+            base:
+              type: number
+              format: float
+            surge:
+              type: number
+              format: float
+            total:
+              type: number
+              format: float
+            currency:
+              type: string
+              example: "PHP"
+        scheduledAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Location:
+      type: object
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: number
+          format: double
+          example: 14.5995
+        longitude:
+          type: number
+          format: double
+          example: 120.9842
+        address:
+          type: string
+          example: "Makati, Metro Manila"
+        placeId:
+          type: string
+
+    # Payment Schemas
+    PaymentTransaction:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "txn_1234567890"
+        transactionId:
+          type: string
+        amount:
+          type: number
+          format: float
+          example: 250.00
+        currency:
+          type: string
+          example: "PHP"
+        status:
+          type: string
+          enum: [pending, processing, completed, failed, refunded]
+        paymentMethod:
+          type: string
+          enum: [maya, gcash, cash, card]
+        userId:
+          type: string
+        bookingId:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    MayaPaymentRequest:
+      type: object
+      required:
+        - amount
+        - description
+        - userId
+        - userType
+        - customerName
+        - customerEmail
+        - successUrl
+        - failureUrl
+      properties:
+        amount:
+          type: number
+          format: float
+          minimum: 1
+          example: 250.00
+        description:
+          type: string
+          example: "Ride payment for booking #123"
+        userId:
+          type: string
+        userType:
+          type: string
+          enum: [passenger, driver, operator]
+        customerName:
+          type: string
+          example: "Juan dela Cruz"
+        customerEmail:
+          type: string
+          format: email
+          example: "juan@example.com"
+        customerPhone:
+          type: string
+          example: "+639171234567"
+        bookingId:
+          type: string
+          nullable: true
+        successUrl:
+          type: string
+          format: uri
+        failureUrl:
+          type: string
+          format: uri
+        cancelUrl:
+          type: string
+          format: uri
+        metadata:
+          type: object
+          additionalProperties: true
+
+    MayaPaymentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            transactionId:
+              type: string
+            referenceNumber:
+              type: string
+            checkoutId:
+              type: string
+            redirectUrl:
+              type: string
+              format: uri
+            amount:
+              type: number
+              format: float
+            currency:
+              type: string
+              example: "PHP"
+            expiresAt:
+              type: string
+              format: date-time
+            status:
+              type: string
+              example: "pending"
+
+    # RBAC Schemas
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: "driver"
+        level:
+          type: integer
+          example: 20
+        description:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+          example: ["bookings:read", "bookings:create", "payments:read"]
+        pii_scope:
+          type: string
+          enum: [none, own, regional, national, full]
+        allowed_regions:
+          type: array
+          items:
+            type: string
+        domain:
+          type: string
+        userCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # Compliance Schemas
+    ComplianceReport:
+      type: object
+      properties:
+        id:
+          type: string
+        reportType:
+          type: string
+          enum: [bsp_daily, ltfrb_monthly, bir_quarterly, npc_annual]
+        period:
+          type: object
+          properties:
+            start:
+              type: string
+              format: date
+            end:
+              type: string
+              format: date
+        status:
+          type: string
+          enum: [pending, processing, completed, filed, error]
+        fileUrl:
+          type: string
+          format: uri
+          nullable: true
+        generatedAt:
+          type: string
+          format: date-time
+        filedAt:
+          type: string
+          format: date-time
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties: true
+
+paths:
+  # ==========================================================================
+  # AUTHENTICATION ENDPOINTS
+  # ==========================================================================
+
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user with email and password. Returns JWT token.
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many login attempts
+
+  /api/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Invalidate current session and JWT token
+      operationId: logout
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+
+  /api/auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Get new access token using refresh token
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                      refreshToken:
+                        type: string
+
+  /api/auth/validate:
+    get:
+      tags:
+        - Authentication
+      summary: Validate token
+      description: Check if current JWT token is valid
+      operationId: validateToken
+      responses:
+        '200':
+          description: Token is valid
+        '401':
+          description: Token is invalid or expired
+
+  /api/auth/mfa/setup:
+    post:
+      tags:
+        - Authentication
+      summary: Setup MFA
+      description: Initialize MFA setup and get QR code
+      operationId: setupMFA
+      responses:
+        '200':
+          description: MFA setup initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MFASetupResponse'
+
+  /api/auth/mfa/enable:
+    post:
+      tags:
+        - Authentication
+      summary: Enable MFA
+      description: Confirm and enable MFA with verification code
+      operationId: enableMFA
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+              properties:
+                code:
+                  type: string
+                  example: "123456"
+      responses:
+        '200':
+          description: MFA enabled successfully
+        '400':
+          description: Invalid verification code
+
+  /api/auth/mfa/verify:
+    post:
+      tags:
+        - Authentication
+      summary: Verify MFA code
+      description: Verify MFA code during login
+      operationId: verifyMFA
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - sessionId
+              properties:
+                code:
+                  type: string
+                sessionId:
+                  type: string
+      responses:
+        '200':
+          description: MFA verification successful
+        '401':
+          description: Invalid MFA code
+
+  /api/auth/profile:
+    get:
+      tags:
+        - Authentication
+      summary: Get user profile
+      description: Get current authenticated user profile
+      operationId: getProfile
+      responses:
+        '200':
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/User'
+
+  # ==========================================================================
+  # RBAC ENDPOINTS
+  # ==========================================================================
+
+  /api/rbac/roles:
+    get:
+      tags:
+        - RBAC
+      summary: List all roles
+      description: Get list of all available roles with optional CSV export
+      operationId: listRoles
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json, csv]
+          description: Response format (json or csv)
+      responses:
+        '200':
+          description: Roles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Role'
+            text/csv:
+              schema:
+                type: string
+
+    post:
+      tags:
+        - RBAC
+      summary: Create new role
+      description: Create a new role (super_admin only)
+      operationId: createRole
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - level
+                - permissions
+              properties:
+                name:
+                  type: string
+                level:
+                  type: integer
+                description:
+                  type: string
+                permissions:
+                  type: array
+                  items:
+                    type: string
+                pii_scope:
+                  type: string
+                allowed_regions:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Role created successfully
+        '403':
+          description: Insufficient permissions
+
+  /api/rbac/roles/{id}:
+    get:
+      tags:
+        - RBAC
+      summary: Get role by ID
+      operationId: getRoleById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Role retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Role'
+        '404':
+          description: Role not found
+
+    patch:
+      tags:
+        - RBAC
+      summary: Update role
+      operationId: updateRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                permissions:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Role updated successfully
+        '403':
+          description: Insufficient permissions
+
+    delete:
+      tags:
+        - RBAC
+      summary: Delete role
+      operationId: deleteRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Role deleted successfully
+        '403':
+          description: Insufficient permissions
+
+  # ==========================================================================
+  # BOOKING ENDPOINTS
+  # ==========================================================================
+
+  /api/bookings:
+    get:
+      tags:
+        - Bookings
+      summary: List bookings
+      description: Get list of bookings with filtering and pagination
+      operationId: listBookings
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, accepted, in_progress, completed, cancelled]
+        - name: userId
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bookings retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Booking'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+    post:
+      tags:
+        - Bookings
+      summary: Create booking
+      description: Create a new ride booking
+      operationId: createBooking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pickupLocation
+                - dropoffLocation
+              properties:
+                pickupLocation:
+                  $ref: '#/components/schemas/Location'
+                dropoffLocation:
+                  $ref: '#/components/schemas/Location'
+                scheduledAt:
+                  type: string
+                  format: date-time
+                notes:
+                  type: string
+      responses:
+        '201':
+          description: Booking created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Booking'
+
+  /api/bookings/{id}:
+    get:
+      tags:
+        - Bookings
+      summary: Get booking by ID
+      operationId: getBookingById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Booking retrieved successfully
+        '404':
+          description: Booking not found
+
+    patch:
+      tags:
+        - Bookings
+      summary: Update booking
+      operationId: updateBooking
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                driverId:
+                  type: string
+      responses:
+        '200':
+          description: Booking updated successfully
+
+  # ==========================================================================
+  # PAYMENT ENDPOINTS - MAYA
+  # ==========================================================================
+
+  /api/payments/maya/initiate:
+    post:
+      tags:
+        - Maya
+        - Payments
+      summary: Initiate Maya payment
+      description: Start a new Maya payment transaction
+      operationId: initiateMayaPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MayaPaymentRequest'
+      responses:
+        '200':
+          description: Payment initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MayaPaymentResponse'
+        '400':
+          description: Invalid payment request
+
+  /api/payments/maya/status/{transactionId}:
+    get:
+      tags:
+        - Maya
+        - Payments
+      summary: Get Maya payment status
+      operationId: getMayaPaymentStatus
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/PaymentTransaction'
+
+  /api/payments/maya/webhook:
+    post:
+      tags:
+        - Maya
+        - Payments
+      summary: Maya webhook
+      description: Webhook endpoint for Maya payment notifications
+      operationId: mayaWebhook
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Webhook processed
+
+  /api/payments/maya/refund:
+    post:
+      tags:
+        - Maya
+        - Payments
+      summary: Refund Maya payment
+      operationId: refundMayaPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - transactionId
+                - amount
+              properties:
+                transactionId:
+                  type: string
+                amount:
+                  type: number
+                  format: float
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Refund initiated successfully
+
+  # ==========================================================================
+  # PAYMENT ENDPOINTS - GCASH
+  # ==========================================================================
+
+  /api/payments/gcash/initiate:
+    post:
+      tags:
+        - GCash
+        - Payments
+      summary: Initiate GCash payment
+      operationId: initiateGCashPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MayaPaymentRequest'
+      responses:
+        '200':
+          description: Payment initiated successfully
+
+  /api/payments/gcash/status/{transactionId}:
+    get:
+      tags:
+        - GCash
+        - Payments
+      summary: Get GCash payment status
+      operationId: getGCashPaymentStatus
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment status retrieved
+
+  /api/payments/gcash/webhook:
+    post:
+      tags:
+        - GCash
+        - Payments
+      summary: GCash webhook
+      operationId: gcashWebhook
+      security: []
+      responses:
+        '200':
+          description: Webhook processed
+
+  # ==========================================================================
+  # PAYMENT ENDPOINTS - GENERAL
+  # ==========================================================================
+
+  /api/payments/methods:
+    get:
+      tags:
+        - Payments
+      summary: List payment methods
+      description: Get available payment methods
+      operationId: listPaymentMethods
+      responses:
+        '200':
+          description: Payment methods retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        type:
+                          type: string
+                        enabled:
+                          type: boolean
+
+  /api/payments/transactions:
+    get:
+      tags:
+        - Payments
+      summary: List transactions
+      operationId: listTransactions
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Transactions retrieved
+
+  /api/payments/history:
+    get:
+      tags:
+        - Payments
+      summary: Get payment history
+      operationId: getPaymentHistory
+      responses:
+        '200':
+          description: Payment history retrieved
+
+  # ==========================================================================
+  # HEALTH & METRICS
+  # ==========================================================================
+
+  /api/health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Check API health status
+      operationId: healthCheck
+      security: []
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                  version:
+                    type: string
+                  uptime:
+                    type: number
+
+  /api/metrics:
+    get:
+      tags:
+        - Metrics
+      summary: Get system metrics
+      operationId: getMetrics
+      responses:
+        '200':
+          description: Metrics retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/database/performance:
+    get:
+      tags:
+        - Metrics
+      summary: Get database performance metrics
+      operationId: getDatabasePerformance
+      responses:
+        '200':
+          description: Database metrics retrieved
+
+  # ==========================================================================
+  # PRICING ENDPOINTS
+  # ==========================================================================
+
+  /api/v1/pricing/dashboard:
+    get:
+      tags:
+        - Pricing
+      summary: Get pricing dashboard
+      operationId: getPricingDashboard
+      responses:
+        '200':
+          description: Pricing dashboard data
+
+  /api/v1/pricing/profiles:
+    get:
+      tags:
+        - Pricing
+      summary: List pricing profiles
+      operationId: listPricingProfiles
+      responses:
+        '200':
+          description: Pricing profiles retrieved
+
+    post:
+      tags:
+        - Pricing
+      summary: Create pricing profile
+      operationId: createPricingProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Pricing profile created

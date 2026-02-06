@@ -1,23 +1,23 @@
 /**
- * GCash Payment Initiation API Route
+ * Maya Payment Initiation API Route
  *
- * POST /api/payments/gcash/initiate
+ * POST /api/payments/maya/initiate
  *
- * Initiates a new GCash payment via EBANX
- * Returns redirect URL for customer to complete payment in GCash app
+ * Initiates a new Maya payment
+ * Returns redirect URL for customer to complete payment on Maya checkout page
  *
- * @module api/payments/gcash/initiate
+ * @module api/payments/maya/initiate
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getGCashService } from '@/lib/payments/gcash/service';
-import { GCashPaymentRequest } from '@/lib/payments/gcash/types';
-import { EBANXAPIError } from '@/lib/payments/gcash/types';
+import { getMayaService } from '@/lib/payments/maya/service';
+import { MayaPaymentRequest } from '@/lib/payments/maya/types';
+import { MayaAPIError } from '@/lib/payments/maya/types';
 
 /**
- * POST /api/payments/gcash/initiate
+ * POST /api/payments/maya/initiate
  *
- * Initiate a GCash payment
+ * Initiate a Maya payment
  *
  * Request Body:
  * {
@@ -31,6 +31,7 @@ import { EBANXAPIError } from '@/lib/payments/gcash/types';
  *   bookingId?: string,
  *   successUrl: string,
  *   failureUrl: string,
+ *   cancelUrl?: string,
  *   metadata?: object
  * }
  *
@@ -40,9 +41,8 @@ import { EBANXAPIError } from '@/lib/payments/gcash/types';
  *   data: {
  *     transactionId: string,
  *     referenceNumber: string,
+ *     checkoutId: string,
  *     redirectUrl: string,
- *     deepLinkUrl?: string,
- *     qrCodeUrl?: string,
  *     amount: number,
  *     currency: string,
  *     expiresAt: string,
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Build payment request
-    const paymentRequest: GCashPaymentRequest = {
+    const paymentRequest: MayaPaymentRequest = {
       amount: parseFloat(body.amount),
       currency: body.currency || 'PHP',
       description: body.description,
@@ -92,11 +92,12 @@ export async function POST(request: NextRequest) {
       bookingId: body.bookingId,
       successUrl: body.successUrl,
       failureUrl: body.failureUrl,
+      cancelUrl: body.cancelUrl,
       metadata: body.metadata || {},
     };
 
     // Get payment service
-    const service = getGCashService();
+    const service = getMayaService();
 
     // Initiate payment
     const response = await service.initiatePayment(paymentRequest);
@@ -107,21 +108,20 @@ export async function POST(request: NextRequest) {
       data: {
         transactionId: response.transactionId,
         referenceNumber: response.referenceNumber,
+        checkoutId: response.checkoutId,
         redirectUrl: response.redirectUrl,
-        deepLinkUrl: response.deepLinkUrl,
-        qrCodeUrl: response.qrCodeUrl,
         amount: response.amount,
         currency: response.currency,
         status: response.status,
         expiresAt: response.expiresAt.toISOString(),
       },
-      message: 'GCash payment initiated successfully',
+      message: 'Maya payment initiated successfully',
     });
   } catch (error) {
-    console.error('GCash payment initiation failed:', error);
+    console.error('Maya payment initiation failed:', error);
 
-    // Handle EBANX API errors
-    if (error instanceof EBANXAPIError) {
+    // Handle Maya API errors
+    if (error instanceof MayaAPIError) {
       return NextResponse.json(
         {
           success: false,
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to initiate GCash payment. Please try again.',
+        error: 'Failed to initiate Maya payment. Please try again.',
       },
       { status: 500 }
     );
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * GET /api/payments/gcash/initiate
+ * GET /api/payments/maya/initiate
  *
  * Method not allowed
  */

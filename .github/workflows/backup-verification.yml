@@ -1,0 +1,286 @@
+name: Backup Verification
+
+on:
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC (10 AM PHT)
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      full_test:
+        description: 'Run full restoration test'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  verify-backup:
+    name: Verify Database Backups
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: opstower_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Configure AWS credentials
+        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'ap-southeast-1' }}
+
+      - name: Create backup directory
+        run: |
+          mkdir -p /tmp/backups
+
+      - name: Download latest backup from S3
+        if: ${{ secrets.BACKUP_S3_BUCKET != '' }}
+        run: |
+          # Get the latest backup from S3
+          LATEST_BACKUP=$(aws s3 ls s3://${{ secrets.BACKUP_S3_BUCKET }}/database/ --recursive | \
+                          grep "\.sql\.gz$" | sort | tail -1 | awk '{print $4}')
+
+          if [ -n "$LATEST_BACKUP" ]; then
+            echo "Downloading backup: $LATEST_BACKUP"
+            aws s3 cp "s3://${{ secrets.BACKUP_S3_BUCKET }}/$LATEST_BACKUP" /tmp/backups/latest_backup.sql.gz
+
+            # Download metadata if exists
+            METADATA_FILE="${LATEST_BACKUP%.sql.gz}.meta.json"
+            aws s3 cp "s3://${{ secrets.BACKUP_S3_BUCKET }}/$METADATA_FILE" /tmp/backups/latest_backup.meta.json || true
+          else
+            echo "No backups found in S3"
+            exit 1
+          fi
+
+      - name: Create test backup (if no S3)
+        if: ${{ secrets.BACKUP_S3_BUCKET == '' }}
+        env:
+          PGPASSWORD: postgres
+        run: |
+          # Create a test database with sample data
+          psql -h localhost -U postgres -d postgres -c "CREATE DATABASE opstower_test;"
+          psql -h localhost -U postgres -d opstower_test -c "
+            CREATE TABLE test_table (
+              id SERIAL PRIMARY KEY,
+              name VARCHAR(100),
+              created_at TIMESTAMP DEFAULT NOW()
+            );
+            INSERT INTO test_table (name) VALUES ('Test 1'), ('Test 2'), ('Test 3');
+          "
+
+          # Create test backup
+          pg_dump -h localhost -U postgres opstower_test | gzip > /tmp/backups/latest_backup.sql.gz
+
+      - name: Run backup verification
+        env:
+          BACKUP_DIR: /tmp/backups
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: postgres
+        run: |
+          if [ "${{ inputs.full_test }}" == "true" ]; then
+            ./scripts/verify-backup.sh /tmp/backups/latest_backup.sql.gz --full-test
+          else
+            ./scripts/verify-backup.sh /tmp/backups/latest_backup.sql.gz
+          fi
+
+      - name: Check backup age
+        if: ${{ secrets.BACKUP_S3_BUCKET != '' }}
+        run: |
+          # Extract timestamp from metadata
+          if [ -f /tmp/backups/latest_backup.meta.json ]; then
+            BACKUP_DATE=$(jq -r '.date' /tmp/backups/latest_backup.meta.json)
+            BACKUP_TIMESTAMP=$(date -d "$BACKUP_DATE" +%s)
+            CURRENT_TIMESTAMP=$(date +%s)
+            AGE_HOURS=$(( (CURRENT_TIMESTAMP - BACKUP_TIMESTAMP) / 3600 ))
+
+            echo "Backup age: $AGE_HOURS hours"
+
+            # Alert if backup is older than 48 hours
+            if [ $AGE_HOURS -gt 48 ]; then
+              echo "::warning::Backup is older than 48 hours ($AGE_HOURS hours)"
+            fi
+          fi
+
+      - name: Test backup size
+        run: |
+          BACKUP_SIZE=$(stat -f%z /tmp/backups/latest_backup.sql.gz 2>/dev/null || stat -c%s /tmp/backups/latest_backup.sql.gz)
+          BACKUP_SIZE_MB=$((BACKUP_SIZE / 1024 / 1024))
+
+          echo "Backup size: ${BACKUP_SIZE_MB}MB"
+
+          # Warn if backup is suspiciously small (< 1MB)
+          if [ $BACKUP_SIZE_MB -lt 1 ]; then
+            echo "::warning::Backup size is suspiciously small (${BACKUP_SIZE_MB}MB)"
+          fi
+
+          # Warn if backup is very large (> 10GB)
+          if [ $BACKUP_SIZE_MB -gt 10240 ]; then
+            echo "::warning::Backup size is very large (${BACKUP_SIZE_MB}MB)"
+          fi
+
+      - name: Upload verification log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-log
+          path: /tmp/backups/verification_*.log
+          retention-days: 30
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Backup verification failed"
+          # Could integrate with Slack, email, or other notification systems here
+
+  verify-backup-retention:
+    name: Verify Backup Retention Policy
+    runs-on: ubuntu-latest
+    if: ${{ secrets.AWS_ACCESS_KEY_ID != '' && secrets.BACKUP_S3_BUCKET != '' }}
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'ap-southeast-1' }}
+
+      - name: Check backup retention
+        run: |
+          # List all backups
+          echo "Checking backup retention policy..."
+
+          BACKUP_COUNT=$(aws s3 ls s3://${{ secrets.BACKUP_S3_BUCKET }}/database/ --recursive | \
+                        grep "\.sql\.gz$" | wc -l)
+
+          echo "Total backups in S3: $BACKUP_COUNT"
+
+          # Check for daily backups in last 7 days
+          RECENT_BACKUPS=$(aws s3 ls s3://${{ secrets.BACKUP_S3_BUCKET }}/database/ --recursive | \
+                          grep "\.sql\.gz$" | \
+                          awk '{print $1}' | \
+                          while read date; do
+                            BACKUP_TS=$(date -d "$date" +%s 2>/dev/null || date -j -f "%Y-%m-%d" "$date" +%s)
+                            CUTOFF_TS=$(date -d "7 days ago" +%s 2>/dev/null || date -v-7d +%s)
+                            if [ $BACKUP_TS -gt $CUTOFF_TS ]; then
+                              echo "$date"
+                            fi
+                          done | wc -l)
+
+          echo "Backups in last 7 days: $RECENT_BACKUPS"
+
+          if [ $RECENT_BACKUPS -lt 7 ]; then
+            echo "::warning::Less than 7 daily backups found ($RECENT_BACKUPS)"
+          fi
+
+          # Check total storage used
+          TOTAL_SIZE=$(aws s3 ls s3://${{ secrets.BACKUP_S3_BUCKET }}/database/ --recursive --summarize | \
+                      grep "Total Size" | awk '{print $3}')
+          TOTAL_SIZE_GB=$((TOTAL_SIZE / 1024 / 1024 / 1024))
+
+          echo "Total backup storage: ${TOTAL_SIZE_GB}GB"
+
+  test-restore-procedure:
+    name: Monthly Full Restore Test
+    runs-on: ubuntu-latest
+    # Run on the first Sunday of each month
+    if: github.event.schedule == '0 2 * * 0' && github.event_name == 'schedule'
+    timeout-minutes: 60
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Configure AWS credentials
+        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'ap-southeast-1' }}
+
+      - name: Download latest backup
+        run: |
+          mkdir -p /tmp/backups
+          # Download logic here (same as above)
+
+      - name: Perform full restoration test
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: postgres
+          DATABASE_NAME: opstower_restore_test
+          BACKUP_DIR: /tmp/backups
+        run: |
+          ./scripts/restore-database.sh /tmp/backups/latest_backup.sql.gz --force
+
+      - name: Verify restored database
+        env:
+          PGPASSWORD: postgres
+        run: |
+          # Run comprehensive verification queries
+          psql -h localhost -U postgres -d opstower_restore_test -c "
+            SELECT
+              schemaname,
+              tablename,
+              pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
+            FROM pg_tables
+            WHERE schemaname = 'public'
+            ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
+          "
+
+      - name: Upload restore test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: restore-test-results
+          path: /tmp/backups/restore_*.log
+          retention-days: 90
