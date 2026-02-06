@@ -21,7 +21,8 @@ export function securityHeaders(request: NextRequest) {
   // Security Headers Implementation
   const securityHeadersConfig = {
     // Strict Transport Security - Enforce HTTPS
-    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+    // TODO: Re-enable after setting up SSL certificate
+    // 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
     
     // Content Security Policy - Prevent XSS
     'Content-Security-Policy': [
