@@ -75,7 +75,7 @@ jobs:
           # Update ECS service to use new image
           aws ecs update-service \
             --cluster xpressops-cluster \
-            --service xpressops-tower-service \
+            --service xpressops-tower-prod \
             --force-new-deployment \
             --region ${{ env.AWS_REGION }} || echo "ECS service not configured, skipping deployment"
 
