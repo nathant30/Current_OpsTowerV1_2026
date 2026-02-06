@@ -232,7 +232,7 @@ const ProfileSettingsPage = () => {
 
   const handleCreateApiKey = async () => {
     const name = prompt('Enter a name for the new API key:');
-    if (!name) return;
+    if (!name) {return;}
     
     setIsLoading(true);
     try {
@@ -266,7 +266,7 @@ const ProfileSettingsPage = () => {
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {return;}
 
     if (file.size > 5 * 1024 * 1024) {
       alert('File size must be less than 5MB');

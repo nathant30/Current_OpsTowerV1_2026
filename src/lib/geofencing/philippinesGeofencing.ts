@@ -746,7 +746,7 @@ class PhilippinesGeofencingService {
     const events: GeofenceEvent[] = [];
     
     for (const [geofenceId, geofence] of this.geofences.entries()) {
-      if (!geofence.isActive) continue;
+      if (!geofence.isActive) {continue;}
 
       const isCurrentlyInside = this.isPointInGeofence(location, geofence);
       const wasInside = await this.getDriverGeofenceState(driverId, geofenceId);

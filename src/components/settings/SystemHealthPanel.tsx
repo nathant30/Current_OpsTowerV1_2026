@@ -64,8 +64,8 @@ const SystemHealthPanel = memo<SystemHealthPanelProps>(({
   };
 
   const getMetricColor = (value: number, threshold: number = 80) => {
-    if (value >= threshold) return 'text-red-600';
-    if (value >= threshold * 0.7) return 'text-yellow-600';
+    if (value >= threshold) {return 'text-red-600';}
+    if (value >= threshold * 0.7) {return 'text-yellow-600';}
     return 'text-green-600';
   };
 

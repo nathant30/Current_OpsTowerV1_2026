@@ -210,7 +210,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
           <div className="flex items-center gap-2">
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               const pageNum = page <= 3 ? i + 1 : page - 2 + i;
-              if (pageNum > totalPages) return null;
+              if (pageNum > totalPages) {return null;}
 
               return (
                 <Button

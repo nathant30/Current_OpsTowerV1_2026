@@ -31,7 +31,7 @@ const ENCRYPTION_KEY = getEncryptionKey();
  * Encrypt sensitive data for database storage
  */
 export function encryptField(plaintext: string): string {
-  if (!plaintext) return plaintext;
+  if (!plaintext) {return plaintext;}
   
   try {
     const iv = crypto.randomBytes(IV_LENGTH);
@@ -87,7 +87,7 @@ export function decryptField(encryptedData: string): string {
  * Hash sensitive data for searching (one-way)
  */
 export function hashField(data: string): string {
-  if (!data) return data;
+  if (!data) {return data;}
   
   const salt = process.env.DATABASE_HASH_SALT || 'xpress-ops-default-salt';
   return crypto.createHash('sha256').update(data + salt).digest('hex');

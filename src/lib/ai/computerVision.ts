@@ -326,9 +326,9 @@ class ComputerVisionEngine {
     const techniques: ('photo' | 'video' | 'mask' | '3d_model')[] = [];
     
     // Random spoofing indicators
-    if (Math.random() > 0.95) techniques.push('photo');
-    if (Math.random() > 0.98) techniques.push('video');
-    if (Math.random() > 0.99) techniques.push('mask');
+    if (Math.random() > 0.95) {techniques.push('photo');}
+    if (Math.random() > 0.98) {techniques.push('video');}
+    if (Math.random() > 0.99) {techniques.push('mask');}
 
     const isLive = techniques.length === 0;
     const confidence = isLive ? 0.9 + Math.random() * 0.1 : 0.8 + Math.random() * 0.15;
@@ -459,9 +459,9 @@ class ComputerVisionEngine {
     const techniques: ('digital_alteration' | 'physical_tampering' | 'copy_paste' | 'font_inconsistency')[] = [];
     
     // Random tampering detection
-    if (Math.random() > 0.95) techniques.push('digital_alteration');
-    if (Math.random() > 0.97) techniques.push('font_inconsistency');
-    if (Math.random() > 0.98) techniques.push('copy_paste');
+    if (Math.random() > 0.95) {techniques.push('digital_alteration');}
+    if (Math.random() > 0.97) {techniques.push('font_inconsistency');}
+    if (Math.random() > 0.98) {techniques.push('copy_paste');}
 
     return {
       detected: techniques.length > 0,
@@ -516,8 +516,8 @@ class ComputerVisionEngine {
     confidence += quality.lighting * 0.1;
 
     // Penalties
-    if (tampering.detected) confidence -= 0.4;
-    if (quality.resolution < 800) confidence -= 0.2;
+    if (tampering.detected) {confidence -= 0.4;}
+    if (quality.resolution < 800) {confidence -= 0.2;}
 
     return Math.min(Math.max(confidence, 0), 1);
   }
@@ -650,7 +650,7 @@ class ComputerVisionEngine {
   private identifyVehicleDetails(imageBase64: string): { make?: string; model?: string; year?: number } {
     // Simulate vehicle identification
     const vehicles = Array.from(this.vehicleDatabase.entries());
-    if (vehicles.length === 0) return {};
+    if (vehicles.length === 0) {return {};}
 
     const randomVehicle = vehicles[Math.floor(Math.random() * vehicles.length)][1];
     const randomYear = randomVehicle.popularYears[Math.floor(Math.random() * randomVehicle.popularYears.length)];
@@ -906,9 +906,9 @@ class ComputerVisionEngine {
     const techniques: ('photoshop' | 'deepfake' | 'filter' | 'lighting_change' | 'background_replacement')[] = [];
     
     // Random manipulation detection (simplified)
-    if (Math.random() > 0.95) techniques.push('photoshop');
-    if (Math.random() > 0.98) techniques.push('filter');
-    if (Math.random() > 0.99) techniques.push('lighting_change');
+    if (Math.random() > 0.95) {techniques.push('photoshop');}
+    if (Math.random() > 0.98) {techniques.push('filter');}
+    if (Math.random() > 0.99) {techniques.push('lighting_change');}
 
     return {
       isManipulated: techniques.length > 0,

@@ -626,7 +626,7 @@ export class EmergencyAlertService {
    */
   private async sendWebSocketNotification(userId: string, notification: any): Promise<void> {
     const wsManager = getWebSocketManager();
-    if (!wsManager) return;
+    if (!wsManager) {return;}
 
     // Send via WebSocket
     wsManager.sendToUser(userId, 'emergency:alert', notification);
@@ -837,7 +837,7 @@ export class EmergencyAlertService {
   }
 
   private async notifyExternalServices(alert: EmergencyAlert): Promise<void> {
-    if (!this.config.enableExternalServices) return;
+    if (!this.config.enableExternalServices) {return;}
     
     // Implementation for external service notifications (police, medical, etc.)
     logger.info(`🔼 Escalating ${alert.alertCode} to external services`);
@@ -854,12 +854,12 @@ export class EmergencyAlertService {
 
   private startEscalationMonitor(): void {
     setInterval(async () => {
-      if (!this.config.autoEscalationEnabled) return;
+      if (!this.config.autoEscalationEnabled) {return;}
 
       const now = Date.now();
       
       for (const [alertId, alert] of this.activeAlerts) {
-        if (alert.status !== 'active' && alert.status !== 'acknowledged') continue;
+        if (alert.status !== 'active' && alert.status !== 'acknowledged') {continue;}
         
         const timeSinceTriggered = now - alert.triggeredAt.getTime();
         const escalationInterval = this.config.escalationIntervals[alert.escalationLevel];

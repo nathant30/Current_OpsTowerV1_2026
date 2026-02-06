@@ -116,8 +116,8 @@ export async function getUserFromToken(token: string): Promise<RBACUser | null> 
       db.get(query, [payload.user_id], (err, row: any) => {
         db.close();
         
-        if (err) return reject(err);
-        if (!row) return resolve(null);
+        if (err) {return reject(err);}
+        if (!row) {return resolve(null);}
         
         resolve({
           userId: row.user_id,

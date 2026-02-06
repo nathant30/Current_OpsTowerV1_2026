@@ -101,7 +101,7 @@ const DepotDetailsPage = ({ params }: { params: { id: string } }) => {
 
   // Load vehicles by state
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) {return;}
 
     const groupedVehicles: Record<VehicleReadinessState, Vehicle[]> = {
       IDLE: [],
@@ -130,9 +130,9 @@ const DepotDetailsPage = ({ params }: { params: { id: string } }) => {
     const diffMs = now.getTime() - entered.getTime();
     const diffMins = Math.floor(diffMs / 60000);
 
-    if (diffMins < 60) return `${diffMins}m`;
+    if (diffMins < 60) {return `${diffMins}m`;}
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}h`;
+    if (diffHours < 24) {return `${diffHours}h`;}
     const diffDays = Math.floor(diffHours / 24);
     return `${diffDays}d`;
   };
@@ -152,10 +152,10 @@ const DepotDetailsPage = ({ params }: { params: { id: string } }) => {
     };
 
     const limit = limits[state];
-    if (!limit) return 'text-gray-600';
+    if (!limit) {return 'text-gray-600';}
 
-    if (diffMins > limit) return 'text-red-600 font-bold';
-    if (diffMins > limit * 0.8) return 'text-yellow-600 font-semibold';
+    if (diffMins > limit) {return 'text-red-600 font-bold';}
+    if (diffMins > limit * 0.8) {return 'text-yellow-600 font-semibold';}
     return 'text-green-600';
   };
 

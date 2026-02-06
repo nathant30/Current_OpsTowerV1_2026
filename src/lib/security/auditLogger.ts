@@ -75,7 +75,7 @@ class AuditLogger {
   }
 
   private async flushLogs(): Promise<void> {
-    if (this.logQueue.length === 0) return;
+    if (this.logQueue.length === 0) {return;}
 
     try {
       const logsToFlush = [...this.logQueue];

@@ -404,7 +404,7 @@ export class AuthManager {
   // Check if user has access to region
   hasRegionalAccess(user: AuthPayload, regionId: string): boolean {
     // Admins have access to all regions
-    if (user.role === 'admin') return true;
+    if (user.role === 'admin') {return true;}
     
     // Regional managers and other roles are restricted to their assigned region
     return user.regionId === regionId;

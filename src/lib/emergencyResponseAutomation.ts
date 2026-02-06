@@ -273,8 +273,8 @@ class EmergencyResponseAutomation {
     const previousStatus = response.status;
     
     // Update fields
-    if (update.status) response.status = update.status;
-    if (update.primaryResponder) response.primaryResponder = update.primaryResponder;
+    if (update.status) {response.status = update.status;}
+    if (update.primaryResponder) {response.primaryResponder = update.primaryResponder;}
     if (update.acknowledgedAt) {
       response.acknowledgedAt = update.acknowledgedAt;
       response.responseTime = update.acknowledgedAt.getTime() - response.triggeredAt.getTime();

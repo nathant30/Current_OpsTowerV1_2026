@@ -629,9 +629,9 @@ export class TrafficAndRoutingService {
     // For now, return random severity based on step duration vs distance
     const speed = (step.distance?.value || 1000) / (step.duration?.value || 300) * 3.6; // km/h
     
-    if (speed < 10) return 'severe';
-    if (speed < 20) return 'heavy';
-    if (speed < 40) return 'moderate';
+    if (speed < 10) {return 'severe';}
+    if (speed < 20) {return 'heavy';}
+    if (speed < 40) {return 'moderate';}
     return 'light';
   }
 

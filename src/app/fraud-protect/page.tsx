@@ -216,8 +216,8 @@ const FraudProtectPage = () => {
   };
 
   const filteredAlerts = fraudAlerts.filter(alert => {
-    if (selectedSeverity !== 'all' && alert.severity !== selectedSeverity) return false;
-    if (selectedType !== 'all' && alert.type !== selectedType) return false;
+    if (selectedSeverity !== 'all' && alert.severity !== selectedSeverity) {return false;}
+    if (selectedType !== 'all' && alert.type !== selectedType) {return false;}
     return true;
   });
 

@@ -145,7 +145,7 @@ const CommandCenterPage = () => {
 
   // Load initial data
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) {return;}
 
     // Load mock data for development
     setKPIs(MOCK_KPIS);
@@ -156,7 +156,7 @@ const CommandCenterPage = () => {
 
   // Auto-refresh KPIs every 10 seconds
   useEffect(() => {
-    if (!autoRefresh) return;
+    if (!autoRefresh) {return;}
 
     const interval = setInterval(() => {
       // Simulate KPI updates
@@ -177,9 +177,9 @@ const CommandCenterPage = () => {
     const now = new Date();
     const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-    if (diff < 60) return `${diff}s ago`;
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    if (diff < 60) {return `${diff}s ago`;}
+    if (diff < 3600) {return `${Math.floor(diff / 60)}m ago`;}
+    if (diff < 86400) {return `${Math.floor(diff / 3600)}h ago`;}
     return date.toLocaleDateString();
   };
 

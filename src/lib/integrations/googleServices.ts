@@ -428,9 +428,9 @@ class GoogleServicesManager {
 
       // Add avoidance parameters
       const avoid = [];
-      if (request.avoidTolls) avoid.push('tolls');
-      if (request.avoidHighways) avoid.push('highways');
-      if (request.avoidFerries) avoid.push('ferries');
+      if (request.avoidTolls) {avoid.push('tolls');}
+      if (request.avoidHighways) {avoid.push('highways');}
+      if (request.avoidFerries) {avoid.push('ferries');}
       if (avoid.length > 0) {
         params.avoid = avoid.join('|');
       }
@@ -489,7 +489,7 @@ class GoogleServicesManager {
             value: total.value + leg.duration.value
           }), { text: '0 mins', value: 0 }),
           durationInTraffic: route.legs.reduce((total, leg) => {
-            if (!leg.duration_in_traffic) return total;
+            if (!leg.duration_in_traffic) {return total;}
             return {
               text: `${Math.floor((total.value + leg.duration_in_traffic.value) / 60)} mins`,
               value: total.value + leg.duration_in_traffic.value
@@ -631,10 +631,10 @@ class GoogleServicesManager {
           if (leg.durationInTraffic && leg.duration) {
             delayMinutes = (leg.durationInTraffic.value - leg.duration.value) / 60;
             
-            if (delayMinutes < 2) trafficCondition = 'SMOOTH';
-            else if (delayMinutes < 5) trafficCondition = 'MODERATE';
-            else if (delayMinutes < 10) trafficCondition = 'HEAVY';
-            else trafficCondition = 'SEVERE';
+            if (delayMinutes < 2) {trafficCondition = 'SMOOTH';}
+            else if (delayMinutes < 5) {trafficCondition = 'MODERATE';}
+            else if (delayMinutes < 10) {trafficCondition = 'HEAVY';}
+            else {trafficCondition = 'SEVERE';}
           }
 
           // Calculate average speed
@@ -708,7 +708,7 @@ class GoogleServicesManager {
   }
 
   private async getCached(key: string): Promise<string | null> {
-    if (!this.config.enableCaching) return null;
+    if (!this.config.enableCaching) {return null;}
     
     try {
       return await redis.get(key);
@@ -719,7 +719,7 @@ class GoogleServicesManager {
   }
 
   private async cacheResult(key: string, data: any, expiry: number): Promise<void> {
-    if (!this.config.enableCaching) return;
+    if (!this.config.enableCaching) {return;}
     
     try {
       await redis.setex(key, expiry, JSON.stringify(data));
@@ -774,7 +774,7 @@ class GoogleServicesManager {
 
   private updateServiceHealth(service: string, responseTime: number, success: boolean): void {
     const health = this.serviceHealth.get(service);
-    if (!health) return;
+    if (!health) {return;}
 
     // Update response time (moving average)
     health.responseTime = (health.responseTime * 0.8) + (responseTime * 0.2);

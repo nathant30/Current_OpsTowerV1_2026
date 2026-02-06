@@ -169,8 +169,8 @@ export const GET = asyncHandler(async (request: NextRequest) => {
       availabilityScore += Math.max(0, 10 - locationAge);
       
       // Experience bonus
-      if (driver.total_trips > 100) availabilityScore += 10;
-      if (driver.total_trips > 500) availabilityScore += 5;
+      if (driver.total_trips > 100) {availabilityScore += 10;}
+      if (driver.total_trips > 500) {availabilityScore += 5;}
       
       return {
         id: driver.id,
@@ -291,7 +291,7 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 
 // Helper function to get driver performance metrics
 async function getDriverPerformanceMetrics(driverIds: string[]): Promise<Record<string, any>> {
-  if (driverIds.length === 0) return {};
+  if (driverIds.length === 0) {return {};}
 
   try {
     const metricsQuery = `
@@ -413,9 +413,9 @@ function countDriversByService(drivers: any[]): Record<string, number> {
 function getDensityLevel(requestCount: number, radiusKm: number): string {
   const density = requestCount / (Math.PI * radiusKm * radiusKm); // requests per km²
   
-  if (density > 0.5) return 'high';
-  if (density > 0.2) return 'medium';
-  if (density > 0.05) return 'low';
+  if (density > 0.5) {return 'high';}
+  if (density > 0.2) {return 'medium';}
+  if (density > 0.05) {return 'low';}
   return 'very_low';
 }
 

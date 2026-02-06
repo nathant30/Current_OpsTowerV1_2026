@@ -81,9 +81,9 @@ const FraudEnhancedPassengerTable = () => {
   }, [passengersData]);
 
   const getRiskLevelFromScore = (score: number): RiskLevel => {
-    if (score >= 80) return 'critical';
-    if (score >= 60) return 'high';
-    if (score >= 40) return 'medium';
+    if (score >= 80) {return 'critical';}
+    if (score >= 60) {return 'high';}
+    if (score >= 40) {return 'medium';}
     return 'low';
   };
 
@@ -153,7 +153,7 @@ const FraudEnhancedPassengerTable = () => {
 
   // Sorting logic
   const sortedPassengers = React.useMemo(() => {
-    if (!sortField) return filteredPassengers;
+    if (!sortField) {return filteredPassengers;}
 
     return [...filteredPassengers].sort((a, b) => {
       let aValue, bValue;
@@ -187,8 +187,8 @@ const FraudEnhancedPassengerTable = () => {
           return 0;
       }
 
-      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      if (aValue < bValue) {return sortDirection === 'asc' ? -1 : 1;}
+      if (aValue > bValue) {return sortDirection === 'asc' ? 1 : -1;}
       return 0;
     });
   }, [filteredPassengers, sortField, sortDirection]);

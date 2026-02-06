@@ -86,19 +86,19 @@ export function useBookings(options: UseBookingsOptions = {}) {
   } = options;
 
   const fetchBookings = async () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {return;}
 
     try {
       setLoading(true);
       setError(null);
 
       const params = new URLSearchParams();
-      if (status) params.append('status', status.join(','));
-      if (serviceType) params.append('serviceType', serviceType);
-      if (passengerId) params.append('passengerId', passengerId);
-      if (driverId) params.append('driverId', driverId);
-      if (regionId) params.append('regionId', regionId);
-      if (search) params.append('search', search);
+      if (status) {params.append('status', status.join(','));}
+      if (serviceType) {params.append('serviceType', serviceType);}
+      if (passengerId) {params.append('passengerId', passengerId);}
+      if (driverId) {params.append('driverId', driverId);}
+      if (regionId) {params.append('regionId', regionId);}
+      if (search) {params.append('search', search);}
       params.append('page', page.toString());
       params.append('limit', limit.toString());
       if (dateRange) {
@@ -130,7 +130,7 @@ export function useBookings(options: UseBookingsOptions = {}) {
   };
 
   const updateBookingStatus = async (bookingId: string, newStatus: Booking['status'], notes?: string) => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {return;}
 
     try {
       const token = localStorage.getItem('xpress_auth_token');
@@ -160,7 +160,7 @@ export function useBookings(options: UseBookingsOptions = {}) {
   };
 
   const assignDriver = async (bookingId: string, driverId: string) => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {return;}
 
     try {
       const token = localStorage.getItem('xpress_auth_token');
@@ -193,7 +193,7 @@ export function useBookings(options: UseBookingsOptions = {}) {
 
   // Auto-refresh for active bookings
   useEffect(() => {
-    if (!refreshInterval || !isAuthenticated) return;
+    if (!refreshInterval || !isAuthenticated) {return;}
 
     const interval = setInterval(fetchBookings, refreshInterval);
     return () => clearInterval(interval);

@@ -62,9 +62,9 @@ export default function CorporateAccountsPage() {
         sortOrder: 'asc' as const,
       };
 
-      if (searchTerm) params.search = searchTerm;
-      if (statusFilter.length > 0) params.status = statusFilter;
-      if (hasOutstanding !== undefined) params.hasOutstanding = hasOutstanding;
+      if (searchTerm) {params.search = searchTerm;}
+      if (statusFilter.length > 0) {params.status = statusFilter;}
+      if (hasOutstanding !== undefined) {params.hasOutstanding = hasOutstanding;}
 
       const response = await billingApi.accounts.getAll(params);
 

@@ -214,7 +214,7 @@ class XpressOpsServer {
   // Setup graceful shutdown
   private setupGracefulShutdown(): void {
     const shutdown = async (signal: string) => {
-      if (this.isShuttingDown) return;
+      if (this.isShuttingDown) {return;}
       this.isShuttingDown = true;
 
       logger.info(`\n🔄 Received ${signal}, starting graceful shutdown...`);

@@ -228,7 +228,7 @@ export class MetricsCollector {
     let output = '';
     
     this.metrics.forEach((metricsList, name) => {
-      if (metricsList.length === 0) return;
+      if (metricsList.length === 0) {return;}
 
       const latest = metricsList[metricsList.length - 1];
       
@@ -282,7 +282,7 @@ export class MetricsCollector {
   }
 
   private aggregateValues(values: number[], aggregation: string): number {
-    if (values.length === 0) return 0;
+    if (values.length === 0) {return 0;}
 
     switch (aggregation) {
       case 'SUM':

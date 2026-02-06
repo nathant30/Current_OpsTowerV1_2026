@@ -726,7 +726,7 @@ class PhilippinesEmergencyServices {
   ): any | null {
     const hospitals = Object.values(this.config.medical.hospitals);
     
-    if (hospitals.length === 0) return null;
+    if (hospitals.length === 0) {return null;}
     
     // Calculate distances and find nearest
     const hospitalsWithDistance = hospitals.map(hospital => ({
@@ -745,7 +745,7 @@ class PhilippinesEmergencyServices {
         h.specialties.includes('cardiology')
       );
       
-      if (specialized) return specialized;
+      if (specialized) {return specialized;}
     }
     
     return hospitalsWithDistance[0];
@@ -822,7 +822,7 @@ class PhilippinesEmergencyServices {
     }
 
   private async logEmergencyRequest(request: EmergencyServiceRequest): Promise<void> {
-    if (!this.config.integration.enableLogging) return;
+    if (!this.config.integration.enableLogging) {return;}
     
     await db.query(`
       INSERT INTO emergency_service_requests (
@@ -837,7 +837,7 @@ class PhilippinesEmergencyServices {
   }
 
   private async logEmergencyCancellation(incidentId: string, reason: string): Promise<void> {
-    if (!this.config.integration.enableLogging) return;
+    if (!this.config.integration.enableLogging) {return;}
     
     await db.query(`
       UPDATE emergency_service_requests 

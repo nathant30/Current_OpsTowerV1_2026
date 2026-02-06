@@ -55,7 +55,7 @@ function useApiData<T>(
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchData = useCallback(async (isRetry = false) => {
-    if (!enabled) return;
+    if (!enabled) {return;}
 
     // Cancel previous request
     if (abortControllerRef.current) {
@@ -105,7 +105,7 @@ function useApiData<T>(
 
   // Setup auto-refresh
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {return;}
 
     // Initial fetch
     fetchData();

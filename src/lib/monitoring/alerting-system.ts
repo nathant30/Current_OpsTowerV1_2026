@@ -410,22 +410,22 @@ class AlertingSystem {
     const now = Date.now();
     
     for (const rule of this.correlationRules) {
-      if (!rule.enabled) continue;
+      if (!rule.enabled) {continue;}
       
       // Check if alert matches correlation conditions
-      if (!this.matchesCorrelationConditions(newAlert, rule)) continue;
+      if (!this.matchesCorrelationConditions(newAlert, rule)) {continue;}
       
       // Find existing alerts within time window
       for (const [alertId, existingAlert] of this.alerts) {
-        if (existingAlert.status === 'resolved') continue;
+        if (existingAlert.status === 'resolved') {continue;}
         
         const alertAge = now - existingAlert.lastSeen.getTime();
-        if (alertAge > rule.timeWindow * 1000) continue;
+        if (alertAge > rule.timeWindow * 1000) {continue;}
         
         if (this.matchesCorrelationConditions(existingAlert, rule)) {
           // Check if we can add more alerts to this correlation
           const relatedCount = (existingAlert.relatedAlerts?.length || 0) + 1;
-          if (rule.maxAlerts && relatedCount >= rule.maxAlerts) continue;
+          if (rule.maxAlerts && relatedCount >= rule.maxAlerts) {continue;}
           
           return existingAlert;
         }
@@ -466,7 +466,7 @@ class AlertingSystem {
   // Check if alert should be suppressed
   private isAlertSuppressed(alert: Alert): boolean {
     const alertRule = alert.ruleId ? this.alertRules.get(alert.ruleId) : null;
-    if (!alertRule?.suppressionRules) return false;
+    if (!alertRule?.suppressionRules) {return false;}
     
     for (const rule of alertRule.suppressionRules) {
       const fieldValue = alert.tags[rule.field] || alert.metrics[rule.field];
@@ -481,17 +481,17 @@ class AlertingSystem {
   // Process alert escalation
   private async processAlertEscalation(alertId: string): Promise<void> {
     const alert = this.alerts.get(alertId);
-    if (!alert || alert.status !== 'firing') return;
+    if (!alert || alert.status !== 'firing') {return;}
     
     const alertRule = alert.ruleId ? this.alertRules.get(alert.ruleId) : null;
     const escalationPolicy = alertRule?.escalationPolicy ? 
       this.escalationPolicies.get(alertRule.escalationPolicy.id) : 
       this.escalationPolicies.get('standard_escalation');
     
-    if (!escalationPolicy) return;
+    if (!escalationPolicy) {return;}
     
     const currentLevel = escalationPolicy.levels.find(l => l.levelNumber === alert.escalationLevel + 1);
-    if (!currentLevel) return; // No more escalation levels
+    if (!currentLevel) {return;} // No more escalation levels
     
     // Schedule escalation
     alert.nextEscalation = new Date(Date.now() + currentLevel.delay * 1000);
@@ -511,7 +511,7 @@ class AlertingSystem {
 
   // Send notification through channel
   private async sendNotification(alert: Alert, channel: NotificationChannel): Promise<void> {
-    if (!channel.enabled) return;
+    if (!channel.enabled) {return;}
     
     // Check rate limits
     if (!this.checkRateLimit(channel)) {
@@ -588,7 +588,7 @@ class AlertingSystem {
 
   // Check channel rate limits
   private checkRateLimit(channel: NotificationChannel): boolean {
-    if (!channel.rateLimits) return true;
+    if (!channel.rateLimits) {return true;}
     
     const now = Date.now();
     const oneHourAgo = now - 3600000;
@@ -759,8 +759,8 @@ Alert ID: ${alert.id}
     const now = new Date();
     
     for (const [alertId, alert] of this.alerts) {
-      if (alert.status !== 'firing') continue;
-      if (!alert.nextEscalation || alert.nextEscalation > now) continue;
+      if (alert.status !== 'firing') {continue;}
+      if (!alert.nextEscalation || alert.nextEscalation > now) {continue;}
       
       await this.processAlertEscalation(alertId);
     }
@@ -773,7 +773,7 @@ Alert ID: ${alert.id}
     const oneHourAgo = Date.now() - 3600000;
     
     for (const [alertId, alert] of this.alerts) {
-      if (alert.status !== 'firing') continue;
+      if (alert.status !== 'firing') {continue;}
       
       // Auto-resolve very old alerts (would be configurable)
       if (alert.firstSeen.getTime() < oneHourAgo && alert.severity === 'info') {

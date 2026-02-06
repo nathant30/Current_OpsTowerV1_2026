@@ -97,7 +97,7 @@ class RealtimeLocationTracker {
    * Initialize the tracking system with Google Maps
    */
   async initialize(): Promise<void> {
-    if (this.isInitialized) return;
+    if (this.isInitialized) {return;}
 
     try {
       await loadGoogleMapsAPI();
@@ -201,7 +201,7 @@ class RealtimeLocationTracker {
   async getDriverLocation(driverId: string): Promise<DriverLocationData | null> {
     try {
       const cachedLocation = await redis.get(`driver:location:${driverId}`);
-      if (!cachedLocation) return null;
+      if (!cachedLocation) {return null;}
 
       return JSON.parse(cachedLocation);
     } catch (error) {
@@ -452,7 +452,7 @@ class RealtimeLocationTracker {
    */
   private async updateTrackingSession(data: DriverLocationData): Promise<void> {
     const session = this.trackingSessions.get(data.driverId);
-    if (!session) return;
+    if (!session) {return;}
 
     // Calculate distance traveled
     const lastRoute = session.route;
@@ -635,10 +635,10 @@ class RealtimeLocationTracker {
     driver: DriverLocationData, 
     filters?: { status?: string; isAvailable?: boolean; serviceType?: string }
   ): boolean {
-    if (!filters) return true;
+    if (!filters) {return true;}
     
-    if (filters.status && driver.status !== filters.status) return false;
-    if (filters.isAvailable !== undefined && driver.isAvailable !== filters.isAvailable) return false;
+    if (filters.status && driver.status !== filters.status) {return false;}
+    if (filters.isAvailable !== undefined && driver.isAvailable !== filters.isAvailable) {return false;}
     
     return true;
   }
@@ -685,7 +685,7 @@ class RealtimeLocationTracker {
 
   private async updateRouteCalculation(data: DriverLocationData): Promise<void> {
     const session = this.trackingSessions.get(data.driverId);
-    if (!session || !session.currentTrip) return;
+    if (!session || !session.currentTrip) {return;}
 
     // Update ETA if driver has an active trip
     if (window.google) {

@@ -614,7 +614,7 @@ export class MockDataService {
   
   static updateDriver(id: string, updates: UpdateDriverData): Driver | null {
     const index = mockDrivers.findIndex(d => d.id === id);
-    if (index === -1) return null;
+    if (index === -1) {return null;}
     
     mockDrivers[index] = {
       ...mockDrivers[index],
@@ -626,7 +626,7 @@ export class MockDataService {
   
   static deleteDriver(id: string): boolean {
     const index = mockDrivers.findIndex(d => d.id === id);
-    if (index === -1) return false;
+    if (index === -1) {return false;}
     
     mockDrivers.splice(index, 1);
     return true;
@@ -669,7 +669,7 @@ export class MockDataService {
   
   static updateBooking(id: string, updates: UpdateBookingData): Booking | null {
     const index = mockBookings.findIndex(b => b.id === id);
-    if (index === -1) return null;
+    if (index === -1) {return null;}
     
     mockBookings[index] = {
       ...mockBookings[index],
@@ -759,7 +759,7 @@ export class MockDataService {
   
   static updateIncident(id: string, updates: any): Incident | null {
     const index = mockIncidents.findIndex(i => i.id === id);
-    if (index === -1) return null;
+    if (index === -1) {return null;}
     
     mockIncidents[index] = {
       ...mockIncidents[index],
@@ -807,7 +807,7 @@ export class MockDataService {
   static verifyMfaCode(userId: string, code: string): boolean {
     // Mock MFA verification - in real implementation, verify TOTP/SMS code
     const user = mockUsers.find(u => u.id === userId);
-    if (!user || !user.mfaEnabled) return false;
+    if (!user || !user.mfaEnabled) {return false;}
     
     // Simple mock verification - accept any 6-digit code for demo
     return /^\d{6}$/.test(code);
@@ -826,7 +826,7 @@ export class MockDataService {
 
   static updateUser(id: string, updates: any) {
     const index = mockUsers.findIndex(u => u.id === id);
-    if (index === -1) return null;
+    if (index === -1) {return null;}
     
     mockUsers[index] = {
       ...mockUsers[index],

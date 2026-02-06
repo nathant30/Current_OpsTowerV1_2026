@@ -97,7 +97,7 @@ export default function GeneralLedger() {
   );
 
   const formatCurrency = (amount: number) => {
-    if (amount === 0) return '-';
+    if (amount === 0) {return '-';}
     return `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 

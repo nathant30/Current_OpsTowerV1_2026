@@ -23,7 +23,7 @@ const LiveRidesPage = () => {
   const [loading, setLoading] = useState(true);
 
   const getTabCount = (tabId: string) => {
-    if (!dashboardData) return 0;
+    if (!dashboardData) {return 0;}
     
     switch (tabId) {
       case 'active':

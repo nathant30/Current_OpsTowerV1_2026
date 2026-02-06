@@ -318,7 +318,7 @@ export class RBACEngine {
   }
 
   private getMaskedFields(input: AuthorizationInput): string[] {
-    if (!input.resource.contains_pii) return [];
+    if (!input.resource.contains_pii) {return [];}
     
     if (input.user.pii_scope === "none") {
       return ["phone_number", "email", "address", "payment_info", "license_number"];
@@ -611,11 +611,11 @@ export class RBACEngine {
     
     // Collect permissions from all active roles
     for (const roleAssignment of user.roles) {
-      if (!roleAssignment.isActive) continue;
+      if (!roleAssignment.isActive) {continue;}
       
       // Check temporal validity
       const now = new Date();
-      if (roleAssignment.validUntil && roleAssignment.validUntil < now) continue;
+      if (roleAssignment.validUntil && roleAssignment.validUntil < now) {continue;}
       
       // Add role permissions
       const roleName = roleAssignment.role?.name;

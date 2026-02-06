@@ -149,8 +149,8 @@ export const DriverManagement: React.FC<DriverManagementProps> = ({
       // Documents filter
       if (documentsFilter !== null) {
         const hasAllDocs = Object.values(driver.documents).every(Boolean);
-        if (documentsFilter && !hasAllDocs) return false;
-        if (!documentsFilter && hasAllDocs) return false;
+        if (documentsFilter && !hasAllDocs) {return false;}
+        if (!documentsFilter && hasAllDocs) {return false;}
       }
 
       return true;

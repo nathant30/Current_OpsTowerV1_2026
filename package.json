@@ -8,6 +8,7 @@
     "build": "next build || true",
     "build:strict": "next build",
     "start": "next start",
+    "verify-project": "npm run lint && npm run type-check && npm run test:unit && npm run security:scan",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
@@ -133,7 +134,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
+      "eslint --fix --max-warnings=1000",
       "prettier --write",
       "node scripts/xpress-check.js"
     ],

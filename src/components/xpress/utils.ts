@@ -36,7 +36,7 @@ export function validateXpressClasses(className: string): boolean {
   const classes = className.split(' ');
   
   return classes.every(cls => {
-    if (!cls.trim()) return true;
+    if (!cls.trim()) {return true;}
     return allowedPrefixes.some(prefix => cls.startsWith(prefix));
   });
 }

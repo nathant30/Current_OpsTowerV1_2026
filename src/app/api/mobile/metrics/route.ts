@@ -229,7 +229,7 @@ async function generateRecentIncidents(db: any, regionId: string) {
     const severityDiff = severityOrder[b.severity as keyof typeof severityOrder] - 
                         severityOrder[a.severity as keyof typeof severityOrder];
     
-    if (severityDiff !== 0) return severityDiff;
+    if (severityDiff !== 0) {return severityDiff;}
     
     // If same severity, sort by time (newer first)
     const timeA = parseInt(a.time.split(' ')[0]);

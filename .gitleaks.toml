@@ -174,7 +174,7 @@ paths = [
     ".DS_Store",
     "Thumbs.db",
     # Log files
-    "*.log"
+    ".*\\.log"
 ]
 
 # Commits to ignore (if specific commits need to be skipped)
@@ -183,13 +183,4 @@ commits = [
 ]
 
 # Additional settings
-[allowlist.stopwords]
-# Common words that trigger false positives
-stopwords = [
-    "password",
-    "secret", 
-    "key",
-    "token",
-    "credential",
-    "auth"
-]
+# Note: stopwords removed as they're not supported in this gitleaks version

@@ -278,7 +278,7 @@ export const BookingManagement: React.FC<BookingManagementProps> = ({
 
   // Format duration
   const formatDuration = (minutes: number) => {
-    if (minutes < 60) return `${minutes}m`;
+    if (minutes < 60) {return `${minutes}m`;}
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}h ${mins}m`;

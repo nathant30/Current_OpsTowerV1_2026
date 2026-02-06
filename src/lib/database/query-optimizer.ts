@@ -143,7 +143,7 @@ class QueryOptimizer {
    * Batch fetch zone details (eliminates N+1 in zone APIs)
    */
   async batchFetchZoneDetails(zoneIds: string[]): Promise<Record<string, any>> {
-    if (zoneIds.length === 0) return {};
+    if (zoneIds.length === 0) {return {};}
 
     const cacheKey = `zone_batch:${zoneIds.sort().join(',')}`;
     const cached = this.getFromCache<Record<string, any>>(cacheKey);
@@ -217,7 +217,7 @@ class QueryOptimizer {
    * Batch fetch user permissions (eliminates N+1 in RBAC)
    */
   async batchFetchUserPermissions(userIds: string[]): Promise<Record<string, any>> {
-    if (userIds.length === 0) return {};
+    if (userIds.length === 0) {return {};}
 
     const cacheKey = `user_permissions_batch:${userIds.sort().join(',')}`;
     const cached = this.getFromCache<Record<string, any>>(cacheKey);
@@ -275,7 +275,7 @@ class QueryOptimizer {
    * Batch fetch driver details for location enrichment
    */
   async batchFetchDriverDetails(driverIds: string[]): Promise<Record<string, any>> {
-    if (driverIds.length === 0) return {};
+    if (driverIds.length === 0) {return {};}
 
     const cacheKey = `driver_details_batch:${driverIds.sort().join(',')}`;
     const cached = this.getFromCache<Record<string, any>>(cacheKey);
@@ -529,7 +529,7 @@ class QueryOptimizer {
 
   private getFromCache<T>(key: string): T | null {
     const entry = this.cache.get(key);
-    if (!entry) return null;
+    if (!entry) {return null;}
     
     if (Date.now() > entry.expires) {
       this.cache.delete(key);

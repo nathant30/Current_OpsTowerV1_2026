@@ -362,7 +362,7 @@ export class LocationBatchingService {
    */
   private async broadcastLocationUpdates(batch: LocationBatch): Promise<void> {
     const wsManager = getWebSocketManager();
-    if (!wsManager) return;
+    if (!wsManager) {return;}
 
     const { updates } = batch;
 
@@ -446,7 +446,7 @@ export class LocationBatchingService {
   private async updateDemandHeatmap(batch: LocationBatch): Promise<void> {
     const activeDrivers = batch.updates.filter(u => u.status === 'active' && u.isAvailable);
     
-    if (activeDrivers.length === 0) return;
+    if (activeDrivers.length === 0) {return;}
 
     // Calculate demand density for this batch
     const demandPoints = await this.calculateDemandDensity(activeDrivers);

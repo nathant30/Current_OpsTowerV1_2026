@@ -212,8 +212,8 @@ export default function AddIntegrationPage() {
                     {filteredIntegrations
                       .sort((a, b) => {
                         // Popular items first, then alphabetical
-                        if (a.popular && !b.popular) return -1;
-                        if (!a.popular && b.popular) return 1;
+                        if (a.popular && !b.popular) {return -1;}
+                        if (!a.popular && b.popular) {return 1;}
                         return a.name.localeCompare(b.name);
                       })
                       .map((integration, index) => {
@@ -222,8 +222,8 @@ export default function AddIntegrationPage() {
                           index > 0 && 
                           filteredIntegrations
                             .sort((a, b) => {
-                              if (a.popular && !b.popular) return -1;
-                              if (!a.popular && b.popular) return 1;
+                              if (a.popular && !b.popular) {return -1;}
+                              if (!a.popular && b.popular) {return 1;}
                               return a.name.localeCompare(b.name);
                             })[index - 1].popular;
                         

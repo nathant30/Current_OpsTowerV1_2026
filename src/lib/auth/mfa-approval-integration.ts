@@ -188,7 +188,7 @@ export class MFAApprovalIntegration {
         }
       );
 
-      if (!challenge) return null;
+      if (!challenge) {return null;}
 
       // Get risk assessment for this action
       const riskAssessment = await this.getRiskAssessment(permission, userId);
@@ -424,9 +424,9 @@ export class MFAApprovalIntegration {
     const allowedMethods = mfaService.getAllowedMethods(permission);
     
     // Prefer TOTP for high-security operations
-    if (allowedMethods.includes('totp')) return 'totp';
-    if (allowedMethods.includes('sms')) return 'sms';
-    if (allowedMethods.includes('email')) return 'email';
+    if (allowedMethods.includes('totp')) {return 'totp';}
+    if (allowedMethods.includes('sms')) {return 'sms';}
+    if (allowedMethods.includes('email')) {return 'email';}
     
     return 'totp'; // Default fallback
   }
@@ -477,9 +477,9 @@ export class MFAApprovalIntegration {
   ): Promise<{ level: 'low' | 'medium' | 'high' | 'critical'; factors: string[] }> {
     const sensitivityLevel = mfaService.getSensitivityLevel(permission);
     
-    if (sensitivityLevel > 0.8) return { level: 'critical', factors: ['High sensitivity'] };
-    if (sensitivityLevel > 0.6) return { level: 'high', factors: ['Medium-high sensitivity'] };
-    if (sensitivityLevel > 0.4) return { level: 'medium', factors: ['Medium sensitivity'] };
+    if (sensitivityLevel > 0.8) {return { level: 'critical', factors: ['High sensitivity'] };}
+    if (sensitivityLevel > 0.6) {return { level: 'high', factors: ['Medium-high sensitivity'] };}
+    if (sensitivityLevel > 0.4) {return { level: 'medium', factors: ['Medium sensitivity'] };}
     
     return { level: 'low', factors: ['Low sensitivity'] };
   }

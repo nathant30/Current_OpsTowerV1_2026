@@ -191,12 +191,12 @@ export class ModelMonitoringSystem extends EventEmitter {
     const features = ['amount', 'region', 'hour_of_day', 'transaction_velocity'];
     
     for (const feature of features) {
-      if (!currentData[feature]) continue;
+      if (!currentData[feature]) {continue;}
       
       const currentValues = [currentData[feature]];
       const baselineValues = baseline.map(d => d[feature]).filter(v => v !== undefined);
       
-      if (baselineValues.length === 0) continue;
+      if (baselineValues.length === 0) {continue;}
       
       // Population Stability Index (PSI)
       const psi = this.calculatePSI(currentValues, baselineValues);
@@ -222,7 +222,7 @@ export class ModelMonitoringSystem extends EventEmitter {
       .map(d => d.prediction?.probability || 0)
       .filter(p => p > 0);
     
-    if (baselineTargetRates.length === 0) return 0;
+    if (baselineTargetRates.length === 0) {return 0;}
     
     const baselineMean = baselineTargetRates.reduce((a, b) => a + b, 0) / baselineTargetRates.length;
     const targetDrift = Math.abs(currentTargetRate - baselineMean) / baselineMean;
@@ -239,7 +239,7 @@ export class ModelMonitoringSystem extends EventEmitter {
       .map(d => d.prediction?.confidence || 0)
       .filter(a => a > 0);
     
-    if (baselineAccuracies.length === 0) return 0;
+    if (baselineAccuracies.length === 0) {return 0;}
     
     const baselineMean = baselineAccuracies.reduce((a, b) => a + b, 0) / baselineAccuracies.length;
     const conceptDrift = Math.abs(currentPredictionAccuracy - baselineMean) / baselineMean;
@@ -367,7 +367,7 @@ export class ModelMonitoringSystem extends EventEmitter {
   // Alert Management
   private async checkForAlerts(modelId: string, metrics: ModelMetrics): Promise<void> {
     const rules = this.monitoringRules.get(modelId);
-    if (!rules) return;
+    if (!rules) {return;}
 
     const alerts: DriftAlert[] = [];
 
@@ -439,9 +439,9 @@ export class ModelMonitoringSystem extends EventEmitter {
   }
 
   private getDriftSeverity(driftScore: number): 'low' | 'medium' | 'high' | 'critical' {
-    if (driftScore > 0.5) return 'critical';
-    if (driftScore > 0.3) return 'high';
-    if (driftScore > 0.15) return 'medium';
+    if (driftScore > 0.5) {return 'critical';}
+    if (driftScore > 0.3) {return 'high';}
+    if (driftScore > 0.15) {return 'medium';}
     return 'low';
   }
 
@@ -554,12 +554,12 @@ export class ModelMonitoringSystem extends EventEmitter {
 
   private calculateTrend(modelId: string, metric: string): number {
     const recentMetrics = this.modelMetrics.get(modelId) || [];
-    if (recentMetrics.length < 2) return 0;
+    if (recentMetrics.length < 2) {return 0;}
 
     const recent = recentMetrics.slice(-10); // Last 10 measurements
     const older = recentMetrics.slice(-20, -10); // Previous 10 measurements
 
-    if (older.length === 0) return 0;
+    if (older.length === 0) {return 0;}
 
     let recentAvg = 0, olderAvg = 0;
 
@@ -690,7 +690,7 @@ export class ModelMonitoringSystem extends EventEmitter {
   getModelMetrics(modelId: string, timeframe?: '1h' | '24h' | '7d'): ModelMetrics[] {
     const allMetrics = this.modelMetrics.get(modelId) || [];
     
-    if (!timeframe) return allMetrics;
+    if (!timeframe) {return allMetrics;}
     
     const timeframeMs = {
       '1h': 60 * 60 * 1000,

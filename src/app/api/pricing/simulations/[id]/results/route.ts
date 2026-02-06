@@ -170,7 +170,7 @@ function generateSampleResults(simulation: any) {
 }
 
 function generateDetailedMetrics(metrics: any, simulation: any) {
-  if (!metrics.summary) return null;
+  if (!metrics.summary) {return null;}
 
   return {
     performance_indicators: {

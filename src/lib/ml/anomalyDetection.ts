@@ -502,9 +502,9 @@ class AnomalyDetectionEngine {
   }
 
   private determineSeverity(overallScore: number): AnomalyAlert['severity'] {
-    if (overallScore >= 0.9) return 'critical';
-    if (overallScore >= 0.7) return 'high';
-    if (overallScore >= 0.4) return 'medium';
+    if (overallScore >= 0.9) {return 'critical';}
+    if (overallScore >= 0.7) {return 'high';}
+    if (overallScore >= 0.4) {return 'medium';}
     return 'low';
   }
 
@@ -568,7 +568,7 @@ class AnomalyDetectionEngine {
   }
 
   private calculateCohesion(points: number[][], center: number[]): number {
-    if (points.length === 0) return 0;
+    if (points.length === 0) {return 0;}
     
     const avgDistance = points.reduce((sum, point) => 
       sum + this.euclideanDistance(point, center), 0
@@ -629,7 +629,7 @@ class AnomalyDetectionEngine {
     this.recentAnomalies.forEach(anomaly => {
       byType[anomaly.type] = (byType[anomaly.type] || 0) + 1;
       bySeverity[anomaly.severity] = (bySeverity[anomaly.severity] || 0) + 1;
-      if (anomaly.falsePositive) falsePositives++;
+      if (anomaly.falsePositive) {falsePositives++;}
     });
 
     return {

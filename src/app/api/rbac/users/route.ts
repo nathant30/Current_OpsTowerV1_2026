@@ -48,7 +48,7 @@ export const GET = asyncHandler(async (request: NextRequest) => {
       db.all(query, [], (err, rows: any[]) => {
         db.close();
         
-        if (err) return reject(err);
+        if (err) {return reject(err);}
         
         const users: RBACUser[] = rows.map(row => ({
           id: row.user_id,

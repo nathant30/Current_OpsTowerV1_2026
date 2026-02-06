@@ -278,7 +278,7 @@ async function getUsersWithRoles(
 }
 
 function maskUserData(users: UserWithRolesView[], piiScope: string): UserWithRolesView[] {
-  if (piiScope === 'full') return users;
+  if (piiScope === 'full') {return users;}
   
   return users.map(user => ({
     ...user,

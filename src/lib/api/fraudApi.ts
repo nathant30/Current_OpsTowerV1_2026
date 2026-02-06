@@ -580,9 +580,9 @@ export const fraudAPI = new FraudAPIClient();
 // Export utility functions
 export const fraudUtils = {
   getRiskLevelFromScore: (score: number): RiskLevel => {
-    if (score >= 80) return 'critical';
-    if (score >= 60) return 'high';
-    if (score >= 40) return 'medium';
+    if (score >= 80) {return 'critical';}
+    if (score >= 60) {return 'high';}
+    if (score >= 40) {return 'medium';}
     return 'low';
   },
 
@@ -608,11 +608,11 @@ export const fraudUtils = {
     direction: 'up' | 'down' | 'stable';
     percentage: number;
   } => {
-    if (previous === 0) return { direction: 'stable', percentage: 0 };
+    if (previous === 0) {return { direction: 'stable', percentage: 0 };}
     
     const change = ((current - previous) / previous) * 100;
     
-    if (Math.abs(change) < 1) return { direction: 'stable', percentage: Math.abs(change) };
+    if (Math.abs(change) < 1) {return { direction: 'stable', percentage: Math.abs(change) };}
     
     return {
       direction: change > 0 ? 'up' : 'down',

@@ -642,8 +642,8 @@ export function canUserAccessRegion(user: EnhancedUser, regionId: string): boole
 }
 
 export function canUserUnmaskPII(user: EnhancedUser, dataClass: DataClass, mfaPresent: boolean = false): boolean {
-  if (user.piiScope === 'none') return false;
-  if (user.piiScope === 'full') return true;
-  if (dataClass === 'restricted' && !mfaPresent) return false;
+  if (user.piiScope === 'none') {return false;}
+  if (user.piiScope === 'full') {return true;}
+  if (dataClass === 'restricted' && !mfaPresent) {return false;}
   return user.piiScope === 'masked';
 }

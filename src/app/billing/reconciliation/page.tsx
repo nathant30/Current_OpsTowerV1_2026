@@ -89,10 +89,10 @@ export default function ReconciliationPage() {
         limit: 100,
       };
 
-      if (dateFrom) params.dateFrom = dateFrom;
-      if (dateTo) params.dateTo = dateTo;
-      if (statusFilter.length > 0) params.status = statusFilter;
-      if (accountFilter) params.accountId = accountFilter;
+      if (dateFrom) {params.dateFrom = dateFrom;}
+      if (dateTo) {params.dateTo = dateTo;}
+      if (statusFilter.length > 0) {params.status = statusFilter;}
+      if (accountFilter) {params.accountId = accountFilter;}
 
       const response = await billingApi.reconciliation.getUnreconciled(params);
 
@@ -107,7 +107,7 @@ export default function ReconciliationPage() {
   };
 
   const handleReconcile = async () => {
-    if (!selectedTransaction) return;
+    if (!selectedTransaction) {return;}
 
     try {
       await billingApi.reconciliation.reconcile(selectedTransaction.id, {
@@ -129,7 +129,7 @@ export default function ReconciliationPage() {
   };
 
   const handleMarkDiscrepancy = async () => {
-    if (!selectedTransaction) return;
+    if (!selectedTransaction) {return;}
 
     if (!discrepancyReason) {
       alert('Please provide a reason for the discrepancy');

@@ -72,8 +72,8 @@ const MetricsDashboard: React.FC = () => {
   };
 
   const getStatusColor = (value: number, thresholds: { good: number; warning: number }): string => {
-    if (value <= thresholds.good) return 'text-green-600';
-    if (value <= thresholds.warning) return 'text-yellow-600';
+    if (value <= thresholds.good) {return 'text-green-600';}
+    if (value <= thresholds.warning) {return 'text-yellow-600';}
     return 'text-red-600';
   };
 

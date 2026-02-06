@@ -167,11 +167,11 @@ function useMockDrivers() {
       // Distribute categories: 60% ACTIVE, 15% PENDING, 10% SUSPENDED, 10% INACTIVE, 5% BANNED
       let category: DriverCategory
       const rand = Math.random()
-      if (rand < 0.60) category = 'ACTIVE'
-      else if (rand < 0.75) category = 'PENDING'
-      else if (rand < 0.85) category = 'SUSPENDED'
-      else if (rand < 0.95) category = 'INACTIVE'
-      else category = 'BANNED'
+      if (rand < 0.60) {category = 'ACTIVE'}
+      else if (rand < 0.75) {category = 'PENDING'}
+      else if (rand < 0.85) {category = 'SUSPENDED'}
+      else if (rand < 0.95) {category = 'INACTIVE'}
+      else {category = 'BANNED'}
       
       const status = randomChoice(STATUS_BY_CATEGORY[category])
       const service = randomChoice(SERVICES)
@@ -268,13 +268,13 @@ const DriverProfileModal: React.FC<DriverProfileModalProps> = ({ driver, onClose
   // Generate mock driver data based on the spec
   const getDriverExtendedInfo = (driver: Driver) => {
     const getLastOnlineText = (driver: Driver) => {
-      if (driver.is_online || driver.last_online === 'now') return 'Online now';
+      if (driver.is_online || driver.last_online === 'now') {return 'Online now';}
       const lastOnlineDate = new Date(driver.last_online);
       const now = new Date();
       const diffMs = now.getTime() - lastOnlineDate.getTime();
       const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      if (diffDays === 0) return 'Today';
-      if (diffDays === 1) return '1 day ago';
+      if (diffDays === 0) {return 'Today';}
+      if (diffDays === 1) {return '1 day ago';}
       return `${diffDays} days ago`;
     };
 
@@ -1175,7 +1175,7 @@ function DriverTableDemo({
 
   // Map service types from global filter to local service types
   const getFilteredByServiceType = (data: Driver[]) => {
-    if (selectedServiceType === 'ALL') return data
+    if (selectedServiceType === 'ALL') {return data}
     
     // Map global service types to local service types
     const serviceMapping: Record<string, DriverService> = {
@@ -1186,7 +1186,7 @@ function DriverTableDemo({
     }
     
     const localServiceType = serviceMapping[selectedServiceType]
-    if (!localServiceType) return data
+    if (!localServiceType) {return data}
     
     return data.filter(driver => driver.service === localServiceType)
   }
@@ -1244,9 +1244,9 @@ function DriverTableDemo({
     // Apply other filters (but not status filters during global search)
     rows = rows.filter((r) => {
       // Skip status filter during global search to show all matching results
-      if (!hasSearch && selStatuses.length && !selStatuses.includes(r.status)) return false
-      if (from && new Date(r.applied_at) < new Date(from)) return false
-      if (to && new Date(r.applied_at) > new Date(to + 'T23:59:59')) return false
+      if (!hasSearch && selStatuses.length && !selStatuses.includes(r.status)) {return false}
+      if (from && new Date(r.applied_at) < new Date(from)) {return false}
+      if (to && new Date(r.applied_at) > new Date(to + 'T23:59:59')) {return false}
       return true
     })
 
@@ -1273,12 +1273,12 @@ function DriverTableDemo({
   // Facets (counts within current filter context, except the toggled dimension)
   const facetStatus = useMemo(() => {
     const m: Record<string, number> = {}
-    for (const r of filtered) m[r.status] = (m[r.status] || 0) + 1
+    for (const r of filtered) {m[r.status] = (m[r.status] || 0) + 1}
     return m
   }, [filtered])
   const facetService = useMemo(() => {
     const m: Record<string, number> = {}
-    for (const r of filtered) m[r.service] = (m[r.service] || 0) + 1
+    for (const r of filtered) {m[r.service] = (m[r.service] || 0) + 1}
     return m
   }, [filtered])
 
@@ -1290,7 +1290,7 @@ function DriverTableDemo({
   }
 
   const onSort = (key: keyof Driver) => {
-    if (sortBy === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
+    if (sortBy === key) {setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
     else {
       setSortBy(key)
       setSortDir('asc')
@@ -1356,15 +1356,15 @@ function DriverTableDemo({
     switch (column.key) {
       case 'status':
         const getLastOnlineText = (driver: Driver) => {
-          if (driver.is_online || driver.last_online === 'now') return 'Online now';
+          if (driver.is_online || driver.last_online === 'now') {return 'Online now';}
           const lastOnlineDate = new Date(driver.last_online);
           const now = new Date();
           const diffMs = now.getTime() - lastOnlineDate.getTime();
           const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
           const diffDays = Math.floor(diffHours / 24);
-          if (diffHours < 1) return 'Just now';
-          if (diffHours < 24) return `${diffHours}h ago`;
-          if (diffDays === 1) return 'Yesterday';
+          if (diffHours < 1) {return 'Just now';}
+          if (diffHours < 24) {return `${diffHours}h ago`;}
+          if (diffDays === 1) {return 'Yesterday';}
           return `${diffDays}d ago`;
         };
         return (

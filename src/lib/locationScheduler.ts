@@ -58,7 +58,7 @@ class LocationSchedulerService {
 
   // Stop the scheduler
   stop(): void {
-    if (!this.isRunning) return;
+    if (!this.isRunning) {return;}
 
     logger.info('Stopping location broadcast scheduler');
     
@@ -118,7 +118,7 @@ class LocationSchedulerService {
       // Get all driver location keys
       const locationKeys = await redis.keys('driver:location:*');
       
-      if (locationKeys.length === 0) return [];
+      if (locationKeys.length === 0) {return [];}
 
       // Get locations in batches to avoid memory issues
       const locations: LocationUpdate[] = [];
@@ -257,7 +257,7 @@ class LocationSchedulerService {
   // Health check
   isHealthy(): boolean {
     const lastBroadcast = this.metrics.lastBroadcastTime;
-    if (!lastBroadcast) return false;
+    if (!lastBroadcast) {return false;}
     
     // Consider healthy if last broadcast was within the last 2 minutes
     const twoMinutesAgo = Date.now() - (2 * 60 * 1000);

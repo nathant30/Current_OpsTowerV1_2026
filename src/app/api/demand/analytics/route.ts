@@ -291,7 +291,7 @@ export const GET = asyncHandler(async (request: NextRequest) => {
       const day = parseInt(row.day_of_week);
       const requests = parseInt(row.request_count);
       
-      if (!acc[hour]) acc[hour] = { hour, totalRequests: 0, byDay: {} };
+      if (!acc[hour]) {acc[hour] = { hour, totalRequests: 0, byDay: {} };}
       
       acc[hour].totalRequests += requests;
       acc[hour].byDay[day] = {
@@ -388,7 +388,7 @@ export const GET = asyncHandler(async (request: NextRequest) => {
 
 // Analyze demand trends from balance data
 function analyzeDemandTrends(balanceData: any[]): any {
-  if (balanceData.length < 2) return { trend: 'insufficient_data' };
+  if (balanceData.length < 2) {return { trend: 'insufficient_data' };}
 
   const recent = balanceData.slice(-6); // Last 6 data points
   const earlier = balanceData.slice(0, 6); // First 6 data points
@@ -400,8 +400,8 @@ function analyzeDemandTrends(balanceData: any[]): any {
     ((recentAvgDemand - earlierAvgDemand) / earlierAvgDemand * 100) : 0;
 
   let trend = 'stable';
-  if (changePercent > 20) trend = 'increasing';
-  else if (changePercent < -20) trend = 'decreasing';
+  if (changePercent > 20) {trend = 'increasing';}
+  else if (changePercent < -20) {trend = 'decreasing';}
 
   return {
     trend,

@@ -34,8 +34,8 @@ export const GET = asyncHandler(async (request: NextRequest) => {
       const aValue = (a as any)[paginationParams.sortBy!];
       const bValue = (b as any)[paginationParams.sortBy!];
       
-      if (aValue < bValue) return paginationParams.sortOrder === 'asc' ? -1 : 1;
-      if (aValue > bValue) return paginationParams.sortOrder === 'asc' ? 1 : -1;
+      if (aValue < bValue) {return paginationParams.sortOrder === 'asc' ? -1 : 1;}
+      if (aValue > bValue) {return paginationParams.sortOrder === 'asc' ? 1 : -1;}
       return 0;
     });
   } else {

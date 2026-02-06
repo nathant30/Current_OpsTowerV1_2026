@@ -245,8 +245,8 @@ export class ErrorTracker {
     
     return this.securityEvents
       .filter(event => {
-        if (event.timestamp < since) return false;
-        if (severity && event.severity !== severity) return false;
+        if (event.timestamp < since) {return false;}
+        if (severity && event.severity !== severity) {return false;}
         return true;
       })
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
@@ -273,7 +273,7 @@ export class ErrorTracker {
   // Acknowledge alert
   public acknowledgeAlert(alertId: string, userId: string): boolean {
     const alert = this.activeAlerts.get(alertId);
-    if (!alert) return false;
+    if (!alert) {return false;}
 
     alert.status = 'ACKNOWLEDGED';
     alert.acknowledgedBy = userId;
@@ -293,7 +293,7 @@ export class ErrorTracker {
   // Resolve alert
   public resolveAlert(alertId: string): boolean {
     const alert = this.activeAlerts.get(alertId);
-    if (!alert) return false;
+    if (!alert) {return false;}
 
     alert.status = 'RESOLVED';
     alert.resolvedAt = new Date();
@@ -460,7 +460,7 @@ export class ErrorTracker {
 
   private evaluateAlerts(): void {
     this.activeAlerts.forEach(alert => {
-      if (alert.status !== 'ACTIVE') return;
+      if (alert.status !== 'ACTIVE') {return;}
 
       let shouldTrigger = false;
 
@@ -485,7 +485,7 @@ export class ErrorTracker {
     
     const metrics = metricsCollector.getMetrics(condition.metric, since);
     
-    if (metrics.length === 0) return false;
+    if (metrics.length === 0) {return false;}
     
     let value: number;
     const values = metrics.map(m => m.value);
@@ -530,7 +530,7 @@ export class ErrorTracker {
 
   private executeAlertActions(alert: Alert): void {
     alert.actions.forEach(action => {
-      if (!action.enabled) return;
+      if (!action.enabled) {return;}
 
       const handler = this.alertHandlers.get(action.type);
       if (handler) {

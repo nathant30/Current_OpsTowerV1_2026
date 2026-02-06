@@ -164,7 +164,7 @@ function generateTimeBasedMetrics(timeRange: string) {
 
 function calculateAverageResponseTime(bookings: Booking[]): number {
   const completedBookings = bookings.filter(b => b.completedAt && b.requestedAt);
-  if (completedBookings.length === 0) return 0;
+  if (completedBookings.length === 0) {return 0;}
   
   const totalResponseTime = completedBookings.reduce((sum, booking) => {
     const responseTime = new Date(booking.assignedAt || booking.acceptedAt || booking.completedAt || booking.requestedAt).getTime() -
@@ -177,7 +177,7 @@ function calculateAverageResponseTime(bookings: Booking[]): number {
 
 function calculateAverageRating(drivers: Driver[]): number {
   const ratedDrivers = drivers.filter(d => d.rating > 0);
-  if (ratedDrivers.length === 0) return 0;
+  if (ratedDrivers.length === 0) {return 0;}
   
   const totalRating = ratedDrivers.reduce((sum, driver) => sum + driver.rating, 0);
   return Math.round((totalRating / ratedDrivers.length) * 100) / 100; // Round to 2 decimal places

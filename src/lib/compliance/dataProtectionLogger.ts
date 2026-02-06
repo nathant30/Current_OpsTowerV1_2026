@@ -264,22 +264,22 @@ class DataProtectionLogger {
     let riskScore = 0;
 
     // Data type risk
-    if (event.dataType === 'sensitive' || event.dataType === 'biometric') riskScore += 3;
-    else if (event.dataType === 'financial') riskScore += 2;
-    else if (event.dataType === 'personal') riskScore += 1;
+    if (event.dataType === 'sensitive' || event.dataType === 'biometric') {riskScore += 3;}
+    else if (event.dataType === 'financial') {riskScore += 2;}
+    else if (event.dataType === 'personal') {riskScore += 1;}
 
     // Access type risk
-    if (event.accessType === 'delete') riskScore += 3;
-    else if (event.accessType === 'write' || event.accessType === 'update') riskScore += 2;
-    else if (event.accessType === 'export') riskScore += 2;
+    if (event.accessType === 'delete') {riskScore += 3;}
+    else if (event.accessType === 'write' || event.accessType === 'update') {riskScore += 2;}
+    else if (event.accessType === 'export') {riskScore += 2;}
 
     // Legal basis risk
-    if (event.legalBasis === 'consent') riskScore -= 1;
-    else if (event.legalBasis === 'legitimate_interests') riskScore += 1;
+    if (event.legalBasis === 'consent') {riskScore -= 1;}
+    else if (event.legalBasis === 'legitimate_interests') {riskScore += 1;}
 
-    if (riskScore >= 6) return 'critical';
-    if (riskScore >= 4) return 'high';
-    if (riskScore >= 2) return 'medium';
+    if (riskScore >= 6) {return 'critical';}
+    if (riskScore >= 4) {return 'high';}
+    if (riskScore >= 2) {return 'medium';}
     return 'low';
   }
 

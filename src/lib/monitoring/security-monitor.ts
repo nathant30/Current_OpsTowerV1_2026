@@ -321,7 +321,7 @@ export class SecurityMonitor {
   // Resolve threat
   public resolveThreat(threatId: string): boolean {
     const threat = this.threats.get(threatId);
-    if (!threat) return false;
+    if (!threat) {return false;}
 
     threat.resolved = true;
     

@@ -162,7 +162,7 @@ const IncidentsListPage = () => {
   }, [router]);
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) {return;}
     setIncidents(MOCK_INCIDENTS);
   }, [isClient, setIncidents]);
 
@@ -189,9 +189,9 @@ const IncidentsListPage = () => {
 
     const formatTime = (mins: number): string => {
       const absMins = Math.abs(mins);
-      if (absMins < 60) return `${absMins}m`;
+      if (absMins < 60) {return `${absMins}m`;}
       const hours = Math.floor(absMins / 60);
-      if (hours < 24) return `${hours}h`;
+      if (hours < 24) {return `${hours}h`;}
       const days = Math.floor(hours / 24);
       return `${days}d`;
     };

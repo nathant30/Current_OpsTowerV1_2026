@@ -31,7 +31,7 @@ const isSameDay = (date1: Date, date2: Date) => {
 };
 
 const isDateInRange = (date: Date, from?: Date, to?: Date) => {
-  if (!from || !to) return false;
+  if (!from || !to) {return false;}
   return date >= from && date <= to;
 };
 
@@ -432,7 +432,7 @@ const BookingsPage = () => {
 
   // Enhanced real-time updates with sound notifications
   useEffect(() => {
-    if (!isRealTimeEnabled) return;
+    if (!isRealTimeEnabled) {return;}
 
     const interval = setInterval(() => {
       setBookings(prevBookings => {
@@ -582,8 +582,8 @@ const BookingsPage = () => {
     if (dateRange.from || dateRange.to) {
       filtered = filtered.filter(booking => {
         const bookingDate = new Date(booking.createdAt);
-        if (dateRange.from && bookingDate < dateRange.from) return false;
-        if (dateRange.to && bookingDate > dateRange.to) return false;
+        if (dateRange.from && bookingDate < dateRange.from) {return false;}
+        if (dateRange.to && bookingDate > dateRange.to) {return false;}
         return true;
       });
     }
@@ -796,9 +796,9 @@ const BookingsPage = () => {
   
   // Get time elapsed for requesting bookings with 3-minute timeout
   const getRequestingTime = useCallback((booking: Booking) => {
-    if (booking.status !== 'Requesting') return '';
+    if (booking.status !== 'Requesting') {return '';}
     const elapsed = Math.floor((Date.now() - booking.createdAt.getTime()) / 1000);
-    if (elapsed >= 180) return 'TIMED OUT';
+    if (elapsed >= 180) {return 'TIMED OUT';}
     const minutes = Math.floor(elapsed / 60);
     const seconds = elapsed % 60;
     return `${minutes}m ${seconds}s`;
@@ -806,10 +806,10 @@ const BookingsPage = () => {
   
   // Get requesting color based on elapsed time
   const getRequestingColor = useCallback((booking: Booking) => {
-    if (booking.status !== 'Requesting') return '';
+    if (booking.status !== 'Requesting') {return '';}
     const elapsed = Math.floor((Date.now() - booking.createdAt.getTime()) / 1000);
-    if (elapsed < 30) return 'text-green-600 bg-green-50 border-green-200';
-    if (elapsed < 120) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+    if (elapsed < 30) {return 'text-green-600 bg-green-50 border-green-200';}
+    if (elapsed < 120) {return 'text-yellow-600 bg-yellow-50 border-yellow-200';}
     return 'text-red-600 bg-red-50 border-red-200';
   }, []);
   
@@ -1506,13 +1506,13 @@ const BookingsPage = () => {
                                 {(() => {
                                   const demandPercentage = Math.floor(Math.random() * 120 + 20); // 20% to 140%
                                   const getColorClass = (percentage: number) => {
-                                    if (percentage <= 60) return 'text-green-600';
-                                    if (percentage <= 80) return 'text-orange-600';
+                                    if (percentage <= 60) {return 'text-green-600';}
+                                    if (percentage <= 80) {return 'text-orange-600';}
                                     return 'text-red-600';
                                   };
                                   const getIndicator = (percentage: number) => {
-                                    if (percentage <= 60) return '●';
-                                    if (percentage <= 80) return '●';
+                                    if (percentage <= 60) {return '●';}
+                                    if (percentage <= 80) {return '●';}
                                     return '●';
                                   };
                                   return (
@@ -1734,7 +1734,7 @@ const BookingsPage = () => {
       {/* Clean Booking Details Modal */}
       {selectedBookingModal && (() => {
         const booking = bookings.find(b => b.id === selectedBookingModal);
-        if (!booking || !booking.details) return null;
+        if (!booking || !booking.details) {return null;}
         
         return (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

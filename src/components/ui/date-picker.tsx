@@ -131,7 +131,7 @@ export function DatePicker({
   }
 
   const formatDateRange = (dateRange: Date | DateRange) => {
-    if (!dateRange) return placeholder
+    if (!dateRange) {return placeholder}
     
     if (dateRange instanceof Date) {
       return format(dateRange, "MMM dd, yyyy")

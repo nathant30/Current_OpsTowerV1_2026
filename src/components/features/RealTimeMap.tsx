@@ -187,7 +187,7 @@ export const RealTimeMap: React.FC<RealTimeMapProps> = ({
 
   // Auto-refresh functionality
   useEffect(() => {
-    if (!autoRefresh) return;
+    if (!autoRefresh) {return;}
 
     const interval = setInterval(() => {
       setLastRefresh(new Date());

@@ -125,17 +125,17 @@ export const MobileLiveMap: React.FC = () => {
   };
 
   const filteredDrivers = drivers.filter(driver => {
-    if (filters.riskLevel !== 'all' && driver.riskLevel !== filters.riskLevel) return false;
+    if (filters.riskLevel !== 'all' && driver.riskLevel !== filters.riskLevel) {return false;}
     return true;
   });
 
   const filteredAlerts = fraudAlerts.filter(alert => {
-    if (filters.alertType !== 'all' && alert.type !== filters.alertType) return false;
+    if (filters.alertType !== 'all' && alert.type !== filters.alertType) {return false;}
     return true;
   });
 
   const getDriverColor = (driver: Driver) => {
-    if (driver.status === 'fraud_flagged') return '#EF4444'; // Red
+    if (driver.status === 'fraud_flagged') {return '#EF4444';} // Red
     switch (driver.riskLevel) {
       case 'high': return '#F59E0B'; // Orange
       case 'medium': return '#EAB308'; // Yellow
@@ -154,9 +154,9 @@ export const MobileLiveMap: React.FC = () => {
 
   const formatTimeAgo = (timestamp: number) => {
     const seconds = Math.floor((Date.now() - timestamp) / 1000);
-    if (seconds < 60) return `${seconds}s ago`;
+    if (seconds < 60) {return `${seconds}s ago`;}
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
+    if (minutes < 60) {return `${minutes}m ago`;}
     const hours = Math.floor(minutes / 60);
     return `${hours}h ago`;
   };

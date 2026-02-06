@@ -165,7 +165,7 @@ export const useRealtimeDashboard = (config: DashboardConfig = {}) => {
 
   // Show browser notification
   const showNotification = useCallback((title: string, message: string, priority: 'critical' | 'high' | 'medium' | 'low' = 'medium') => {
-    if (!enableNotifications || !notificationPermissionRef.current) return;
+    if (!enableNotifications || !notificationPermissionRef.current) {return;}
 
     const notification = new Notification(title, {
       body: message,
@@ -185,7 +185,7 @@ export const useRealtimeDashboard = (config: DashboardConfig = {}) => {
 
   // Play alert sound
   const playAlertSound = useCallback((priority: 'critical' | 'high' | 'medium' | 'low' = 'medium') => {
-    if (!soundEnabledRef.current) return;
+    if (!soundEnabledRef.current) {return;}
 
     const soundFile = {
       critical: '/sounds/critical-alert.mp3',
@@ -392,7 +392,7 @@ export const useRealtimeDashboard = (config: DashboardConfig = {}) => {
 
   // Set up event listeners
   useEffect(() => {
-    if (!connected) return;
+    if (!connected) {return;}
 
     const cleanupFunctions = [
       on('driver:status_changed', handleDriverStatusChange),

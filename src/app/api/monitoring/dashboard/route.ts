@@ -390,27 +390,27 @@ function getSettledValue<T>(settledResult: PromiseSettledResult<T>, defaultValue
 
 function calculatePerformanceScore(metrics: any): number {
   // Simple performance scoring algorithm
-  if (!metrics || !metrics.requests) return 0;
+  if (!metrics || !metrics.requests) {return 0;}
 
   let score = 100;
   
   // Penalize high error rates
-  if (metrics.requests.errorRate > 5) score -= 30;
-  else if (metrics.requests.errorRate > 1) score -= 10;
+  if (metrics.requests.errorRate > 5) {score -= 30;}
+  else if (metrics.requests.errorRate > 1) {score -= 10;}
   
   // Penalize slow response times
-  if (metrics.responseTime?.average > 2000) score -= 20;
-  else if (metrics.responseTime?.average > 1000) score -= 10;
+  if (metrics.responseTime?.average > 2000) {score -= 20;}
+  else if (metrics.responseTime?.average > 1000) {score -= 10;}
   
   // Penalize slow database queries
-  if (metrics.database?.slowQueries > 10) score -= 20;
-  else if (metrics.database?.slowQueries > 5) score -= 10;
+  if (metrics.database?.slowQueries > 10) {score -= 20;}
+  else if (metrics.database?.slowQueries > 5) {score -= 10;}
   
   return Math.max(0, score);
 }
 
 function calculateTrend(kpi: any): string {
-  if (!kpi) return 'STABLE';
+  if (!kpi) {return 'STABLE';}
   return kpi.trend;
 }
 
@@ -448,9 +448,9 @@ function determineRiskLevel(stats: any, threats: any[]): 'LOW' | 'MEDIUM' | 'HIG
   const criticalThreats = threats.filter(t => t.severity === 'CRITICAL');
   const highThreats = threats.filter(t => t.severity === 'HIGH');
   
-  if (criticalThreats.length > 0) return 'CRITICAL';
-  if (highThreats.length > 2) return 'HIGH';
-  if (stats.totalEvents > 100) return 'MEDIUM';
+  if (criticalThreats.length > 0) {return 'CRITICAL';}
+  if (highThreats.length > 2) {return 'HIGH';}
+  if (stats.totalEvents > 100) {return 'MEDIUM';}
   return 'LOW';
 }
 

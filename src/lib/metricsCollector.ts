@@ -89,7 +89,7 @@ class MetricsCollectorService {
 
   // Stop metrics collection
   stop(): void {
-    if (!this.isRunning) return;
+    if (!this.isRunning) {return;}
 
     logger.info('Stopping metrics collection');
 
@@ -228,7 +228,7 @@ class MetricsCollectorService {
     const regionIds = await this.getActiveRegionIds();
     const wsManager = getWebSocketManager();
     
-    if (!wsManager) return;
+    if (!wsManager) {return;}
     
     for (const regionId of regionIds) {
       try {
@@ -385,17 +385,17 @@ class MetricsCollectorService {
     let load = 0;
     
     // Location processing load (0-40%)
-    if (locationMetrics.averageProcessingTime > 1000) load += 20;
-    else if (locationMetrics.averageProcessingTime > 500) load += 10;
+    if (locationMetrics.averageProcessingTime > 1000) {load += 20;}
+    else if (locationMetrics.averageProcessingTime > 500) {load += 10;}
     
     // Emergency processing load (0-30%)
-    if (emergencyMetrics.criticalAlerts > 5) load += 20;
-    else if (emergencyMetrics.criticalAlerts > 2) load += 10;
+    if (emergencyMetrics.criticalAlerts > 5) {load += 20;}
+    else if (emergencyMetrics.criticalAlerts > 2) {load += 10;}
     
     // WebSocket connection load (0-30%)
     const connectionCount = wsStats?.totalConnections || 0;
-    if (connectionCount > 1000) load += 20;
-    else if (connectionCount > 500) load += 10;
+    if (connectionCount > 1000) {load += 20;}
+    else if (connectionCount > 500) {load += 10;}
     
     return Math.min(load, 100); // Cap at 100%
   }

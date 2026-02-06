@@ -201,7 +201,7 @@ class RealtimeScoringPipeline {
 
   private async processBatchJob(jobId: string): Promise<void> {
     const job = this.batchJobs.get(jobId);
-    if (!job) return;
+    if (!job) {return;}
 
     job.status = 'processing';
     this.batchJobs.set(jobId, job);
@@ -459,9 +459,9 @@ class RealtimeScoringPipeline {
       
       // Cache for different durations based on risk level
       let ttl = 300; // 5 minutes default
-      if (response.prediction.riskLevel === 'critical') ttl = 60; // 1 minute
-      else if (response.prediction.riskLevel === 'high') ttl = 180; // 3 minutes
-      else if (response.prediction.riskLevel === 'low') ttl = 900; // 15 minutes
+      if (response.prediction.riskLevel === 'critical') {ttl = 60;} // 1 minute
+      else if (response.prediction.riskLevel === 'high') {ttl = 180;} // 3 minutes
+      else if (response.prediction.riskLevel === 'low') {ttl = 900;} // 15 minutes
       
       await redisCacheManager.setCacheWithTTL(cacheKey, JSON.stringify(cacheData), ttl);
       
@@ -516,7 +516,7 @@ class RealtimeScoringPipeline {
   }
 
   private processQueue(): void {
-    if (this.isProcessing) return;
+    if (this.isProcessing) {return;}
     
     this.isProcessing = true;
     

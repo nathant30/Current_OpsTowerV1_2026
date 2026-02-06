@@ -128,7 +128,7 @@ export const POILaneEditor: React.FC<POILaneEditorProps> = ({ poi, onSave, onCan
   }, [poi]);
 
   const handleFieldChange = (field: string, value: any) => {
-    if (!editedPOI) return;
+    if (!editedPOI) {return;}
     
     setEditedPOI(prev => ({
       ...prev!,
@@ -138,7 +138,7 @@ export const POILaneEditor: React.FC<POILaneEditorProps> = ({ poi, onSave, onCan
   };
 
   const addPickupLane = () => {
-    if (!editedPOI) return;
+    if (!editedPOI) {return;}
     
     const newLane: Lane = {
       id: Date.now().toString(),
@@ -158,7 +158,7 @@ export const POILaneEditor: React.FC<POILaneEditorProps> = ({ poi, onSave, onCan
   };
 
   const addDropoffLane = () => {
-    if (!editedPOI) return;
+    if (!editedPOI) {return;}
     
     const newLane: Lane = {
       id: Date.now().toString(),
@@ -178,7 +178,7 @@ export const POILaneEditor: React.FC<POILaneEditorProps> = ({ poi, onSave, onCan
   };
 
   const updateLane = (laneId: string, isPickup: boolean, updatedLane: Lane) => {
-    if (!editedPOI) return;
+    if (!editedPOI) {return;}
     
     const laneType = isPickup ? 'pickupLanes' : 'dropoffLanes';
     setEditedPOI(prev => ({
@@ -191,7 +191,7 @@ export const POILaneEditor: React.FC<POILaneEditorProps> = ({ poi, onSave, onCan
   };
 
   const deleteLane = (laneId: string, isPickup: boolean) => {
-    if (!editedPOI) return;
+    if (!editedPOI) {return;}
     
     const laneType = isPickup ? 'pickupLanes' : 'dropoffLanes';
     setEditedPOI(prev => ({

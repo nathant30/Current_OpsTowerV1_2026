@@ -149,16 +149,16 @@ export const MobileDashboard: React.FC = () => {
   };
 
   const getTrendIcon = (value: number, threshold: number = 0) => {
-    if (value > threshold) return <TrendingUp className="w-4 h-4 text-green-500" />;
-    if (value < -threshold) return <TrendingDown className="w-4 h-4 text-red-500" />;
+    if (value > threshold) {return <TrendingUp className="w-4 h-4 text-green-500" />;}
+    if (value < -threshold) {return <TrendingDown className="w-4 h-4 text-red-500" />;}
     return <Minus className="w-4 h-4 text-gray-400" />;
   };
 
   const formatTimeAgo = (timestamp: number) => {
     const seconds = Math.floor((Date.now() - timestamp) / 1000);
-    if (seconds < 60) return `${seconds}s ago`;
+    if (seconds < 60) {return `${seconds}s ago`;}
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
+    if (minutes < 60) {return `${minutes}m ago`;}
     const hours = Math.floor(minutes / 60);
     return `${hours}h ago`;
   };

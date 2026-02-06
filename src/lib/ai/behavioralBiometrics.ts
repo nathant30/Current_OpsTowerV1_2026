@@ -347,7 +347,7 @@ class BehavioralBiometricsEngine {
     pressure?: number
   ): Promise<void> {
     const session = this.sessions.get(sessionId);
-    if (!session) return;
+    if (!session) {return;}
 
     session.capturedData.keystrokes.push({
       timestamp: timestamp || Date.now(),
@@ -372,7 +372,7 @@ class BehavioralBiometricsEngine {
     timestamp?: number
   ): Promise<void> {
     const session = this.sessions.get(sessionId);
-    if (!session) return;
+    if (!session) {return;}
 
     session.capturedData.touchEvents.push({
       timestamp: timestamp || Date.now(),
@@ -397,7 +397,7 @@ class BehavioralBiometricsEngine {
     timestamp?: number
   ): Promise<void> {
     const session = this.sessions.get(sessionId);
-    if (!session) return;
+    if (!session) {return;}
 
     session.capturedData.sensorData.push({
       timestamp: timestamp || Date.now(),
@@ -415,7 +415,7 @@ class BehavioralBiometricsEngine {
     timestamp?: number
   ): Promise<void> {
     const session = this.sessions.get(sessionId);
-    if (!session) return;
+    if (!session) {return;}
 
     session.capturedData.appUsage.push({
       timestamp: timestamp || Date.now(),
@@ -430,7 +430,7 @@ class BehavioralBiometricsEngine {
     metrics: Partial<BiometricSession['capturedData']['deviceMetrics']>
   ): Promise<void> {
     const session = this.sessions.get(sessionId);
-    if (!session) return;
+    if (!session) {return;}
 
     session.capturedData.deviceMetrics = {
       ...session.capturedData.deviceMetrics,
@@ -440,7 +440,7 @@ class BehavioralBiometricsEngine {
 
   async endSession(sessionId: string): Promise<void> {
     const session = this.sessions.get(sessionId);
-    if (!session) return;
+    if (!session) {return;}
 
     session.endTime = Date.now();
 
@@ -519,7 +519,7 @@ class BehavioralBiometricsEngine {
     const flightTimes = [];
     for (let i = 1; i < keystrokes.length; i++) {
       const flightTime = keystrokes[i].timestamp - (keystrokes[i-1].timestamp + keystrokes[i-1].dwellTime);
-      if (flightTime > 0) flightTimes.push(flightTime);
+      if (flightTime > 0) {flightTimes.push(flightTime);}
     }
 
     if (flightTimes.length > 0) {
@@ -697,7 +697,7 @@ class BehavioralBiometricsEngine {
   }
 
   private calculateVariation(values: number[]): number {
-    if (values.length === 0) return 0;
+    if (values.length === 0) {return 0;}
     
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
     const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
@@ -707,7 +707,7 @@ class BehavioralBiometricsEngine {
   }
 
   private calculatePositionVariation(positions: { x: number; y: number }[]): number {
-    if (positions.length === 0) return 0;
+    if (positions.length === 0) {return 0;}
     
     const meanX = positions.reduce((sum, pos) => sum + pos.x, 0) / positions.length;
     const meanY = positions.reduce((sum, pos) => sum + pos.y, 0) / positions.length;
@@ -720,7 +720,7 @@ class BehavioralBiometricsEngine {
   }
 
   private calculateSensorVariation(readings: { x: number; y: number; z: number }[]): number {
-    if (readings.length === 0) return 0;
+    if (readings.length === 0) {return 0;}
     
     const xValues = readings.map(r => r.x);
     const yValues = readings.map(r => r.y);
@@ -736,7 +736,7 @@ class BehavioralBiometricsEngine {
   private detectKeystrokeAnomalies(session: BiometricSession): void {
     // Real-time keystroke anomaly detection
     const keystrokes = session.capturedData.keystrokes;
-    if (keystrokes.length < 5) return;
+    if (keystrokes.length < 5) {return;}
 
     const recentKeystrokes = keystrokes.slice(-10); // Last 10 keystrokes
     const recentDwellTimes = recentKeystrokes.map(k => k.dwellTime);
@@ -756,7 +756,7 @@ class BehavioralBiometricsEngine {
   private detectTouchAnomalies(session: BiometricSession): void {
     // Real-time touch anomaly detection
     const touchEvents = session.capturedData.touchEvents;
-    if (touchEvents.length < 10) return;
+    if (touchEvents.length < 10) {return;}
 
     const recentTouches = touchEvents.slice(-20); // Last 20 touches
     const tapEvents = recentTouches.filter(t => t.type === 'tap');
@@ -987,7 +987,7 @@ class BehavioralBiometricsEngine {
     const flightTimes = [];
     for (let i = 1; i < keystrokes.length; i++) {
       const flightTime = keystrokes[i].timestamp - (keystrokes[i-1].timestamp + keystrokes[i-1].dwellTime);
-      if (flightTime > 0) flightTimes.push(flightTime);
+      if (flightTime > 0) {flightTimes.push(flightTime);}
     }
 
     current.keystrokeTimings.flightTimes.push(...flightTimes);
@@ -1363,7 +1363,7 @@ class BehavioralBiometricsEngine {
     const sessionTaps = sessionTouchEvents.filter(e => e.type === 'tap');
     const sessionPressures = sessionTaps.map(t => t.pressure);
     
-    if (sessionPressures.length === 0) return 0.5;
+    if (sessionPressures.length === 0) {return 0.5;}
 
     const sessionAvgPressure = sessionPressures.reduce((sum, p) => sum + p, 0) / sessionPressures.length;
     
@@ -1450,9 +1450,9 @@ class BehavioralBiometricsEngine {
     });
 
     // Score based on how close to typical active hours
-    if (isInActiveHours) return 1;
-    if (minDistance <= 2) return 0.8;
-    if (minDistance <= 4) return 0.6;
+    if (isInActiveHours) {return 1;}
+    if (minDistance <= 2) {return 0.8;}
+    if (minDistance <= 4) {return 0.6;}
     return 0.3;
   }
 

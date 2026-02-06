@@ -13,7 +13,7 @@ export async function updateRoleWithApprovals(
   reason?: string
 ): Promise<RoleRecord | PendingChange> {
   const role = await getRole(roleId);
-  if (!role) throw new Error('role_not_found');
+  if (!role) {throw new Error('role_not_found');}
 
   const isBaseline = BASELINE_ROLES.has(role.name.toLowerCase());
   const needsApproval = role.sensitive || isBaseline || (role.level >= 60);
@@ -32,12 +32,12 @@ export async function applyApprovedChange(pendingId: string, approverUserId: str
     
     // Get the pending change
     const pendingChange = await getPendingChange(pendingId);
-    if (!pendingChange) throw new Error('pending_change_not_found');
-    if (pendingChange.status !== 'approved') throw new Error('change_not_approved');
+    if (!pendingChange) {throw new Error('pending_change_not_found');}
+    if (pendingChange.status !== 'approved') {throw new Error('change_not_approved');}
     
     // Get the current role
     const currentRole = await getRole(pendingChange.role_id);
-    if (!currentRole) throw new Error('role_not_found');
+    if (!currentRole) {throw new Error('role_not_found');}
     
     // Create version snapshot before applying changes
     await createVersionSnapshot(currentRole, approverUserId);
@@ -52,7 +52,7 @@ export async function applyApprovedChange(pendingId: string, approverUserId: str
 
 export async function requiresApproval(roleId: string, patch: Partial<RoleRecord>): Promise<boolean> {
   const role = await getRole(roleId);
-  if (!role) return false;
+  if (!role) {return false;}
 
   const isBaseline = BASELINE_ROLES.has(role.name.toLowerCase());
   const isHighLevel = (role.level >= 60);
@@ -98,7 +98,7 @@ export async function bulkUpdateRoles(
 
 export async function safeDeleteRole(roleId: string, actorUserId: string): Promise<boolean> {
   const role = await getRole(roleId);
-  if (!role) throw new Error('role_not_found');
+  if (!role) {throw new Error('role_not_found');}
   
   if (role.is_immutable) {
     throw new Error('cannot_delete_immutable_role');

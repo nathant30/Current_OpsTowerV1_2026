@@ -588,7 +588,7 @@ const OpsTowardDashboard = () => {
 
   // Auto-hide sidebar on mobile
   useEffect(() => {
-    if (isMobile) setSidebarCollapsed(true);
+    if (isMobile) {setSidebarCollapsed(true);}
   }, [isMobile]);
 
   // Real-time updates with AI integration
@@ -652,7 +652,7 @@ const OpsTowardDashboard = () => {
   // Safety workflow handlers
   const handleEmergencyAction = useCallback((action: string, incidentId: string) => {
     const incident = emergencyIncidents.find(i => i.id === incidentId);
-    if (!incident) return;
+    if (!incident) {return;}
 
     const newNote = {
       timestamp: new Date(),
@@ -687,7 +687,7 @@ const OpsTowardDashboard = () => {
     const diff = Date.now() - date.getTime();
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
-    if (hours > 0) return `${hours}h ago`;
+    if (hours > 0) {return `${hours}h ago`;}
     return `${minutes}m ago`;
   };
 

@@ -197,7 +197,7 @@ export const RealtimeDashboard: React.FC<DashboardProps> = ({
 
   // System status indicator
   const getSystemStatus = () => {
-    if (!systemHealth) return { status: 'loading', color: 'bg-gray-500' };
+    if (!systemHealth) {return { status: 'loading', color: 'bg-gray-500' };}
     
     const services = Object.values(systemHealth);
     const healthyServices = services.filter(service => service.status === 'healthy').length;

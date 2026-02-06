@@ -362,12 +362,12 @@ class FraudDetectionLoadBalancer {
    */
   private startQueueProcessor(): void {
     setInterval(async () => {
-      if (this.requestQueue.length === 0) return;
+      if (this.requestQueue.length === 0) {return;}
       
       const availableCapacity = this.getAvailableCapacity();
       const batchSize = Math.min(availableCapacity, this.requestQueue.length, 50);
       
-      if (batchSize <= 0) return;
+      if (batchSize <= 0) {return;}
       
       const batch = this.requestQueue.splice(0, batchSize);
       
@@ -434,7 +434,7 @@ class FraudDetectionLoadBalancer {
 
   private updateNodeStatus(nodeId: string, healthResult: HealthCheckResult): void {
     const node = this.nodes.get(nodeId);
-    if (!node) return;
+    if (!node) {return;}
     
     node.responseTime = healthResult.responseTime;
     node.errorRate = healthResult.errorRate;
@@ -491,11 +491,11 @@ class FraudDetectionLoadBalancer {
     let priority = 50; // Base priority
     
     // Higher priority for real-time events
-    if (eventData.eventType === 'gps_update') priority += 30;
-    if (eventData.eventType === 'payment') priority += 20;
+    if (eventData.eventType === 'gps_update') {priority += 30;}
+    if (eventData.eventType === 'payment') {priority += 20;}
     
     // Higher priority for drivers (less false positive concern)
-    if (eventData.userType === 'driver') priority += 10;
+    if (eventData.userType === 'driver') {priority += 10;}
     
     return priority;
   }
@@ -508,7 +508,7 @@ class FraudDetectionLoadBalancer {
 
   private updateNodeMetrics(nodeId: string, responseTime: number, success: boolean): void {
     const node = this.nodes.get(nodeId);
-    if (!node) return;
+    if (!node) {return;}
     
     // Exponential moving average for response time
     node.responseTime = node.responseTime * 0.9 + responseTime * 0.1;

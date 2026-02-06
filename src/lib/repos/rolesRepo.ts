@@ -43,7 +43,7 @@ export async function createRole(input: Partial<RoleRecord>, userId: string): Pr
 export async function updateRoleDirect(id: string, patch: Partial<RoleRecord>, userId: string): Promise<RoleRecord> {
   // Get existing role first
   const existing = await getRole(id);
-  if (!existing) throw new Error('role_not_found');
+  if (!existing) {throw new Error('role_not_found');}
 
   const next: Partial<RoleRecord> = {
     name: patch.name ?? existing.name,

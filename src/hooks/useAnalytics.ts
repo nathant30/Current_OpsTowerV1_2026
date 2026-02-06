@@ -70,16 +70,16 @@ export function useAnalytics(options: UseAnalyticsOptions = {}) {
   } = options;
 
   const fetchAnalytics = async () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {return;}
 
     try {
       setLoading(true);
       setError(null);
 
       const params = new URLSearchParams();
-      if (timeRange) params.append('timeRange', timeRange);
-      if (regionId) params.append('regionId', regionId);
-      if (serviceType && serviceType !== 'ALL') params.append('serviceType', serviceType);
+      if (timeRange) {params.append('timeRange', timeRange);}
+      if (regionId) {params.append('regionId', regionId);}
+      if (serviceType && serviceType !== 'ALL') {params.append('serviceType', serviceType);}
 
       const token = localStorage.getItem('xpress_auth_token');
       const response = await fetch(`/api/analytics?${params.toString()}`, {
@@ -111,7 +111,7 @@ export function useAnalytics(options: UseAnalyticsOptions = {}) {
 
   // Auto-refresh
   useEffect(() => {
-    if (!refreshInterval || !isAuthenticated) return;
+    if (!refreshInterval || !isAuthenticated) {return;}
 
     const interval = setInterval(fetchAnalytics, refreshInterval);
     return () => clearInterval(interval);

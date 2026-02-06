@@ -627,19 +627,19 @@ class EmailServiceManager {
         }
       };
       
-      if (message.cc) msg.cc = message.cc;
-      if (message.bcc) msg.bcc = message.bcc;
-      if (config.replyToEmail) msg.replyTo = config.replyToEmail;
-      if (message.category) msg.categories = [message.category];
-      if (message.tags) msg.customArgs.tags = message.tags.join(',');
+      if (message.cc) {msg.cc = message.cc;}
+      if (message.bcc) {msg.bcc = message.bcc;}
+      if (config.replyToEmail) {msg.replyTo = config.replyToEmail;}
+      if (message.category) {msg.categories = [message.category];}
+      if (message.tags) {msg.customArgs.tags = message.tags.join(',');}
       
       // Handle template or content
       if (message.templateId) {
         msg.templateId = message.templateId;
         msg.dynamicTemplateData = message.templateData || {};
       } else {
-        if (message.html) msg.html = message.html;
-        if (message.text) msg.text = message.text;
+        if (message.html) {msg.html = message.html;}
+        if (message.text) {msg.text = message.text;}
       }
       
       // Handle attachments
@@ -710,10 +710,10 @@ class EmailServiceManager {
         }
       };
       
-      if (message.cc) mailOptions.cc = Array.isArray(message.cc) ? message.cc.join(', ') : message.cc;
-      if (message.bcc) mailOptions.bcc = Array.isArray(message.bcc) ? message.bcc.join(', ') : message.bcc;
-      if (message.html) mailOptions.html = message.html;
-      if (message.text) mailOptions.text = message.text;
+      if (message.cc) {mailOptions.cc = Array.isArray(message.cc) ? message.cc.join(', ') : message.cc;}
+      if (message.bcc) {mailOptions.bcc = Array.isArray(message.bcc) ? message.bcc.join(', ') : message.bcc;}
+      if (message.html) {mailOptions.html = message.html;}
+      if (message.text) {mailOptions.text = message.text;}
       
       // Handle attachments
       if (message.attachments && message.attachments.length > 0) {
@@ -994,12 +994,12 @@ class EmailServiceManager {
   private async processIndividualEvent(event: any): Promise<void> {
     const messageId = event.sg_message_id || event.messageId;
     
-    if (!messageId) return;
+    if (!messageId) {return;}
     
     // Get existing report
     const existingReport = await this.getDeliveryReport(messageId);
     
-    if (!existingReport) return;
+    if (!existingReport) {return;}
     
     // Update report based on event type
     const updatedReport = { ...existingReport };
@@ -1014,14 +1014,14 @@ class EmailServiceManager {
         updatedReport.status = 'opened';
         updatedReport.openedAt = new Date(event.timestamp * 1000);
         updatedReport.opens++;
-        if (!existingReport.openedAt) updatedReport.uniqueOpens++;
+        if (!existingReport.openedAt) {updatedReport.uniqueOpens++;}
         break;
         
       case 'click':
         updatedReport.status = 'clicked';
         updatedReport.clickedAt = new Date(event.timestamp * 1000);
         updatedReport.clicks++;
-        if (!existingReport.clickedAt) updatedReport.uniqueClicks++;
+        if (!existingReport.clickedAt) {updatedReport.uniqueClicks++;}
         break;
         
       case 'bounce':
@@ -1122,7 +1122,7 @@ class EmailServiceManager {
 
   private updateProviderHealth(provider: string, success: boolean, responseTime: number): void {
     const health = this.providerHealth.get(provider);
-    if (!health) return;
+    if (!health) {return;}
 
     health.averageResponseTime = (health.averageResponseTime * 0.8) + (responseTime * 0.2);
     
@@ -1175,7 +1175,7 @@ class EmailServiceManager {
   }
 
   private async processEmailQueue(): Promise<void> {
-    if (this.emailQueue.length === 0) return;
+    if (this.emailQueue.length === 0) {return;}
     
     this.isProcessing = true;
     

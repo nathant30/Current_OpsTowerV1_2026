@@ -369,7 +369,7 @@ export class ABTestingFramework extends EventEmitter {
 
   private findEligibleTest(userId: string, context: any): ABTest | null {
     for (const test of this.activeTests.values()) {
-      if (test.status !== 'running') continue;
+      if (test.status !== 'running') {continue;}
       
       // Check regional targeting
       if (test.targeting.regions && !test.targeting.regions.includes(context.region)) {
@@ -396,8 +396,8 @@ export class ABTestingFramework extends EventEmitter {
         const criteria = test.targeting.sample_criteria;
         const amount = context.transaction_context.amount;
         
-        if (criteria.min_transaction_amount && amount < criteria.min_transaction_amount) continue;
-        if (criteria.max_transaction_amount && amount > criteria.max_transaction_amount) continue;
+        if (criteria.min_transaction_amount && amount < criteria.min_transaction_amount) {continue;}
+        if (criteria.max_transaction_amount && amount > criteria.max_transaction_amount) {continue;}
       }
       
       return test; // First eligible test wins
@@ -650,7 +650,7 @@ export class ABTestingFramework extends EventEmitter {
   }
 
   private calculateAccuracy(results: TestResult[]): number {
-    if (results.length === 0) return 0;
+    if (results.length === 0) {return 0;}
     
     const correctPredictions = results.filter(r => 
       r.business_outcome?.fraud_detected === (r.response.prediction.class === 'fraud')
@@ -690,7 +690,7 @@ export class ABTestingFramework extends EventEmitter {
   }
 
   private calculateFalsePositiveRate(results: TestResult[]): number {
-    if (results.length === 0) return 0;
+    if (results.length === 0) {return 0;}
     
     const falsePositives = results.filter(r => r.business_outcome?.false_positive).length;
     return falsePositives / results.length;
@@ -734,7 +734,7 @@ export class ABTestingFramework extends EventEmitter {
   }
 
   private calculateErrorRate(results: TestResult[]): number {
-    if (results.length === 0) return 0;
+    if (results.length === 0) {return 0;}
     
     const errors = results.filter(r => r.performance.response_time_ms > 1000).length;
     return errors / results.length;

@@ -357,7 +357,7 @@ function extractResourceType(request: NextRequest): string {
 function extractRegionId(request: NextRequest, options: AuthOptions): string | undefined {
   // Check query parameters first
   const regionParam = request.nextUrl.searchParams.get('region');
-  if (regionParam) return regionParam;
+  if (regionParam) {return regionParam;}
   
   // Check options
   if (options.allowedRegions?.length === 1) {
@@ -384,9 +384,9 @@ function extractAction(request: NextRequest): string {
   };
   
   // Special cases for specific endpoints
-  if (pathname.includes('/assign')) return 'assign_driver';
-  if (pathname.includes('/contact')) return 'contact_driver_masked';
-  if (pathname.includes('/live-map')) return 'view_live_map';
+  if (pathname.includes('/assign')) {return 'assign_driver';}
+  if (pathname.includes('/contact')) {return 'contact_driver_masked';}
+  if (pathname.includes('/live-map')) {return 'view_live_map';}
   
   return actionMap[method] || 'unknown';
 }
@@ -414,7 +414,7 @@ function extractClientIP(request: NextRequest): string {
   }
   
   const realIP = request.headers.get('x-real-ip');
-  if (realIP) return realIP;
+  if (realIP) {return realIP;}
   
   return 'unknown';
 }

@@ -455,7 +455,7 @@ class SOSAlertProcessor {
    * Update driver status to emergency
    */
   private async updateDriverStatusToEmergency(driverId?: string): Promise<void> {
-    if (!driverId) return;
+    if (!driverId) {return;}
     
     try {
       await db.query(

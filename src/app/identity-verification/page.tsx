@@ -125,7 +125,7 @@ const IdentityVerificationListPage = () => {
   }, [router]);
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) {return;}
     setVerifications(MOCK_VERIFICATIONS);
   }, [isClient]);
 
@@ -182,7 +182,7 @@ const IdentityVerificationListPage = () => {
   // Sort by priority (oldest first, VIP first)
   const sortedVerifications = useMemo(() => {
     return [...filteredVerifications].sort((a, b) => {
-      if (a.isVIP !== b.isVIP) return a.isVIP ? -1 : 1;
+      if (a.isVIP !== b.isVIP) {return a.isVIP ? -1 : 1;}
       return a.priority - b.priority;
     });
   }, [filteredVerifications]);

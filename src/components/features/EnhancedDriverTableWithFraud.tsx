@@ -319,9 +319,9 @@ const EnhancedDriverTable = () => {
   ];
 
   const getRiskLevelFromScore = (score: number): string => {
-    if (score >= 80) return 'critical';
-    if (score >= 60) return 'high';
-    if (score >= 40) return 'medium';
+    if (score >= 80) {return 'critical';}
+    if (score >= 60) {return 'high';}
+    if (score >= 40) {return 'medium';}
     return 'low';
   };
 
@@ -360,7 +360,7 @@ const EnhancedDriverTable = () => {
 
   // Sorting logic
   const sortedDrivers = React.useMemo(() => {
-    if (!sortField) return filteredDrivers;
+    if (!sortField) {return filteredDrivers;}
 
     return [...filteredDrivers].sort((a, b) => {
       let aValue, bValue;
@@ -394,8 +394,8 @@ const EnhancedDriverTable = () => {
           return 0;
       }
 
-      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      if (aValue < bValue) {return sortDirection === 'asc' ? -1 : 1;}
+      if (aValue > bValue) {return sortDirection === 'asc' ? 1 : -1;}
       return 0;
     });
   }, [filteredDrivers, sortField, sortDirection]);

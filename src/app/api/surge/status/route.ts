@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
         averageMultiplier: parseFloat(avgMultiplierOverall.toFixed(2)),
         maxMultiplier: hexStateStats.length > 0 ? Math.max(...hexStateStats.map(s => s.maxMultiplier)) : 1.0,
         serviceBreakdown: hexStateStats.reduce((acc, stat) => {
-          if (!acc[stat.service_key]) acc[stat.service_key] = {};
+          if (!acc[stat.service_key]) {acc[stat.service_key] = {};}
           acc[stat.service_key][stat.source] = {
             hexCount: stat.hexCount,
             avgMultiplier: parseFloat(stat.avgMultiplier.toFixed(2)),
@@ -144,7 +144,7 @@ export async function GET(request: NextRequest) {
       overrides: {
         active: activeOverrides.reduce((sum, o) => sum + o.count, 0),
         byService: activeOverrides.reduce((acc, o) => {
-          if (!acc[o.service_key]) acc[o.service_key] = {};
+          if (!acc[o.service_key]) {acc[o.service_key] = {};}
           acc[o.service_key][o.status] = o.count;
           return acc;
         }, {} as any)
@@ -152,7 +152,7 @@ export async function GET(request: NextRequest) {
       schedules: {
         upcoming24h: upcomingSchedules.reduce((sum, s) => sum + s.count, 0),
         byService: upcomingSchedules.reduce((acc, s) => {
-          if (!acc[s.service_key]) acc[s.service_key] = {};
+          if (!acc[s.service_key]) {acc[s.service_key] = {};}
           acc[s.service_key][s.status] = s.count;
           return acc;
         }, {} as any)

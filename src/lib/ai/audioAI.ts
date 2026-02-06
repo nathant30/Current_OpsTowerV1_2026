@@ -135,10 +135,10 @@ export class AudioFraudDetectionEngine {
     const stressLevel = this.calculateStressLevel(audioFeatures);
 
     const anomalies = [];
-    if (similarity < 0.7) anomalies.push('voice_mismatch');
-    if (!pitchMatch) anomalies.push('pitch_anomaly');
-    if (!tempoMatch) anomalies.push('tempo_anomaly');
-    if (spoofingRisk > 0.6) anomalies.push('spoofing_detected');
+    if (similarity < 0.7) {anomalies.push('voice_mismatch');}
+    if (!pitchMatch) {anomalies.push('pitch_anomaly');}
+    if (!tempoMatch) {anomalies.push('tempo_anomaly');}
+    if (spoofingRisk > 0.6) {anomalies.push('spoofing_detected');}
 
     return {
       isAuthentic: similarity > 0.8 && spoofingRisk < 0.3,
@@ -155,10 +155,10 @@ export class AudioFraudDetectionEngine {
   async detectVoiceSpoofing(audioFeatures: any): Promise<number> {
     let riskScore = 0;
 
-    if (audioFeatures.artificialMarkers > 0.3) riskScore += 0.4;
-    if (audioFeatures.qualityInconsistency > 0.5) riskScore += 0.3;
-    if (audioFeatures.backgroundNoise.artificialSounds.length > 0) riskScore += 0.2;
-    if (audioFeatures.frequencyAnomalies > 0.4) riskScore += 0.3;
+    if (audioFeatures.artificialMarkers > 0.3) {riskScore += 0.4;}
+    if (audioFeatures.qualityInconsistency > 0.5) {riskScore += 0.3;}
+    if (audioFeatures.backgroundNoise.artificialSounds.length > 0) {riskScore += 0.2;}
+    if (audioFeatures.frequencyAnomalies > 0.4) {riskScore += 0.3;}
 
     const philippinesAccents = ['manila', 'cebu', 'davao', 'tagalog', 'bisaya'];
     if (!philippinesAccents.includes(audioFeatures.accent.toLowerCase())) {
@@ -250,7 +250,7 @@ export class AudioFraudDetectionEngine {
   }
 
   private calculateVoiceSimilarity(profile1: number[], profile2: number[]): number {
-    if (profile1.length !== profile2.length) return 0;
+    if (profile1.length !== profile2.length) {return 0;}
     
     let similarity = 0;
     for (let i = 0; i < profile1.length; i++) {
@@ -261,7 +261,7 @@ export class AudioFraudDetectionEngine {
   }
 
   private averageVoicePrint(voicePrints: number[][]): number[] {
-    if (voicePrints.length === 0) return [];
+    if (voicePrints.length === 0) {return [];}
     
     const length = voicePrints[0].length;
     const avg = new Array(length).fill(0);
@@ -284,9 +284,9 @@ export class AudioFraudDetectionEngine {
     const pitch = audioFeatures.pitch;
     const tempo = audioFeatures.tempo;
     
-    if (pitch > 180 && tempo > 1.5) return 'excited_or_stressed';
-    if (pitch < 120 && tempo < 0.8) return 'calm_or_depressed';
-    if (tempo > 1.3) return 'anxious';
+    if (pitch > 180 && tempo > 1.5) {return 'excited_or_stressed';}
+    if (pitch < 120 && tempo < 0.8) {return 'calm_or_depressed';}
+    if (tempo > 1.3) {return 'anxious';}
     
     return 'neutral';
   }
@@ -294,10 +294,10 @@ export class AudioFraudDetectionEngine {
   private calculateStressLevel(audioFeatures: any): number {
     let stress = 0;
     
-    if (audioFeatures.pitch > 200) stress += 0.3;
-    if (audioFeatures.tempo > 1.8) stress += 0.3;
-    if (audioFeatures.qualityInconsistency > 0.5) stress += 0.2;
-    if (audioFeatures.speechPatterns.includes('hesitation')) stress += 0.2;
+    if (audioFeatures.pitch > 200) {stress += 0.3;}
+    if (audioFeatures.tempo > 1.8) {stress += 0.3;}
+    if (audioFeatures.qualityInconsistency > 0.5) {stress += 0.2;}
+    if (audioFeatures.speechPatterns.includes('hesitation')) {stress += 0.2;}
     
     return Math.min(stress, 1.0);
   }
@@ -305,16 +305,16 @@ export class AudioFraudDetectionEngine {
   private calculateVoiceRiskScore(authenticity: AudioAnalysisResult, indicators: string[]): number {
     let risk = 0;
     
-    if (!authenticity.isAuthentic) risk += 0.4;
+    if (!authenticity.isAuthentic) {risk += 0.4;}
     risk += authenticity.spoofingRisk * 0.3;
     risk += indicators.length * 0.1;
-    if (authenticity.stressLevel > 0.7) risk += 0.2;
+    if (authenticity.stressLevel > 0.7) {risk += 0.2;}
     
     return Math.min(risk, 1.0);
   }
 
   async analyzeCallPattern(calls: VoiceCallAnalysis[], userId: string): Promise<any> {
-    if (calls.length === 0) return null;
+    if (calls.length === 0) {return null;}
 
     const avgRiskScore = calls.reduce((sum, call) => sum + call.riskScore, 0) / calls.length;
     const totalFraudIndicators = calls.reduce((sum, call) => sum + call.fraudIndicators.length, 0);
@@ -322,9 +322,9 @@ export class AudioFraudDetectionEngine {
     const timePattern = this.analyzeCallTiming(calls);
 
     const suspiciousPatterns = [];
-    if (avgRiskScore > 0.6) suspiciousPatterns.push('high_avg_risk');
-    if (totalFraudIndicators > calls.length * 2) suspiciousPatterns.push('multiple_fraud_indicators');
-    if (callFrequency > 10 && timePattern === 'unusual') suspiciousPatterns.push('suspicious_call_pattern');
+    if (avgRiskScore > 0.6) {suspiciousPatterns.push('high_avg_risk');}
+    if (totalFraudIndicators > calls.length * 2) {suspiciousPatterns.push('multiple_fraud_indicators');}
+    if (callFrequency > 10 && timePattern === 'unusual') {suspiciousPatterns.push('suspicious_call_pattern');}
 
     return {
       userId,
@@ -338,12 +338,12 @@ export class AudioFraudDetectionEngine {
   }
 
   private analyzeCallTiming(calls: VoiceCallAnalysis[]): string {
-    if (calls.length < 3) return 'insufficient_data';
+    if (calls.length < 3) {return 'insufficient_data';}
     
     const hours = calls.map(call => call.timestamp.getHours());
     const nightCalls = hours.filter(hour => hour < 6 || hour > 22).length;
     
-    if (nightCalls > calls.length * 0.7) return 'unusual';
+    if (nightCalls > calls.length * 0.7) {return 'unusual';}
     return 'normal';
   }
 
@@ -353,7 +353,7 @@ export class AudioFraudDetectionEngine {
 
   async updateVoiceProfile(userId: string, newAudioData: ArrayBuffer): Promise<void> {
     const existingProfile = this.voiceProfiles.get(userId);
-    if (!existingProfile) return;
+    if (!existingProfile) {return;}
 
     const newFeatures = await this.extractAudioFeatures(newAudioData);
     
@@ -383,7 +383,7 @@ export class RealTimeVoiceMonitor {
     logger.info(`Started real-time voice monitoring for call ${callId}`);
     
     setInterval(async () => {
-      if (!this.activeMonitoring.get(callId)) return;
+      if (!this.activeMonitoring.get(callId)) {return;}
       
       await this.processRealTimeAudio(callId, userId);
     }, 2000);

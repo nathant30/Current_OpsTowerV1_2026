@@ -66,11 +66,11 @@ function InvoicesContent() {
         sortOrder: 'desc' as const,
       };
 
-      if (searchTerm) params.search = searchTerm;
-      if (statusFilter.length > 0) params.status = statusFilter;
-      if (dateFrom) params.dateFrom = dateFrom;
-      if (dateTo) params.dateTo = dateTo;
-      if (accountFilter) params.accountId = accountFilter;
+      if (searchTerm) {params.search = searchTerm;}
+      if (statusFilter.length > 0) {params.status = statusFilter;}
+      if (dateFrom) {params.dateFrom = dateFrom;}
+      if (dateTo) {params.dateTo = dateTo;}
+      if (accountFilter) {params.accountId = accountFilter;}
 
       const response = await billingApi.invoices.getAll(params);
 
@@ -91,7 +91,7 @@ function InvoicesContent() {
   };
 
   const handleBulkAction = async (action: 'send' | 'mark_paid' | 'send_reminder') => {
-    if (selectedInvoices.length === 0) return;
+    if (selectedInvoices.length === 0) {return;}
 
     try {
       setBulkActionLoading(true);

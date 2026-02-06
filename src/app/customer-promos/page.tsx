@@ -171,7 +171,7 @@ const CustomerPromosPage = () => {
   }, [router]);
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) {return;}
     setPromos(MOCK_PROMOS);
   }, [isClient]);
 

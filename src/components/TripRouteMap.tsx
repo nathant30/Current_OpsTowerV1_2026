@@ -48,7 +48,7 @@ export default function TripRouteMap({
     };
 
     const initializeMap = () => {
-      if (!mapRef.current) return;
+      if (!mapRef.current) {return;}
 
       try {
         const mapOptions = {
@@ -230,7 +230,7 @@ export default function TripRouteMap({
         
         // Ensure minimum zoom level
         const listener = window.google.maps.event.addListener(googleMap, "idle", function() {
-          if (googleMap.getZoom() > 16) googleMap.setZoom(16);
+          if (googleMap.getZoom() > 16) {googleMap.setZoom(16);}
           window.google.maps.event.removeListener(listener);
         });
 

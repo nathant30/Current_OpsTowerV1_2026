@@ -181,7 +181,7 @@ class ConnectionPoolOptimizer {
     }
 
     const config = this.poolConfigs.get(availablePools[0][0]);
-    if (!config) return availablePools[0][1];
+    if (!config) {return availablePools[0][1];}
 
     switch (config.loadBalanceStrategy) {
       case 'round-robin':
@@ -377,7 +377,7 @@ class ConnectionPoolOptimizer {
 
   private updatePoolStatistics(name: string, pool: Pool): void {
     const stats = this.statistics.get(name);
-    if (!stats) return;
+    if (!stats) {return;}
 
     // Update connection counts
     stats.totalConnections = pool.totalCount;

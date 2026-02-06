@@ -40,7 +40,7 @@ export async function getRole(id: string): Promise<RoleRecord | null> {
     FROM roles WHERE role_id = ?
   `, [id]);
   
-  if (rows.length === 0) return null;
+  if (rows.length === 0) {return null;}
   
   const row = rows[0];
   const xpressRole = XPRESS_ROLES[row.name as keyof typeof XPRESS_ROLES];
@@ -70,7 +70,7 @@ export async function getRoleByName(name: string): Promise<RoleRecord | null> {
     FROM roles WHERE name = ?
   `, [name]);
   
-  if (rows.length === 0) return null;
+  if (rows.length === 0) {return null;}
   
   const row = rows[0];
   const xpressRole = XPRESS_ROLES[row.name as keyof typeof XPRESS_ROLES];
@@ -107,7 +107,7 @@ export async function createRole(input: Partial<RoleRecord>, userId: string): Pr
 
 export async function updateRoleDirect(id: string, patch: Partial<RoleRecord>, userId: string): Promise<RoleRecord> {
   const existing = await getRole(id);
-  if (!existing) throw new Error('role_not_found');
+  if (!existing) {throw new Error('role_not_found');}
   
   // Check if role is immutable
   if (existing.is_immutable) {

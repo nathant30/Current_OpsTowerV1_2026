@@ -115,7 +115,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
   ];
 
   const canAccessItem = (item: NavigationItem): boolean => {
-    if (!item.roles) return true;
+    if (!item.roles) {return true;}
     return item.roles.includes(userRole);
   };
 
@@ -149,7 +149,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
   };
 
   const isActiveRoute = (path: string): boolean => {
-    if (path === '/dashboard' && pathname === '/') return true;
+    if (path === '/dashboard' && pathname === '/') {return true;}
     return pathname === path;
   };
 
@@ -190,7 +190,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (!startX || !startY) return;
+      if (!startX || !startY) {return;}
 
       const endX = e.changedTouches[0].clientX;
       const endY = e.changedTouches[0].clientY;

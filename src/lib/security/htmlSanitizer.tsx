@@ -78,7 +78,7 @@ export function sanitizeHTML(content: string): SanitizedContent {
  * @returns Safe HTML with basic formatting preserved
  */
 export function textToSafeHTML(text: string): string {
-  if (!text) return '';
+  if (!text) {return '';}
   
   return text
     .replace(/&/g, '&amp;')
@@ -136,7 +136,7 @@ export const SafeText: React.FC<{
   className?: string;
   preserveFormatting?: boolean;
 }> = ({ content, className = '', preserveFormatting = false }) => {
-  if (!content) return null;
+  if (!content) {return null;}
   
   if (preserveFormatting) {
     return (

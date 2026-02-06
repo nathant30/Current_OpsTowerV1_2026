@@ -719,7 +719,7 @@ class APIManagementService {
   }
 
   private scheduleKeyRotation(apiKey: APIKey): void {
-    if (!apiKey.rotationSchedule?.enabled) return;
+    if (!apiKey.rotationSchedule?.enabled) {return;}
 
     const schedule = apiKey.rotationSchedule;
     const cronExpression = this.buildCronExpression(schedule);

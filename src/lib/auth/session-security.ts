@@ -398,7 +398,7 @@ export class SessionSecurityManager {
     mfaDurationMinutes: number = 30
   ): Promise<boolean> {
     const session = this.activeSessions.get(sessionId);
-    if (!session) return false;
+    if (!session) {return false;}
 
     session.mfaVerifiedAt = mfaVerifiedAt;
     session.mfaExpiresAt = new Date(mfaVerifiedAt.getTime() + mfaDurationMinutes * 60 * 1000);
@@ -419,7 +419,7 @@ export class SessionSecurityManager {
    */
   public async terminateSession(sessionId: string, reason: string): Promise<boolean> {
     const session = this.activeSessions.get(sessionId);
-    if (!session) return false;
+    if (!session) {return false;}
 
     session.isActive = false;
 

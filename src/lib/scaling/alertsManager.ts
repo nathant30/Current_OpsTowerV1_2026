@@ -77,7 +77,7 @@ class AlertsManager {
 
   private updateNotificationStatus(alertId: string): void {
     const status = this.notificationHistory.get(alertId);
-    if (!status) return;
+    if (!status) {return;}
 
     status.channels = status.channels.map(channel => ({
       ...channel,
@@ -359,7 +359,7 @@ class AlertsManager {
   async acknowledgeAlert(alertId: string, userId: string, comment?: string): Promise<boolean> {
     // In a real implementation, this would update the alert with acknowledgment info
     const alert = monitoringSystem.getAllAlerts().find(a => a.id === alertId);
-    if (!alert) return false;
+    if (!alert) {return false;}
 
     // Add acknowledgment metadata (in real implementation, this would be persisted)
     (alert as any).acknowledged = {

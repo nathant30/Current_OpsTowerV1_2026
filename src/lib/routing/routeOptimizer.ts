@@ -209,7 +209,7 @@ class RouteOptimizer {
    * Initialize the route optimizer
    */
   async initialize(): Promise<void> {
-    if (this.isInitialized) return;
+    if (this.isInitialized) {return;}
 
     try {
       await loadGoogleMapsAPI();
@@ -420,16 +420,16 @@ class RouteOptimizer {
 
       // Safety score based on route characteristics
       let safetyScore = 100;
-      if (philippinesData.floodProne) safetyScore -= 20;
-      if (philippinesData.peakHours) safetyScore -= 15;
-      if (realTimeData.currentTraffic.some(t => t.severity === 'severe')) safetyScore -= 25;
-      if (realTimeData.roadClosures.length > 0) safetyScore -= 10;
+      if (philippinesData.floodProne) {safetyScore -= 20;}
+      if (philippinesData.peakHours) {safetyScore -= 15;}
+      if (realTimeData.currentTraffic.some(t => t.severity === 'severe')) {safetyScore -= 25;}
+      if (realTimeData.roadClosures.length > 0) {safetyScore -= 10;}
 
       // Weather impact
       let weatherAdjustment = 1.0;
       if (realTimeData.weatherImpact) {
         weatherAdjustment = realTimeData.weatherImpact.delayFactor;
-        if (realTimeData.weatherImpact.condition === 'flood') safetyScore -= 30;
+        if (realTimeData.weatherImpact.condition === 'flood') {safetyScore -= 30;}
       }
 
       // Calculate weighted score based on preferences
@@ -586,7 +586,7 @@ class RouteOptimizer {
   }
 
   private checkFloodProneRoute(routes: google.maps.DirectionsRoute[], regionConfig: RegionConfig): boolean {
-    if (!regionConfig?.floodProneAreas) return false;
+    if (!regionConfig?.floodProneAreas) {return false;}
 
     for (const route of routes) {
       for (const leg of route.legs) {
@@ -610,7 +610,7 @@ class RouteOptimizer {
   }
 
   private isWithinPeakHours(regionConfig: RegionConfig): boolean {
-    if (!regionConfig?.peakHours) return false;
+    if (!regionConfig?.peakHours) {return false;}
 
     const now = new Date();
     const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;

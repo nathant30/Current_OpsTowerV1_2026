@@ -550,47 +550,47 @@ const EnhancedPassengerTableWithFraud = () => {
   ];
 
   const getStatusIcon = (status: string) => {
-    if (status === 'vip') return '👑';
-    if (status === 'premium') return '⭐';
-    if (status === 'regular') return '🟢';
-    if (status === 'new') return '🟠';
-    if (status === 'suspended') return '🔴';
-    if (status === 'banned') return '⛔';
-    if (status === 'inactive') return '⚫';
+    if (status === 'vip') {return '👑';}
+    if (status === 'premium') {return '⭐';}
+    if (status === 'regular') {return '🟢';}
+    if (status === 'new') {return '🟠';}
+    if (status === 'suspended') {return '🔴';}
+    if (status === 'banned') {return '⛔';}
+    if (status === 'inactive') {return '⚫';}
     return '🔵';
   };
 
   const getCompletionRateColor = (rate: number) => {
-    if (rate >= 95) return 'text-green-600 bg-green-50';
-    if (rate >= 85) return 'text-yellow-600 bg-yellow-50';
+    if (rate >= 95) {return 'text-green-600 bg-green-50';}
+    if (rate >= 85) {return 'text-yellow-600 bg-yellow-50';}
     return 'text-red-600 bg-red-50';
   };
 
   const getFraudRiskColor = (risk: string) => {
-    if (risk === 'Critical') return 'bg-red-100 text-red-800 border border-red-300';
-    if (risk === 'High') return 'bg-orange-100 text-orange-800 border border-orange-300';
-    if (risk === 'Medium') return 'bg-yellow-100 text-yellow-800 border border-yellow-300';
+    if (risk === 'Critical') {return 'bg-red-100 text-red-800 border border-red-300';}
+    if (risk === 'High') {return 'bg-orange-100 text-orange-800 border border-orange-300';}
+    if (risk === 'Medium') {return 'bg-yellow-100 text-yellow-800 border border-yellow-300';}
     return 'bg-green-100 text-green-800 border border-green-300';
   };
 
   const getFraudScoreColor = (score: number) => {
-    if (score >= 80) return 'bg-red-100 text-red-800 border border-red-300';
-    if (score >= 60) return 'bg-orange-100 text-orange-800 border border-orange-300';
-    if (score >= 40) return 'bg-yellow-100 text-yellow-800 border border-yellow-300';
+    if (score >= 80) {return 'bg-red-100 text-red-800 border border-red-300';}
+    if (score >= 60) {return 'bg-orange-100 text-orange-800 border border-orange-300';}
+    if (score >= 40) {return 'bg-yellow-100 text-yellow-800 border border-yellow-300';}
     return 'bg-green-100 text-green-800 border border-green-300';
   };
 
   const getInvestigationStatusColor = (status: string) => {
-    if (status === 'investigating') return 'bg-red-100 text-red-800 border border-red-300';
-    if (status === 'monitoring') return 'bg-yellow-100 text-yellow-800 border border-yellow-300';
-    if (status === 'flagged') return 'bg-orange-100 text-orange-800 border border-orange-300';
-    if (status === 'cleared') return 'bg-blue-100 text-blue-800 border border-blue-300';
+    if (status === 'investigating') {return 'bg-red-100 text-red-800 border border-red-300';}
+    if (status === 'monitoring') {return 'bg-yellow-100 text-yellow-800 border border-yellow-300';}
+    if (status === 'flagged') {return 'bg-orange-100 text-orange-800 border border-orange-300';}
+    if (status === 'cleared') {return 'bg-blue-100 text-blue-800 border border-blue-300';}
     return 'bg-green-100 text-green-800 border border-green-300';
   };
 
   const getTrendIcon = (trend: string) => {
-    if (trend === 'up') return <TrendingUp className="w-3 h-3 text-green-500 inline ml-1" />;
-    if (trend === 'down') return <TrendingDown className="w-3 h-3 text-red-500 inline ml-1" />;
+    if (trend === 'up') {return <TrendingUp className="w-3 h-3 text-green-500 inline ml-1" />;}
+    if (trend === 'down') {return <TrendingDown className="w-3 h-3 text-red-500 inline ml-1" />;}
     return null;
   };
 
@@ -846,7 +846,7 @@ const EnhancedPassengerTableWithFraud = () => {
   };
 
   const handleResizeMove = (e: MouseEvent) => {
-    if (!isResizing) return;
+    if (!isResizing) {return;}
     
     const deltaX = e.clientX - resizeStartX;
     const newWidth = Math.max(60, resizeStartWidth + deltaX); // Minimum width of 60px
@@ -983,16 +983,16 @@ const EnhancedPassengerTableWithFraud = () => {
       return matchesSearch && matchesType && matchesStatus;
     })
     .sort((a, b) => {
-      if (!sortField) return 0;
+      if (!sortField) {return 0;}
       
       let aValue = a[sortField as keyof typeof a];
       let bValue = b[sortField as keyof typeof b];
       
-      if (typeof aValue === 'string') aValue = aValue.toLowerCase();
-      if (typeof bValue === 'string') bValue = bValue.toLowerCase();
+      if (typeof aValue === 'string') {aValue = aValue.toLowerCase();}
+      if (typeof bValue === 'string') {bValue = bValue.toLowerCase();}
       
-      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      if (aValue < bValue) {return sortDirection === 'asc' ? -1 : 1;}
+      if (aValue > bValue) {return sortDirection === 'asc' ? 1 : -1;}
       return 0;
     });
 

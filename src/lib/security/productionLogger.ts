@@ -28,7 +28,7 @@ class ProductionLogger {
   }
 
   private sanitizeData(data: any): any {
-    if (!data || typeof data !== 'object') return data;
+    if (!data || typeof data !== 'object') {return data;}
 
     const sensitiveKeys = [
       'password', 'token', 'secret', 'key', 'authorization',
@@ -61,28 +61,28 @@ class ProductionLogger {
   }
 
   error(message: string, data?: any, context?: LogContext): void {
-    if (!this.shouldLog(LogLevel.ERROR)) return;
+    if (!this.shouldLog(LogLevel.ERROR)) {return;}
     
     const sanitizedData = this.sanitizeData(data);
     console.error(this.formatMessage('ERROR', message, context), sanitizedData);
   }
 
   warn(message: string, data?: any, context?: LogContext): void {
-    if (!this.shouldLog(LogLevel.WARN)) return;
+    if (!this.shouldLog(LogLevel.WARN)) {return;}
     
     const sanitizedData = this.sanitizeData(data);
     console.warn(this.formatMessage('WARN', message, context), sanitizedData);
   }
 
   info(message: string, data?: any, context?: LogContext): void {
-    if (!this.shouldLog(LogLevel.INFO)) return;
+    if (!this.shouldLog(LogLevel.INFO)) {return;}
     
     const sanitizedData = this.sanitizeData(data);
     console.log(`[INFO] ${message}`, sanitizedData);
   }
 
   debug(message: string, data?: any, context?: LogContext): void {
-    if (!this.shouldLog(LogLevel.DEBUG)) return;
+    if (!this.shouldLog(LogLevel.DEBUG)) {return;}
     
     const sanitizedData = this.sanitizeData(data);
     console.debug(`[DEBUG] ${message}`, sanitizedData);
@@ -90,12 +90,12 @@ class ProductionLogger {
 
   // Performance logging
   time(label: string): void {
-    if (!this.shouldLog(LogLevel.DEBUG)) return;
+    if (!this.shouldLog(LogLevel.DEBUG)) {return;}
     console.time(label);
   }
 
   timeEnd(label: string): void {
-    if (!this.shouldLog(LogLevel.DEBUG)) return;
+    if (!this.shouldLog(LogLevel.DEBUG)) {return;}
     console.timeEnd(label);
   }
 

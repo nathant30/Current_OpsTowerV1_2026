@@ -399,7 +399,7 @@ class EnhancedMetricsCollector {
   // Get metric data
   getMetric(name: string, timeRangeMs: number = 300000): MetricTimeSeries | null {
     const metric = this.metrics.get(name);
-    if (!metric) return null;
+    if (!metric) {return null;}
 
     const cutoff = Date.now() - timeRangeMs;
     const filteredPoints = metric.dataPoints.filter(
@@ -467,7 +467,7 @@ class EnhancedMetricsCollector {
     let output = '';
     
     for (const [name, metric] of this.metrics) {
-      if (metric.dataPoints.length === 0) continue;
+      if (metric.dataPoints.length === 0) {continue;}
       
       const latestPoint = metric.dataPoints[metric.dataPoints.length - 1];
       const labelsStr = latestPoint.tags 

@@ -114,9 +114,9 @@ const ShiftDetailsPage = ({ params }: { params: { id: string } }) => {
 
   // Format time offset
   const formatOffset = (minutes?: number) => {
-    if (minutes === undefined) return '';
-    if (minutes === 0) return 'On time';
-    if (minutes > 0) return `${minutes}m early`;
+    if (minutes === undefined) {return '';}
+    if (minutes === 0) {return 'On time';}
+    if (minutes > 0) {return `${minutes}m early`;}
     return `${Math.abs(minutes)}m late`;
   };
 

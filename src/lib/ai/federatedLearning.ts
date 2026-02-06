@@ -357,11 +357,11 @@ export class FederatedLearningOrchestrator {
   private validateUpdates(updates: ModelUpdate[]): ModelUpdate[] {
     return updates.filter(update => {
       const node = this.nodes.get(update.nodeId);
-      if (!node) return false;
+      if (!node) {return false;}
       
-      if (update.localAccuracy < 0.5 || update.localAccuracy > 1.0) return false;
-      if (update.sampleCount < 100) return false;
-      if (update.privacyBudgetUsed > node.privacyProfile.differentialPrivacyEpsilon) return false;
+      if (update.localAccuracy < 0.5 || update.localAccuracy > 1.0) {return false;}
+      if (update.sampleCount < 100) {return false;}
+      if (update.privacyBudgetUsed > node.privacyProfile.differentialPrivacyEpsilon) {return false;}
       
       return true;
     });
@@ -465,7 +465,7 @@ export class FederatedLearningOrchestrator {
     const allNodes = Array.from(this.nodes.values());
     
     return allNodes.filter(node => {
-      if (!node.isActive) return false;
+      if (!node.isActive) {return false;}
       
       switch (query.queryType) {
         case 'pattern_match':
@@ -557,7 +557,7 @@ export class FederatedLearningOrchestrator {
   }
 
   private calculateConsistencyScore(results: any[]): number {
-    if (results.length < 2) return 1.0;
+    if (results.length < 2) {return 1.0;}
     
     const accuracies = results.map(r => r.accuracy);
     const mean = accuracies.reduce((a, b) => a + b, 0) / accuracies.length;

@@ -577,7 +577,7 @@ class DriverSafetyMonitoringSystem {
   }
 
   private calculateResponseComplianceScore(history: any): number {
-    if (history.total === 0) return 100; // No incidents = perfect score
+    if (history.total === 0) {return 100;} // No incidents = perfect score
     
     const falseAlarmRate = history.falseAlarms / history.total;
     const resolutionRate = history.resolved / Math.max(1, history.total - history.falseAlarms);
@@ -604,8 +604,8 @@ class DriverSafetyMonitoringSystem {
     // Recent training bonus
     if (compliance.lastTraining) {
       const daysSinceTraining = (Date.now() - compliance.lastTraining.getTime()) / (24 * 60 * 60 * 1000);
-      if (daysSinceTraining < 90) score += 20; // Recent training
-      else if (daysSinceTraining < 180) score += 10;
+      if (daysSinceTraining < 90) {score += 20;} // Recent training
+      else if (daysSinceTraining < 180) {score += 10;}
     }
     
     // Compliance status
@@ -619,7 +619,7 @@ class DriverSafetyMonitoringSystem {
   }
 
   private calculateBehavioralScore(patterns: BehavioralPattern[]): number {
-    if (patterns.length === 0) return 100; // No patterns = good
+    if (patterns.length === 0) {return 100;} // No patterns = good
     
     let score = 100;
     
@@ -641,22 +641,22 @@ class DriverSafetyMonitoringSystem {
     let riskScore = 100 - overallScore; // Inverse of safety score
     
     // Assess risk factors
-    if (overallScore < 50) riskFactors.push('Low overall safety score');
-    if (history.recent30Days > 3) riskFactors.push('High recent incident frequency');
-    if (history.falseAlarms / Math.max(1, history.total) > 0.3) riskFactors.push('High false alarm rate');
-    if (compliance.status === 'non_compliant') riskFactors.push('Safety compliance issues');
-    if (patterns.some(p => p.riskLevel >= 7)) riskFactors.push('High-risk behavioral patterns detected');
+    if (overallScore < 50) {riskFactors.push('Low overall safety score');}
+    if (history.recent30Days > 3) {riskFactors.push('High recent incident frequency');}
+    if (history.falseAlarms / Math.max(1, history.total) > 0.3) {riskFactors.push('High false alarm rate');}
+    if (compliance.status === 'non_compliant') {riskFactors.push('Safety compliance issues');}
+    if (patterns.some(p => p.riskLevel >= 7)) {riskFactors.push('High-risk behavioral patterns detected');}
     
     // Additional risk score adjustments
-    if (history.escalated > 0) riskScore += 10;
-    if (patterns.length > 3) riskScore += patterns.length * 5;
+    if (history.escalated > 0) {riskScore += 10;}
+    if (patterns.length > 3) {riskScore += patterns.length * 5;}
     
     // Determine risk level
     let riskLevel: SafetyRiskLevel;
-    if (riskScore >= 80) riskLevel = 'critical';
-    else if (riskScore >= 60) riskLevel = 'high';
-    else if (riskScore >= 40) riskLevel = 'medium';
-    else riskLevel = 'low';
+    if (riskScore >= 80) {riskLevel = 'critical';}
+    else if (riskScore >= 60) {riskLevel = 'high';}
+    else if (riskScore >= 40) {riskLevel = 'medium';}
+    else {riskLevel = 'low';}
     
     return { riskLevel, riskFactors, riskScore: Math.min(100, riskScore) };
   }
@@ -739,7 +739,7 @@ class DriverSafetyMonitoringSystem {
       LIMIT 1
     `, [driverId]);
     
-    if (previousResult.rows.length === 0) return 0;
+    if (previousResult.rows.length === 0) {return 0;}
     
     return currentScore - previousResult.rows[0].overall_safety_score;
   }
@@ -873,7 +873,7 @@ class DriverSafetyMonitoringSystem {
         LIMIT 1
       `, [driverId]);
       
-      if (result.rows.length === 0) return null;
+      if (result.rows.length === 0) {return null;}
       
       const row = result.rows[0];
       return {

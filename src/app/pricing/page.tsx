@@ -183,7 +183,7 @@ export default function PricingManagement() {
   const fetchProfileBundle = async (profileId: number) => {
     try {
       const response = await fetch(`/api/pricing/profiles/${profileId}`)
-      if (!response.ok) throw new Error('Failed to fetch profile details')
+      if (!response.ok) {throw new Error('Failed to fetch profile details')}
       const bundle = await response.json()
       setProfileBundle(bundle)
       await fetchPreview(profileId)
@@ -205,7 +205,7 @@ export default function PricingManagement() {
           riderView: riderViewMode
         })
       })
-      if (!response.ok) throw new Error('Failed to compute preview')
+      if (!response.ok) {throw new Error('Failed to compute preview')}
       const preview = await response.json()
       setPreviewData(preview)
     } catch (err) {
@@ -222,7 +222,7 @@ export default function PricingManagement() {
           upserts: [component]
         })
       })
-      if (!response.ok) throw new Error('Failed to update component')
+      if (!response.ok) {throw new Error('Failed to update component')}
       await fetchProfileBundle(profileId)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update component')
@@ -282,7 +282,7 @@ export default function PricingManagement() {
   }
   
   const handleComponentSave = async () => {
-    if (!selectedProfileId || !editingComponent) return
+    if (!selectedProfileId || !editingComponent) {return}
     await updateComponent(selectedProfileId, editingComponent)
     setShowComponentModal(false)
     setEditingComponent(null)
@@ -295,7 +295,7 @@ export default function PricingManagement() {
   }
 
   const handleDelete = async (id: number, type: string) => {
-    if (!confirm(`Are you sure you want to delete this ${type}?`)) return
+    if (!confirm(`Are you sure you want to delete this ${type}?`)) {return}
     
     try {
       const response = await fetch(`/api/pricing/${type}s/${id}`, {

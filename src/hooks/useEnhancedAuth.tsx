@@ -314,7 +314,7 @@ export function EnhancedAuthProvider({ children }: { children: ReactNode }) {
   };
 
   const enableMFA = async (): Promise<{ qrCode: string; backupCodes: string[] }> => {
-    if (!authState.user) throw new Error('Not authenticated');
+    if (!authState.user) {throw new Error('Not authenticated');}
 
     const token = localStorage.getItem(TOKEN_KEY);
     const response = await fetch('/api/auth/enhanced/mfa/enable', {
@@ -389,7 +389,7 @@ export function EnhancedAuthProvider({ children }: { children: ReactNode }) {
 
   // Regional access functions
   const canAccessRegion = (regionId: string): boolean => {
-    if (!authState.user) return false;
+    if (!authState.user) {return false;}
     const regions = rbacEngine.getEffectiveRegions(authState.user);
     return regions.length === 0 || regions.includes(regionId);
   };
@@ -400,12 +400,12 @@ export function EnhancedAuthProvider({ children }: { children: ReactNode }) {
 
   // PII access functions
   const canUnmaskPII = (dataClass: string = 'internal'): boolean => {
-    if (!authState.user) return false;
+    if (!authState.user) {return false;}
     const effectiveScope = rbacEngine.getEffectivePIIScope(authState.user);
     
-    if (effectiveScope === 'none') return false;
-    if (effectiveScope === 'full') return true;
-    if (dataClass === 'restricted') return false; // Masked access not allowed for restricted
+    if (effectiveScope === 'none') {return false;}
+    if (effectiveScope === 'full') {return true;}
+    if (dataClass === 'restricted') {return false;} // Masked access not allowed for restricted
     
     return effectiveScope === 'masked';
   };
@@ -415,7 +415,7 @@ export function EnhancedAuthProvider({ children }: { children: ReactNode }) {
   };
 
   const getActiveTemporaryAccess = (): TemporaryAccess[] => {
-    if (!authState.user?.temporaryAccess) return [];
+    if (!authState.user?.temporaryAccess) {return [];}
     
     const now = new Date();
     return authState.user.temporaryAccess.filter(ta => 
@@ -424,7 +424,7 @@ export function EnhancedAuthProvider({ children }: { children: ReactNode }) {
   };
 
   const isSessionExpiringSoon = (minutes: number = SESSION_WARNING_MINUTES): boolean => {
-    if (!authState.sessionExpiry) return false;
+    if (!authState.sessionExpiry) {return false;}
     const warningTime = minutes * 60 * 1000; // Convert to milliseconds
     return (authState.sessionExpiry - Date.now()) <= warningTime;
   };

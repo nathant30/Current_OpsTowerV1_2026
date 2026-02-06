@@ -477,7 +477,7 @@ export class QuantumInspiredComputingEngine {
     const min = Math.min(...data);
     const range = max - min;
     
-    if (range === 0) return data.map(() => 0.5);
+    if (range === 0) {return data.map(() => 0.5);}
     
     return data.map(value => (value - min) / range);
   }
@@ -547,7 +547,7 @@ export class QuantumInspiredComputingEngine {
   }
 
   private calculateFraudProbability(measurements: any[]): number {
-    if (measurements.length === 0) return 0.5;
+    if (measurements.length === 0) {return 0.5;}
     
     const positiveMeasurements = measurements.filter(m => m.result === 1).length;
     const totalMeasurements = measurements.length;
@@ -635,8 +635,8 @@ export class QuantumInspiredComputingEngine {
   }
 
   private complexPower(base: Complex, power: number): Complex {
-    if (power === 0) return { real: 1, imaginary: 0 };
-    if (power === 1) return base;
+    if (power === 0) {return { real: 1, imaginary: 0 };}
+    if (power === 1) {return base;}
     
     let result = { real: 1, imaginary: 0 };
     for (let i = 0; i < power; i++) {
@@ -686,8 +686,8 @@ export class QuantumInspiredComputingEngine {
     let energy = 0;
     
     for (let i = 0; i < state.length - 1; i++) {
-      if (state[i] === state[i + 1]) energy -= 1;
-      else energy += 0.5;
+      if (state[i] === state[i + 1]) {energy -= 1;}
+      else {energy += 0.5;}
     }
     
     const fraudPatternPenalty = state.filter(bit => bit === 1).length > state.length * 0.7 ? 10 : 0;
@@ -735,7 +735,7 @@ export class QuantumInspiredComputingEngine {
     let complexity = 0;
     
     for (let i = 1; i < pattern.length; i++) {
-      if (pattern[i] !== pattern[i-1]) complexity++;
+      if (pattern[i] !== pattern[i-1]) {complexity++;}
     }
     
     return complexity / pattern.length;
@@ -792,7 +792,7 @@ export class QuantumInspiredComputingEngine {
       normB += b[i] * b[i];
     }
     
-    if (normA === 0 || normB === 0) return 0;
+    if (normA === 0 || normB === 0) {return 0;}
     return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
   }
 
@@ -819,7 +819,7 @@ export class QuantumInspiredComputingEngine {
     let score = 0;
     
     for (let i = 0; i < solution.length; i++) {
-      if (solution[i] === 1) score += Math.random();
+      if (solution[i] === 1) {score += Math.random();}
     }
     
     return score / solution.length;

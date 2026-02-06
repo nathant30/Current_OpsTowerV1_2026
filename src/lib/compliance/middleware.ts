@@ -74,9 +74,9 @@ export class DatabaseComplianceMiddleware {
 
     // Determine access type
     let accessType: 'read' | 'write' | 'delete' | 'export' = 'read';
-    if (queryUpper.startsWith('SELECT')) accessType = 'read';
-    else if (queryUpper.startsWith('UPDATE') || queryUpper.startsWith('INSERT')) accessType = 'write';
-    else if (queryUpper.startsWith('DELETE')) accessType = 'delete';
+    if (queryUpper.startsWith('SELECT')) {accessType = 'read';}
+    else if (queryUpper.startsWith('UPDATE') || queryUpper.startsWith('INSERT')) {accessType = 'write';}
+    else if (queryUpper.startsWith('DELETE')) {accessType = 'delete';}
     
     // Check for bulk operations (potential mass export)
     if (queryUpper.includes('LIMIT') && !queryUpper.includes('LIMIT 1')) {

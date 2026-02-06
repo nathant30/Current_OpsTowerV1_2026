@@ -207,7 +207,7 @@ function getClientIP(request: NextRequest): string {
   }
   
   const realIP = request.headers.get('x-real-ip');
-  if (realIP) return realIP;
+  if (realIP) {return realIP;}
   
   return 'unknown';
 }

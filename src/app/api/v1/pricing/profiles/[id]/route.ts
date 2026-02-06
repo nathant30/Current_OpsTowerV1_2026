@@ -105,7 +105,7 @@ export const PUT = withAuthAndRateLimit(async (
 
     // Handle each possible field update
     Object.entries(validatedData).forEach(([key, value]) => {
-      if (key === 'id') return; // Skip ID field
+      if (key === 'id') {return;} // Skip ID field
       
       switch (key) {
         case 'regionId':

@@ -80,8 +80,8 @@ export const GET = withAuthAndRateLimit(async (request: NextRequest, user) => {
       const aValue = (a as any)[paginationParams.sortBy!];
       const bValue = (b as any)[paginationParams.sortBy!];
       
-      if (aValue < bValue) return paginationParams.sortOrder === 'asc' ? -1 : 1;
-      if (aValue > bValue) return paginationParams.sortOrder === 'asc' ? 1 : -1;
+      if (aValue < bValue) {return paginationParams.sortOrder === 'asc' ? -1 : 1;}
+      if (aValue > bValue) {return paginationParams.sortOrder === 'asc' ? 1 : -1;}
       return 0;
     });
   }

@@ -76,10 +76,10 @@ export function validateMFASession(userId: string): boolean {
 export function getMFASession(userId: string): MFASession | null {
   const session = mfaSessions.get(userId);
   
-  if (!session) return null;
+  if (!session) {return null;}
   
   // Check validity
-  if (!validateMFASession(userId)) return null;
+  if (!validateMFASession(userId)) {return null;}
   
   return { ...session }; // Return copy
 }

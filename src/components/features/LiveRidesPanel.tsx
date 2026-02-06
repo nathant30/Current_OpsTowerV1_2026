@@ -277,7 +277,7 @@ export const LiveRidesPanel: React.FC<LiveRidesPanelProps> = ({
 
   // Auto refresh
   useEffect(() => {
-    if (!autoRefresh) return;
+    if (!autoRefresh) {return;}
 
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {

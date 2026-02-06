@@ -484,11 +484,11 @@ async function calculateSurgeMultiplier(
 }
 
 function calculateSmoothingFactor(history: number[]): number {
-  if (history.length < 3) return 1.0;
+  if (history.length < 3) {return 1.0;}
   
   // Calculate volatility
   const volatility = history.reduce((acc, val, idx) => {
-    if (idx === 0) return acc;
+    if (idx === 0) {return acc;}
     return acc + Math.abs(val - history[idx - 1]);
   }, 0) / (history.length - 1);
   

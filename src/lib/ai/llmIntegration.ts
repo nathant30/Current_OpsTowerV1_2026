@@ -554,9 +554,9 @@ Investigation into User ${prompt.includes('user_') ? 'ID ending in ***' : 'REDAC
     const criticalCount = alerts.filter(a => a.severity === 'critical').length;
     const highCount = alerts.filter(a => a.severity === 'high').length;
 
-    if (criticalCount > 0) return 'critical';
-    if (highCount > 5) return 'high';
-    if (alerts.length > 20) return 'medium';
+    if (criticalCount > 0) {return 'critical';}
+    if (highCount > 5) {return 'high';}
+    if (alerts.length > 20) {return 'medium';}
     return 'low';
   }
 

@@ -198,7 +198,7 @@ export class MultiAccountDetector {
     const suspectedAccounts: SuspectedAccount[] = [];
     
     for (const otherAccount of allAccounts) {
-      if (otherAccount.id === accountData.id) continue;
+      if (otherAccount.id === accountData.id) {continue;}
       
       const similarityScore = await this.compareAccounts(accountData, otherAccount);
       
@@ -235,9 +235,9 @@ export class MultiAccountDetector {
       const device1 = account1.deviceInfo;
       const device2 = account2.deviceInfo;
       
-      if (device1.model === device2.model) similarity += 30;
-      if (device1.platform === device2.platform) similarity += 20;
-      if (device1.osVersion === device2.osVersion) similarity += 15;
+      if (device1.model === device2.model) {similarity += 30;}
+      if (device1.platform === device2.platform) {similarity += 20;}
+      if (device1.osVersion === device2.osVersion) {similarity += 15;}
       factors += 3;
     }
 
@@ -436,7 +436,7 @@ export class MultiAccountDetector {
     accountData: AccountData,
     suspectedAccounts: SuspectedAccount[]
   ): Promise<void> {
-    if (!accountData.ridePatterns) return;
+    if (!accountData.ridePatterns) {return;}
 
     let totalBehavioralSimilarity = 0;
     let timingCorrelations: number[] = [];
@@ -628,7 +628,7 @@ export class MultiAccountDetector {
   private calculateStringSimilarity(str1: string, str2: string): number {
     // Levenshtein distance-based similarity
     const maxLength = Math.max(str1.length, str2.length);
-    if (maxLength === 0) return 100;
+    if (maxLength === 0) {return 100;}
     
     const distance = this.levenshteinDistance(str1, str2);
     return ((maxLength - distance) / maxLength) * 100;
@@ -637,8 +637,8 @@ export class MultiAccountDetector {
   private levenshteinDistance(str1: string, str2: string): number {
     const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
     
-    for (let i = 0; i <= str1.length; i++) matrix[0][i] = i;
-    for (let j = 0; j <= str2.length; j++) matrix[j][0] = j;
+    for (let i = 0; i <= str1.length; i++) {matrix[0][i] = i;}
+    for (let j = 0; j <= str2.length; j++) {matrix[j][0] = j;}
     
     for (let j = 1; j <= str2.length; j++) {
       for (let i = 1; i <= str1.length; i++) {
@@ -668,13 +668,13 @@ export class MultiAccountDetector {
     const local1 = email1.split('@')[0];
     const local2 = email2.split('@')[0];
     
-    if (domain1 !== domain2) return 0;
+    if (domain1 !== domain2) {return 0;}
     
     return this.calculateStringSimilarity(local1, local2);
   }
 
   private calculateAddressSimilarity(addr1: Address | undefined, addr2: Address | undefined): number {
-    if (!addr1 || !addr2) return 0;
+    if (!addr1 || !addr2) {return 0;}
     
     let similarity = 0;
     let factors = 0;
@@ -698,12 +698,12 @@ export class MultiAccountDetector {
   }
 
   private extractBarangay(address: Address | undefined): string | null {
-    if (!address) return null;
+    if (!address) {return null;}
     return address.barangay || null;
   }
 
   private detectFamilialConnections(name: string, otherNames: string[]): boolean {
-    if (!name || otherNames.length === 0) return false;
+    if (!name || otherNames.length === 0) {return false;}
     
     const nameParts = name.toLowerCase().split(' ');
     const lastName = nameParts[nameParts.length - 1];
@@ -717,9 +717,9 @@ export class MultiAccountDetector {
   private identifySharedAttributes(account1: AccountData, account2: AccountData): string[] {
     const attributes: string[] = [];
     
-    if (account1.deviceId === account2.deviceId) attributes.push('device_id');
-    if (account1.phone === account2.phone) attributes.push('phone_number');
-    if (account1.email === account2.email) attributes.push('email');
+    if (account1.deviceId === account2.deviceId) {attributes.push('device_id');}
+    if (account1.phone === account2.phone) {attributes.push('phone_number');}
+    if (account1.email === account2.email) {attributes.push('email');}
     
     return attributes;
   }

@@ -62,8 +62,8 @@ async function getUserRoleAndPermissions(userId: string): Promise<any> {
     db.get(query, [userId], (err, row: any) => {
       db.close();
       
-      if (err) return reject(err);
-      if (!row) return resolve(null);
+      if (err) {return reject(err);}
+      if (!row) {return resolve(null);}
       
       resolve({
         userId: row.user_id,
@@ -189,7 +189,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
       const db = new sqlite3.Database(DB_PATH);
       db.get('SELECT user_id FROM users WHERE email = ?', [body.username], (err, row: any) => {
         db.close();
-        if (err) return reject(err);
+        if (err) {return reject(err);}
         resolve(row);
       });
     });

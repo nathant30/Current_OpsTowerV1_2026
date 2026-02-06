@@ -29,7 +29,7 @@ const HeatmapLegend = memo<HeatmapLegendProps>(({
   showLegend,
   onZoneClick
 }) => {
-  if (!showLegend) return null;
+  if (!showLegend) {return null;}
 
   const getColorIndicator = (color: string) => {
     const colorMap = {

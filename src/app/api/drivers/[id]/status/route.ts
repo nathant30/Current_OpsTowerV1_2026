@@ -511,7 +511,7 @@ async function updateDriverStatusCaches(driverId: string, driver: any, locationR
 async function broadcastStatusChange(driver: any, statusChange: any, locationRecord: any): Promise<void> {
   try {
     const wsManager = getWebSocketManager();
-    if (!wsManager) return;
+    if (!wsManager) {return;}
 
     const statusChangeEvent = {
       driverId: driver.id,

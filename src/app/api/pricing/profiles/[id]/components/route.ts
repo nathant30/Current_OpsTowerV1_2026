@@ -33,8 +33,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
           if (completed >= total) {
             db.run('COMMIT', (err) => {
               db.close();
-              if (err) reject(err);
-              else resolve();
+              if (err) {reject(err);}
+              else {resolve();}
             });
           }
         };

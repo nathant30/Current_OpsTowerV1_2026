@@ -242,9 +242,9 @@ const PerformanceTab: React.FC = () => {
   };
 
   const getRankBadge = (rank: number) => {
-    if (rank === 1) return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-    if (rank === 2) return 'bg-gray-100 text-gray-800 border-gray-300';
-    if (rank === 3) return 'bg-orange-100 text-orange-800 border-orange-300';
+    if (rank === 1) {return 'bg-yellow-100 text-yellow-800 border-yellow-300';}
+    if (rank === 2) {return 'bg-gray-100 text-gray-800 border-gray-300';}
+    if (rank === 3) {return 'bg-orange-100 text-orange-800 border-orange-300';}
     return 'bg-blue-50 text-blue-700 border-blue-200';
   };
 

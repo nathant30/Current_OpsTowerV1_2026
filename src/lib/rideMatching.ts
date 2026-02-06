@@ -533,7 +533,7 @@ export class RideMatchingEngine {
   ): Promise<void> {
     try {
       const wsManager = getWebSocketManager();
-      if (!wsManager) return;
+      if (!wsManager) {return;}
 
       // Notify the assigned driver
       const driverEvent = {

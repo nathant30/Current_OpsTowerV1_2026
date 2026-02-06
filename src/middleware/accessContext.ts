@@ -116,7 +116,7 @@ export async function accessContextMiddleware(req: Request, res: Response, next:
 
 // Guards
 export function requireRegionAccess(ctx: AccessContext, regionId: string, min: AccessLevel = 'read'): boolean {
-  if (ctx.isGlobalBypass) return true;
+  if (ctx.isGlobalBypass) {return true;}
   
   const grant = ctx.allowedRegions.find(g => g.regionId === regionId);
   if (!grant) {

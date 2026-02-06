@@ -81,7 +81,7 @@ export const useRealtimeData = (options: UseRealtimeDataOptions) => {
   } = options;
 
   const connect = useCallback(() => {
-    if (connection.socket?.connected) return;
+    if (connection.socket?.connected) {return;}
 
     const socketUrl = process.env.NODE_ENV === 'development' 
       ? 'http://localhost:3001'

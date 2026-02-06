@@ -235,19 +235,19 @@ export class DatabaseMonitor {
       
       // SELECT FROM table
       let match = cleaned.match(/from\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
-      if (match) return match[1];
+      if (match) {return match[1];}
       
       // INSERT INTO table
       match = cleaned.match(/insert\s+into\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
-      if (match) return match[1];
+      if (match) {return match[1];}
       
       // UPDATE table
       match = cleaned.match(/update\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
-      if (match) return match[1];
+      if (match) {return match[1];}
       
       // DELETE FROM table
       match = cleaned.match(/delete\s+from\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
-      if (match) return match[1];
+      if (match) {return match[1];}
       
       return null;
     } catch (error) {

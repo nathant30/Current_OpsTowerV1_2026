@@ -498,7 +498,7 @@ export const useWebSocketMap = (config: WebSocketMapHookConfig = {}) => {
 
   // Filter drivers based on viewport and filters
   const getVisibleDrivers = useCallback((bounds?: { north: number; south: number; east: number; west: number }) => {
-    if (!bounds) return driversArray;
+    if (!bounds) {return driversArray;}
 
     return driversArray.filter(driver => 
       driver.position.lat >= bounds.south &&
@@ -512,7 +512,7 @@ export const useWebSocketMap = (config: WebSocketMapHookConfig = {}) => {
   const sortedEmergencyAlerts = state.emergencyAlerts.sort((a, b) => {
     const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
     const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
-    if (priorityDiff !== 0) return priorityDiff;
+    if (priorityDiff !== 0) {return priorityDiff;}
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 

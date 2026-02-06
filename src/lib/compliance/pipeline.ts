@@ -655,7 +655,7 @@ export class ComplianceDataPipeline extends EventEmitter {
    * Process batched events
    */
   private async processBatch(): Promise<void> {
-    if (this.isProcessing) return;
+    if (this.isProcessing) {return;}
 
     this.isProcessing = true;
     const batch = this.eventQueue.splice(0, this.batchSize);

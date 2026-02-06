@@ -164,12 +164,12 @@ export class MultiModalAIFusion {
 
     if (data.visualData?.faceVerification) {
       scores.visual = 1 - data.visualData.faceVerification.confidence;
-      if (!data.visualData.faceVerification.isMatch) scores.visual += 0.3;
+      if (!data.visualData.faceVerification.isMatch) {scores.visual += 0.3;}
     }
 
     if (data.visualData?.documentVerification) {
       scores.visual += data.visualData.documentVerification.fraudRisk * 0.7;
-      if (!data.visualData.documentVerification.isValid) scores.visual += 0.4;
+      if (!data.visualData.documentVerification.isValid) {scores.visual += 0.4;}
     }
 
     if (data.audioData?.voiceAnalysis) {
@@ -180,7 +180,7 @@ export class MultiModalAIFusion {
     if (data.behavioralData?.biometricProfile) {
       const profile = data.behavioralData.biometricProfile;
       scores.behavioral = 1 - profile.authenticityScore;
-      if (profile.anomalies.length > 2) scores.behavioral += 0.3;
+      if (profile.anomalies.length > 2) {scores.behavioral += 0.3;}
     }
 
     if (data.networkData?.fraudNetwork) {
@@ -193,7 +193,7 @@ export class MultiModalAIFusion {
     if (data.textualData?.investigation) {
       const investigation = data.textualData.investigation;
       scores.textual = investigation.riskScore;
-      if (investigation.fraudIndicators.length > 3) scores.textual += 0.2;
+      if (investigation.fraudIndicators.length > 3) {scores.textual += 0.2;}
     }
 
     Object.keys(scores).forEach(key => {
@@ -269,11 +269,11 @@ export class MultiModalAIFusion {
   private identifyPrimaryConcerns(modalityScores: any, correlations: any): string[] {
     const concerns: string[] = [];
 
-    if (modalityScores.visual > 0.7) concerns.push('visual_authentication_failure');
-    if (modalityScores.audio > 0.7) concerns.push('voice_spoofing_detected');
-    if (modalityScores.behavioral > 0.7) concerns.push('behavioral_anomaly_critical');
-    if (modalityScores.network > 0.7) concerns.push('fraud_network_connection');
-    if (modalityScores.textual > 0.7) concerns.push('suspicious_communication_patterns');
+    if (modalityScores.visual > 0.7) {concerns.push('visual_authentication_failure');}
+    if (modalityScores.audio > 0.7) {concerns.push('voice_spoofing_detected');}
+    if (modalityScores.behavioral > 0.7) {concerns.push('behavioral_anomaly_critical');}
+    if (modalityScores.network > 0.7) {concerns.push('fraud_network_connection');}
+    if (modalityScores.textual > 0.7) {concerns.push('suspicious_communication_patterns');}
 
     if (correlations.visualAudioConsistency < this.correlationThresholds.conflicting) {
       concerns.push('cross_modal_inconsistency');
@@ -349,7 +349,7 @@ export class MultiModalAIFusion {
   private checkEmergencyConditions(riskScore: number, modalityScores: any): string[] {
     const flags: string[] = [];
 
-    if (riskScore > 0.9) flags.push('critical_fraud_risk');
+    if (riskScore > 0.9) {flags.push('critical_fraud_risk');}
     
     const highRiskModalities = Object.entries(modalityScores)
       .filter(([_, score]: [string, any]) => score > 0.8)
@@ -380,7 +380,7 @@ export class MultiModalAIFusion {
   }
 
   private calculateScoreConsistency(scores: number[]): number {
-    if (scores.length < 2) return 0.5;
+    if (scores.length < 2) {return 0.5;}
     
     const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
     const variance = scores.reduce((acc, score) => acc + Math.pow(score - mean, 2), 0) / scores.length;
@@ -389,8 +389,8 @@ export class MultiModalAIFusion {
   }
 
   private determineAuthenticity(riskScore: number): 'genuine' | 'suspicious' | 'fraudulent' {
-    if (riskScore > 0.7) return 'fraudulent';
-    if (riskScore > 0.4) return 'suspicious';
+    if (riskScore > 0.7) {return 'fraudulent';}
+    if (riskScore > 0.4) {return 'suspicious';}
     return 'genuine';
   }
 
@@ -439,11 +439,11 @@ export class MultiModalAIFusion {
   private getUsedModalities(data: MultiModalData): string[] {
     const modalities: string[] = [];
     
-    if (data.visualData) modalities.push('visual');
-    if (data.audioData) modalities.push('audio');
-    if (data.behavioralData) modalities.push('behavioral');
-    if (data.networkData) modalities.push('network');
-    if (data.textualData) modalities.push('textual');
+    if (data.visualData) {modalities.push('visual');}
+    if (data.audioData) {modalities.push('audio');}
+    if (data.behavioralData) {modalities.push('behavioral');}
+    if (data.networkData) {modalities.push('network');}
+    if (data.textualData) {modalities.push('textual');}
     
     return modalities;
   }
@@ -487,7 +487,7 @@ export class MultiModalAIFusion {
   }
 
   async optimizeFusionWeights(historicalData: MultiModalData[]): Promise<void> {
-    if (historicalData.length < 100) return;
+    if (historicalData.length < 100) {return;}
 
     logger.info('Optimizing fusion weights based on historical performance...');
     

@@ -163,9 +163,9 @@ function useMockPassengers() {
       // Distribute categories: 85% ACTIVE, 10% SUSPENDED, 5% BANNED
       let category: PassengerCategory
       const rand = Math.random()
-      if (rand < 0.85) category = 'ACTIVE'
-      else if (rand < 0.95) category = 'SUSPENDED'
-      else category = 'BANNED'
+      if (rand < 0.85) {category = 'ACTIVE'}
+      else if (rand < 0.95) {category = 'SUSPENDED'}
+      else {category = 'BANNED'}
       
       const status = randomChoice(STATUS_BY_CATEGORY[category])
       const preferredService = randomChoice(SERVICES)
@@ -318,7 +318,7 @@ export default function PassengerTableDemo({
 
   // Map service types from global filter to local service types
   const getFilteredByServiceType = (data: Passenger[]) => {
-    if (selectedServiceType === 'ALL') return data
+    if (selectedServiceType === 'ALL') {return data}
     
     // Map global service types to local service types
     const serviceMapping: Record<string, PassengerService> = {
@@ -329,7 +329,7 @@ export default function PassengerTableDemo({
     }
     
     const localServiceType = serviceMapping[selectedServiceType]
-    if (!localServiceType) return data
+    if (!localServiceType) {return data}
     
     return data.filter(passenger => passenger.preferred_service === localServiceType)
   }
@@ -387,9 +387,9 @@ export default function PassengerTableDemo({
     // Apply other filters
     rows = rows.filter((r) => {
       // Skip status filter during global search to show all matching results
-      if (!hasSearch && selStatuses.length && !selStatuses.includes(r.status)) return false
-      if (from && new Date(r.signup_date) < new Date(from)) return false
-      if (to && new Date(r.signup_date) > new Date(to + 'T23:59:59')) return false
+      if (!hasSearch && selStatuses.length && !selStatuses.includes(r.status)) {return false}
+      if (from && new Date(r.signup_date) < new Date(from)) {return false}
+      if (to && new Date(r.signup_date) > new Date(to + 'T23:59:59')) {return false}
       return true
     })
 
@@ -416,7 +416,7 @@ export default function PassengerTableDemo({
   // Facets (counts within current filter context)
   const facetStatus = useMemo(() => {
     const m: Record<string, number> = {}
-    for (const r of filtered) m[r.status] = (m[r.status] || 0) + 1
+    for (const r of filtered) {m[r.status] = (m[r.status] || 0) + 1}
     return m
   }, [filtered])
 
@@ -428,7 +428,7 @@ export default function PassengerTableDemo({
   }
 
   const onSort = (key: keyof Passenger) => {
-    if (sortBy === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
+    if (sortBy === key) {setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
     else {
       setSortBy(key)
       setSortDir('asc')
@@ -493,9 +493,9 @@ export default function PassengerTableDemo({
     switch (column.key) {
       case 'status':
         const getStatusIcon = (status: PassengerStatus) => {
-          if (ACTIVE_STATUSES.includes(status as ActivePassengerStatus)) return '✅'
-          if (SUSPENDED_STATUSES.includes(status as SuspendedPassengerStatus)) return '⚠️'
-          if (BANNED_STATUSES.includes(status as BannedPassengerStatus)) return '❌'
+          if (ACTIVE_STATUSES.includes(status as ActivePassengerStatus)) {return '✅'}
+          if (SUSPENDED_STATUSES.includes(status as SuspendedPassengerStatus)) {return '⚠️'}
+          if (BANNED_STATUSES.includes(status as BannedPassengerStatus)) {return '❌'}
           return '❓'
         }
         

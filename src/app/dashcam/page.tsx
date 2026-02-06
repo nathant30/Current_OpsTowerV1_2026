@@ -153,7 +153,7 @@ const DashcamFootagePage = () => {
   }, [router]);
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) {return;}
     setFootage(MOCK_FOOTAGE);
   }, [isClient]);
 

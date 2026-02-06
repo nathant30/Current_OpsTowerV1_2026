@@ -258,37 +258,37 @@ export function RBACProvider({ children }: { children: ReactNode }) {
   };
 
   const hasPermission = (permission: Permission): boolean => {
-    if (!user) return false;
+    if (!user) {return false;}
     
     // Super admin bypass (for testing)
-    if (user.permissions.includes('*' as Permission)) return true;
+    if (user.permissions.includes('*' as Permission)) {return true;}
     
     return user.permissions.includes(permission);
   };
 
   const hasAnyPermission = (permissions: Permission[]): boolean => {
-    if (!user) return false;
+    if (!user) {return false;}
     
     // Super admin bypass
-    if (user.permissions.includes('*' as Permission)) return true;
+    if (user.permissions.includes('*' as Permission)) {return true;}
     
     return permissions.some(permission => user.permissions.includes(permission));
   };
 
   const hasAllPermissions = (permissions: Permission[]): boolean => {
-    if (!user) return false;
+    if (!user) {return false;}
     
     // Super admin bypass
-    if (user.permissions.includes('*' as Permission)) return true;
+    if (user.permissions.includes('*' as Permission)) {return true;}
     
     return permissions.every(permission => user.permissions.includes(permission));
   };
 
   const canAccessRegion = (regionId: string): boolean => {
-    if (!user) return false;
+    if (!user) {return false;}
     
     // Super admin or global access
-    if (user.regions.includes('*')) return true;
+    if (user.regions.includes('*')) {return true;}
     
     return user.regions.includes(regionId);
   };
@@ -326,7 +326,7 @@ export function RBACProvider({ children }: { children: ReactNode }) {
   };
 
   const requiresMFA = (permission: Permission): boolean => {
-    if (!user) return false;
+    if (!user) {return false;}
     return requiresMFAForAction(permission, user.level);
   };
 
@@ -355,7 +355,7 @@ export function RBACProvider({ children }: { children: ReactNode }) {
     action?: string, 
     permission?: Permission
   ): Promise<{ challengeId: string; expiresAt: Date } | null> => {
-    if (!user) return null;
+    if (!user) {return null;}
 
     try {
       const response = await fetch('/api/auth/mfa/challenge', {
@@ -445,7 +445,7 @@ export function RBACProvider({ children }: { children: ReactNode }) {
   };
 
   const isMFAVerified = (): boolean => {
-    if (!mfaState) return false;
+    if (!mfaState) {return false;}
     
     // Check if MFA is verified and not expired
     if (mfaState.isVerified && mfaState.expiresAt) {

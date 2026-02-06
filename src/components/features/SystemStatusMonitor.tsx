@@ -100,7 +100,7 @@ export const SystemStatusMonitor: React.FC<SystemStatusProps> = ({
 
   // Listen for system health updates
   useEffect(() => {
-    if (!connected) return;
+    if (!connected) {return;}
 
     const cleanup = on('system:health_check', (healthData) => {
       const services: ServiceStatus[] = [
@@ -203,7 +203,7 @@ export const SystemStatusMonitor: React.FC<SystemStatusProps> = ({
 
   // Overall system health calculation
   const overallHealth = useMemo(() => {
-    if (isLoading) return { status: 'loading', score: 0, color: 'bg-gray-500' };
+    if (isLoading) {return { status: 'loading', score: 0, color: 'bg-gray-500' };}
     
     const healthyServices = systemServices.filter(s => s.status === 'healthy').length;
     const totalServices = systemServices.length;

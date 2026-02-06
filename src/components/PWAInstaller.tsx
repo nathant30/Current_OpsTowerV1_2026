@@ -61,7 +61,7 @@ export const PWAInstaller: React.FC = () => {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {return;}
 
     try {
       await deferredPrompt.prompt();

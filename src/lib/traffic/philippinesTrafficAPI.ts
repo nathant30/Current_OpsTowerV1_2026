@@ -239,7 +239,7 @@ class PhilippinesTrafficService {
    */
   private async fetchTrafficData(sourceId: string): Promise<void> {
     const source = this.dataSources.get(sourceId);
-    if (!source || !source.isActive) return;
+    if (!source || !source.isActive) {return;}
 
     try {
       let data: PhilippinesTrafficData;

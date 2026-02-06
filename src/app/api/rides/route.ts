@@ -125,10 +125,10 @@ async function calculateSurgeMultiplier(regionId: string, serviceType: string): 
   const demandRatio = availableDrivers > 0 ? activeRequests / availableDrivers : 3;
   
   let surgeMultiplier = 1.0;
-  if (demandRatio > 2.0) surgeMultiplier = 2.5;
-  else if (demandRatio > 1.5) surgeMultiplier = 2.0;
-  else if (demandRatio > 1.2) surgeMultiplier = 1.5;
-  else if (demandRatio > 1.0) surgeMultiplier = 1.2;
+  if (demandRatio > 2.0) {surgeMultiplier = 2.5;}
+  else if (demandRatio > 1.5) {surgeMultiplier = 2.0;}
+  else if (demandRatio > 1.2) {surgeMultiplier = 1.5;}
+  else if (demandRatio > 1.0) {surgeMultiplier = 1.2;}
 
   // Cache surge pricing for 60 seconds
   await redis.setex(`surge:${regionId}:${serviceType}`, 60, surgeMultiplier.toString());
@@ -411,7 +411,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
 async function tryAutoAssignRide(rideId: string): Promise<void> {
   try {
     const cachedRide = await redis.get(`ride:${rideId}`);
-    if (!cachedRide) return;
+    if (!cachedRide) {return;}
 
     const rideData = JSON.parse(cachedRide);
     
@@ -419,7 +419,7 @@ async function tryAutoAssignRide(rideId: string): Promise<void> {
     const currentRideQuery = await db.query('SELECT * FROM bookings WHERE id = $1', [rideId]);
     const currentRide = currentRideQuery.rows[0];
     
-    if (!currentRide || currentRide.status !== 'searching') return;
+    if (!currentRide || currentRide.status !== 'searching') {return;}
 
     // Get the closest available driver
     const nearbyDrivers = await findNearbyAvailableDrivers(

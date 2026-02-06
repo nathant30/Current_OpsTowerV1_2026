@@ -129,7 +129,7 @@ class WebSocketServer {
     }
 
   private setupEventHandlers(): void {
-    if (!this.io) return;
+    if (!this.io) {return;}
 
     this.io.on('connection', (socket) => {
       // Handle client authentication and setup
@@ -159,7 +159,7 @@ class WebSocketServer {
       // Handle channel subscriptions
       socket.on('subscribe', (channels: string[]) => {
         const client = this.clients.get(socket.id);
-        if (!client) return;
+        if (!client) {return;}
 
         channels.forEach(channel => {
           if (this.canSubscribeToChannel(client, channel)) {
@@ -176,7 +176,7 @@ class WebSocketServer {
       // Handle unsubscribe
       socket.on('unsubscribe', (channels: string[]) => {
         const client = this.clients.get(socket.id);
-        if (!client) return;
+        if (!client) {return;}
 
         channels.forEach(channel => {
           socket.leave(channel);
@@ -256,7 +256,7 @@ class WebSocketServer {
 
   private canSubscribeToChannel(client: WebSocketClient, channel: string): boolean {
     // Admin can subscribe to anything
-    if (client.role === 'admin') return true;
+    if (client.role === 'admin') {return true;}
 
     // Define role-based channel permissions
     const permissions = {
@@ -383,15 +383,15 @@ class WebSocketServer {
     const parts = metric.split('.');
     const systems = [];
     
-    if (parts[0]) systems.push(parts[0]);
-    if (parts[0] === 'fraud') systems.push('security');
-    if (parts[0] === 'loadBalancer') systems.push('infrastructure');
+    if (parts[0]) {systems.push(parts[0]);}
+    if (parts[0] === 'fraud') {systems.push('security');}
+    if (parts[0] === 'loadBalancer') {systems.push('infrastructure');}
     
     return systems;
   }
 
   start(): void {
-    if (this.isRunning) return;
+    if (this.isRunning) {return;}
     this.isRunning = true;
 
     // Start live map updates every 10 seconds
@@ -407,7 +407,7 @@ class WebSocketServer {
     }
 
   stop(): void {
-    if (!this.isRunning) return;
+    if (!this.isRunning) {return;}
     this.isRunning = false;
 
     if (this.mapUpdateInterval) {
@@ -501,8 +501,8 @@ class WebSocketServer {
   }
 
   private inferFraudType(metric: string): 'gps_spoofing' | 'multi_account' | 'incentive_fraud' {
-    if (metric.includes('gps')) return 'gps_spoofing';
-    if (metric.includes('multi') || metric.includes('account')) return 'multi_account';
+    if (metric.includes('gps')) {return 'gps_spoofing';}
+    if (metric.includes('multi') || metric.includes('account')) {return 'multi_account';}
     return 'incentive_fraud';
   }
 
@@ -521,13 +521,13 @@ class WebSocketServer {
     targetDevices?: ('desktop' | 'tablet' | 'mobile')[];
     targetRegions?: ('manila' | 'cebu' | 'davao')[];
   } = {}): void {
-    if (!this.io) return;
+    if (!this.io) {return;}
 
     // Filter clients based on targeting options
     const targetClients = Array.from(this.clients.values()).filter(client => {
-      if (options.targetRoles && !options.targetRoles.includes(client.role)) return false;
-      if (options.targetDevices && !options.targetDevices.includes(client.deviceType)) return false;
-      if (options.targetRegions && client.location && !options.targetRegions.includes(client.location.region)) return false;
+      if (options.targetRoles && !options.targetRoles.includes(client.role)) {return false;}
+      if (options.targetDevices && !options.targetDevices.includes(client.deviceType)) {return false;}
+      if (options.targetRegions && client.location && !options.targetRegions.includes(client.location.region)) {return false;}
       return client.subscribedChannels.has(channel);
     });
 
@@ -571,13 +571,13 @@ class WebSocketServer {
   }
 
   sendToClient(clientId: string, event: string, data: any): boolean {
-    if (!this.io) return false;
+    if (!this.io) {return false;}
     this.io.to(clientId).emit(event, data);
     return true;
   }
 
   sendToUser(userId: string, event: string, data: any): number {
-    if (!this.io) return 0;
+    if (!this.io) {return 0;}
     
     const userClients = Array.from(this.clients.values())
       .filter(client => client.userId === userId);

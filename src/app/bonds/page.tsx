@@ -133,7 +133,7 @@ const BondsManagementPage = () => {
   }, [router]);
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) {return;}
     setBonds(MOCK_BONDS);
   }, [isClient]);
 

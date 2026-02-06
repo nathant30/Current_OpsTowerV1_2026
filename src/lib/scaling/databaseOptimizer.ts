@@ -292,7 +292,7 @@ class DatabaseOptimizer {
    * Batch operations for high throughput
    */
   async batchInsertFraudAlerts(alerts: any[]): Promise<void> {
-    if (alerts.length === 0) return;
+    if (alerts.length === 0) {return;}
 
     const client = await this.pool.connect();
     try {
@@ -340,7 +340,7 @@ class DatabaseOptimizer {
   }
 
   private async batchUpdateUserScores(updates: any[][]): Promise<void> {
-    if (updates.length === 0) return;
+    if (updates.length === 0) {return;}
 
     const client = await this.pool.connect();
     try {

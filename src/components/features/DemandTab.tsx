@@ -151,7 +151,7 @@ const DemandTab: React.FC = () => {
     setRefreshInterval(interval);
 
     return () => {
-      if (interval) clearInterval(interval);
+      if (interval) {clearInterval(interval);}
     };
   }, []);
 
@@ -196,15 +196,15 @@ const DemandTab: React.FC = () => {
   };
 
   const getSurgeColor = (multiplier: number) => {
-    if (multiplier >= 1.8) return 'text-red-600 font-bold';
-    if (multiplier >= 1.5) return 'text-orange-600 font-semibold';
-    if (multiplier >= 1.2) return 'text-yellow-600 font-medium';
+    if (multiplier >= 1.8) {return 'text-red-600 font-bold';}
+    if (multiplier >= 1.5) {return 'text-orange-600 font-semibold';}
+    if (multiplier >= 1.2) {return 'text-yellow-600 font-medium';}
     return 'text-green-600 font-medium';
   };
 
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 80) return 'text-green-600';
-    if (confidence >= 70) return 'text-yellow-600';
+    if (confidence >= 80) {return 'text-green-600';}
+    if (confidence >= 70) {return 'text-yellow-600';}
     return 'text-orange-600';
   };
 

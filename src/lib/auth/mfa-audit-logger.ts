@@ -557,9 +557,9 @@ export class MFAAuditLogger {
 
   private getSensitivityLevel(permission: Permission): number {
     // Mock implementation - in production, get from MFA service
-    if (permission.includes('pii') || permission.includes('unmask')) return 0.9;
-    if (permission.includes('financial') || permission.includes('payout')) return 0.8;
-    if (permission.includes('admin') || permission.includes('manage')) return 0.6;
+    if (permission.includes('pii') || permission.includes('unmask')) {return 0.9;}
+    if (permission.includes('financial') || permission.includes('payout')) {return 0.8;}
+    if (permission.includes('admin') || permission.includes('manage')) {return 0.6;}
     return 0.4;
   }
 

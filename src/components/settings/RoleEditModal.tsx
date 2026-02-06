@@ -254,7 +254,7 @@ const RoleEditModal: React.FC<RoleEditModalProps> = ({ isOpen, role, onClose, on
 
   // Check if a permission is allowed for current role type
   const isPermissionAllowed = (permission: string): boolean => {
-    if (!role) return true; // Allow all if no role context
+    if (!role) {return true;} // Allow all if no role context
     
     // SECURITY: Only super_admin can edit super_admin roles and see all permissions
     // In production, get this from user context/auth
@@ -266,7 +266,7 @@ const RoleEditModal: React.FC<RoleEditModalProps> = ({ isOpen, role, onClose, on
     }
     
     const allowedCategories = getAllowedCategories(role.name);
-    if (allowedCategories.length === 0) return true; // Allow all if no constraints defined
+    if (allowedCategories.length === 0) {return true;} // Allow all if no constraints defined
     
     // Find which category this permission belongs to
     for (const [category, permissions] of Object.entries(PERMISSION_CATEGORIES)) {

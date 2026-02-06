@@ -270,7 +270,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const updateProfile = async (updates: Partial<User>): Promise<void> => {
-    if (!authState.user) return;
+    if (!authState.user) {return;}
 
     try {
       const token = localStorage.getItem(TOKEN_KEY);
@@ -303,7 +303,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const enableMFA = async (): Promise<{ qrCode: string; backupCodes: string[] }> => {
-    if (!authState.user) throw new Error('Not authenticated');
+    if (!authState.user) {throw new Error('Not authenticated');}
 
     const token = localStorage.getItem(TOKEN_KEY);
     const response = await fetch('/api/auth/mfa/enable', {
@@ -319,7 +319,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const verifyMFA = async (code: string): Promise<void> => {
-    if (!authState.user) throw new Error('Not authenticated');
+    if (!authState.user) {throw new Error('Not authenticated');}
 
     const token = localStorage.getItem(TOKEN_KEY);
     const response = await fetch('/api/auth/mfa/verify', {

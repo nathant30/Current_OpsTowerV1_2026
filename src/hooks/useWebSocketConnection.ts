@@ -88,9 +88,9 @@ export const useWebSocketConnection = (config: ConnectionConfig = {}) => {
 
   // Calculate connection quality based on latency and stability
   const calculateConnectionQuality = useCallback((latency: number, reconnects: number): 'excellent' | 'good' | 'poor' | 'unknown' => {
-    if (reconnects > 5) return 'poor';
-    if (latency < 50) return 'excellent';
-    if (latency < 200) return 'good';
+    if (reconnects > 5) {return 'poor';}
+    if (latency < 50) {return 'excellent';}
+    if (latency < 200) {return 'good';}
     return 'poor';
   }, []);
 

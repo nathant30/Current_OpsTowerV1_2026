@@ -340,8 +340,8 @@ describe('Passenger Experience Optimization', () => {
 
     // Mock Redis responses
     mockRedis.get.mockImplementation(async (key: string) => {
-      if (key.includes('customer:')) return JSON.stringify(mockCustomer);
-      if (key.includes('bookings:')) return JSON.stringify(mockBookings);
+      if (key.includes('customer:')) {return JSON.stringify(mockCustomer);}
+      if (key.includes('bookings:')) {return JSON.stringify(mockBookings);}
       if (key.includes('wait_time_targets')) {
         return JSON.stringify({
           'ride_4w': { average: 480, p95: 840 }, // 8 minutes avg, 14 minutes p95

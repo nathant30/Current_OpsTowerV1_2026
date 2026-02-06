@@ -93,7 +93,7 @@ export const CleanMetricsCard: React.FC<CleanMetricsCardProps> = ({
   const colors = colorVariants[color];
 
   const getTrendIcon = () => {
-    if (!trend) return null;
+    if (!trend) {return null;}
     
     switch (trend.direction) {
       case 'up':
@@ -106,7 +106,7 @@ export const CleanMetricsCard: React.FC<CleanMetricsCardProps> = ({
   };
 
   const getTrendColor = () => {
-    if (!trend) return '';
+    if (!trend) {return '';}
     
     switch (trend.direction) {
       case 'up':

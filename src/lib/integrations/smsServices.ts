@@ -666,8 +666,8 @@ class SMSServiceManager {
           return this.config.globe.costPerMessage <= this.config.smart.costPerMessage ? 'globe' : 'smart';
         }
         
-        if (globeHealth?.status === 'healthy') return 'globe';
-        if (smartHealth?.status === 'healthy') return 'smart';
+        if (globeHealth?.status === 'healthy') {return 'globe';}
+        if (smartHealth?.status === 'healthy') {return 'smart';}
       }
     }
     
@@ -945,7 +945,7 @@ class SMSServiceManager {
 
   private updateProviderHealth(provider: string, success: boolean, responseTime: number): void {
     const health = this.providerHealth.get(provider);
-    if (!health) return;
+    if (!health) {return;}
 
     // Update response time (moving average)
     health.averageResponseTime = (health.averageResponseTime * 0.8) + (responseTime * 0.2);
@@ -1004,7 +1004,7 @@ class SMSServiceManager {
   }
 
   private async processMessageQueue(): Promise<void> {
-    if (this.messageQueue.length === 0) return;
+    if (this.messageQueue.length === 0) {return;}
     
     this.isProcessing = true;
     

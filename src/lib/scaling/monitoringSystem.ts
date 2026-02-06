@@ -339,7 +339,7 @@ class MonitoringSystem extends EventEmitter {
 
   private checkAlerts(metrics: SystemMetrics): void {
     for (const rule of this.alertRules) {
-      if (!rule.enabled) continue;
+      if (!rule.enabled) {continue;}
 
       const now = Date.now();
       const lastAlert = this.lastAlertTime[rule.id] || 0;
@@ -349,7 +349,7 @@ class MonitoringSystem extends EventEmitter {
       }
 
       const metricValue = this.getMetricValue(metrics, rule.metric);
-      if (metricValue === null) continue;
+      if (metricValue === null) {continue;}
 
       const shouldAlert = this.evaluateCondition(metricValue, rule.condition, rule.threshold);
       
@@ -458,7 +458,7 @@ class MonitoringSystem extends EventEmitter {
   }
 
   start(): void {
-    if (this.isRunning) return;
+    if (this.isRunning) {return;}
 
     this.isRunning = true;
     
@@ -472,7 +472,7 @@ class MonitoringSystem extends EventEmitter {
   }
 
   stop(): void {
-    if (!this.isRunning) return;
+    if (!this.isRunning) {return;}
 
     this.isRunning = false;
     

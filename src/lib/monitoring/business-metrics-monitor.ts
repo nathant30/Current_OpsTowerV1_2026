@@ -531,9 +531,9 @@ class BusinessMetricsMonitor {
 
   // Calculate demand level based on rides
   private calculateDemandLevel(ridesPerHour: number): 'low' | 'medium' | 'high' | 'surge' {
-    if (ridesPerHour < 10) return 'low';
-    if (ridesPerHour < 30) return 'medium';
-    if (ridesPerHour < 60) return 'high';
+    if (ridesPerHour < 10) {return 'low';}
+    if (ridesPerHour < 30) {return 'medium';}
+    if (ridesPerHour < 60) {return 'high';}
     return 'surge';
   }
 

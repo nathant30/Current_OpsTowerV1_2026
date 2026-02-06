@@ -67,17 +67,17 @@ export function useDrivers(options: UseDriversOptions = {}) {
   } = options;
 
   const fetchDrivers = async () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {return;}
 
     try {
       setLoading(true);
       setError(null);
 
       const params = new URLSearchParams();
-      if (status) params.append('status', status);
-      if (vehicleType) params.append('vehicleType', vehicleType);
-      if (regionId) params.append('regionId', regionId);
-      if (search) params.append('search', search);
+      if (status) {params.append('status', status);}
+      if (vehicleType) {params.append('vehicleType', vehicleType);}
+      if (regionId) {params.append('regionId', regionId);}
+      if (search) {params.append('search', search);}
       params.append('page', page.toString());
       params.append('limit', limit.toString());
 
@@ -105,7 +105,7 @@ export function useDrivers(options: UseDriversOptions = {}) {
   };
 
   const updateDriverStatus = async (driverId: string, newStatus: Driver['status']) => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {return;}
 
     try {
       const token = localStorage.getItem('xpress_auth_token');
@@ -138,7 +138,7 @@ export function useDrivers(options: UseDriversOptions = {}) {
 
   // Auto-refresh
   useEffect(() => {
-    if (!refreshInterval || !isAuthenticated) return;
+    if (!refreshInterval || !isAuthenticated) {return;}
 
     const interval = setInterval(fetchDrivers, refreshInterval);
     return () => clearInterval(interval);

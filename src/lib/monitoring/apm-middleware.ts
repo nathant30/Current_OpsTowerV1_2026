@@ -263,13 +263,13 @@ class APMMonitor {
   // Classify database query type
   private classifyQuery(query: string): string {
     const queryLower = query.toLowerCase().trim();
-    if (queryLower.startsWith('select')) return 'select';
-    if (queryLower.startsWith('insert')) return 'insert';
-    if (queryLower.startsWith('update')) return 'update';
-    if (queryLower.startsWith('delete')) return 'delete';
-    if (queryLower.startsWith('create')) return 'ddl';
-    if (queryLower.startsWith('alter')) return 'ddl';
-    if (queryLower.startsWith('drop')) return 'ddl';
+    if (queryLower.startsWith('select')) {return 'select';}
+    if (queryLower.startsWith('insert')) {return 'insert';}
+    if (queryLower.startsWith('update')) {return 'update';}
+    if (queryLower.startsWith('delete')) {return 'delete';}
+    if (queryLower.startsWith('create')) {return 'ddl';}
+    if (queryLower.startsWith('alter')) {return 'ddl';}
+    if (queryLower.startsWith('drop')) {return 'ddl';}
     return 'other';
   }
 

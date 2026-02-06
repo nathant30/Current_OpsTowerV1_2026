@@ -121,7 +121,7 @@ class MetricsCollector {
   // Get metric points for time range
   public getMetricPoints(name: string, fromTime: number, toTime: number): MetricPoint[] {
     const metric = this.metrics.get(name);
-    if (!metric) return [];
+    if (!metric) {return [];}
 
     return metric.points.filter(point => 
       point.timestamp >= fromTime && point.timestamp <= toTime

@@ -25,8 +25,8 @@ export const CreditLimitIndicator: React.FC<CreditLimitIndicatorProps> = ({
   const isOverLimit = outstandingBalance > creditLimit;
 
   const getProgressColor = () => {
-    if (isOverLimit) return 'bg-danger-600';
-    if (isNearLimit) return 'bg-warning-500';
+    if (isOverLimit) {return 'bg-danger-600';}
+    if (isNearLimit) {return 'bg-warning-500';}
     return 'bg-success-500';
   };
 

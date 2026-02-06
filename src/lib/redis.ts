@@ -126,18 +126,18 @@ class MockRedisManager {
     const keys = Array.isArray(key) ? key : [key];
     let deleted = 0;
     for (const k of keys) {
-      if (cache.delete(k)) deleted++;
+      if (cache.delete(k)) {deleted++;}
     }
     return deleted;
   }
 
   async invalidateCacheByTag(tag: string): Promise<number> {
     const tagSet = sets.get(`tag:${tag}`);
-    if (!tagSet) return 0;
+    if (!tagSet) {return 0;}
     
     let deleted = 0;
     for (const key of tagSet) {
-      if (cache.delete(key)) deleted++;
+      if (cache.delete(key)) {deleted++;}
     }
     sets.delete(`tag:${tag}`);
     return deleted;
@@ -201,7 +201,7 @@ class MockRedisManager {
 
   async getUserSessions(userId: string): Promise<SessionData[]> {
     const userSessions = sets.get(`user_sessions:${userId}`);
-    if (!userSessions) return [];
+    if (!userSessions) {return [];}
 
     const sessions: SessionData[] = [];
     for (const sessionId of userSessions) {

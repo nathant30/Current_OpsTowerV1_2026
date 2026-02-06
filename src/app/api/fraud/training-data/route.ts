@@ -242,10 +242,10 @@ async function validateTrainingRecords(records: TrainingRecord[]): Promise<strin
   const errors: string[] = [];
   
   records.forEach((record, index) => {
-    if (!record.id) errors.push(`Record ${index}: Missing ID`);
-    if (!record.userId) errors.push(`Record ${index}: Missing userId`);
-    if (typeof record.isFraud !== 'boolean') errors.push(`Record ${index}: Invalid isFraud value`);
-    if (!record.features) errors.push(`Record ${index}: Missing features`);
+    if (!record.id) {errors.push(`Record ${index}: Missing ID`);}
+    if (!record.userId) {errors.push(`Record ${index}: Missing userId`);}
+    if (typeof record.isFraud !== 'boolean') {errors.push(`Record ${index}: Invalid isFraud value`);}
+    if (!record.features) {errors.push(`Record ${index}: Missing features`);}
     if (record.confidenceScore < 0 || record.confidenceScore > 100) {
       errors.push(`Record ${index}: Invalid confidence score`);
     }

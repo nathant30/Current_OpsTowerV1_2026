@@ -122,7 +122,7 @@ class DatabaseService {
    * Test database connection
    */
   private async testConnection(): Promise<void> {
-    if (!this.pool) throw new Error('Database not initialized');
+    if (!this.pool) {throw new Error('Database not initialized');}
 
     const client = await this.pool.connect();
     try {
@@ -229,7 +229,7 @@ class DatabaseService {
     queries: Array<{ text: string; params?: any[]; operation?: string }>,
     userId?: string
   ): Promise<T[]> {
-    if (!this.pool) throw new Error('Database not initialized');
+    if (!this.pool) {throw new Error('Database not initialized');}
 
     const client = await this.pool.connect();
     

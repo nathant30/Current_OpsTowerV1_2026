@@ -49,7 +49,7 @@ export const TransactionDetailsModal: React.FC<TransactionDetailsModalProps> = (
   onClose,
   transaction,
 }) => {
-  if (!transaction) return null;
+  if (!transaction) {return null;}
 
   const handleDownloadReceipt = () => {
     console.log('Download receipt for transaction:', transaction.id);

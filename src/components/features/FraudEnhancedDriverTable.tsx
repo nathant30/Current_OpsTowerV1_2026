@@ -81,9 +81,9 @@ const FraudEnhancedDriverTable = () => {
   }, [driversData]);
 
   const getRiskLevelFromScore = (score: number): RiskLevel => {
-    if (score >= 80) return 'critical';
-    if (score >= 60) return 'high';
-    if (score >= 40) return 'medium';
+    if (score >= 80) {return 'critical';}
+    if (score >= 60) {return 'high';}
+    if (score >= 40) {return 'medium';}
     return 'low';
   };
 
@@ -101,9 +101,9 @@ const FraudEnhancedDriverTable = () => {
   };
 
   const getCorrelationBadge = (score: number) => {
-    if (score >= 0.8) return { color: 'text-red-600', bg: 'bg-red-50', label: 'High Correlation' };
-    if (score >= 0.5) return { color: 'text-orange-600', bg: 'bg-orange-50', label: 'Medium Correlation' };
-    if (score >= 0.3) return { color: 'text-yellow-600', bg: 'bg-yellow-50', label: 'Low Correlation' };
+    if (score >= 0.8) {return { color: 'text-red-600', bg: 'bg-red-50', label: 'High Correlation' };}
+    if (score >= 0.5) {return { color: 'text-orange-600', bg: 'bg-orange-50', label: 'Medium Correlation' };}
+    if (score >= 0.3) {return { color: 'text-yellow-600', bg: 'bg-yellow-50', label: 'Low Correlation' };}
     return { color: 'text-green-600', bg: 'bg-green-50', label: 'No Correlation' };
   };
 
@@ -128,7 +128,7 @@ const FraudEnhancedDriverTable = () => {
 
   // Sorting logic
   const sortedDrivers = React.useMemo(() => {
-    if (!sortField) return filteredDrivers;
+    if (!sortField) {return filteredDrivers;}
 
     return [...filteredDrivers].sort((a, b) => {
       let aValue, bValue;
@@ -162,8 +162,8 @@ const FraudEnhancedDriverTable = () => {
           return 0;
       }
 
-      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      if (aValue < bValue) {return sortDirection === 'asc' ? -1 : 1;}
+      if (aValue > bValue) {return sortDirection === 'asc' ? 1 : -1;}
       return 0;
     });
   }, [filteredDrivers, sortField, sortDirection]);

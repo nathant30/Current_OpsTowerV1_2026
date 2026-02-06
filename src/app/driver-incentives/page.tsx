@@ -198,7 +198,7 @@ const DriverIncentivesPage = () => {
   }, [router]);
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) {return;}
     setCampaigns(MOCK_CAMPAIGNS);
     setLeaderboard(MOCK_LEADERBOARD);
   }, [isClient]);
@@ -403,7 +403,7 @@ const DriverIncentivesPage = () => {
               <YAxis stroke="#666" fontSize={12} />
               <Tooltip
                 formatter={(value: any, name: string) => {
-                  if (name === 'payout') return formatCurrency(value);
+                  if (name === 'payout') {return formatCurrency(value);}
                   return value;
                 }}
                 contentStyle={{

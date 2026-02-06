@@ -513,7 +513,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
     ltfrb_compliance_score: number;
     gcash_paymaya_usage_pattern: number;
   } | Record<string, never>> {
-    if (!rawData.philippines_context) return {};
+    if (!rawData.philippines_context) {return {};}
     
     const context = rawData.philippines_context;
     const timestamp = rawData.transaction.timestamp;
@@ -557,10 +557,10 @@ export class FeatureEngineeringPipeline extends EventEmitter {
     let riskScore = 0.3; // Base risk
     
     // New user risk
-    if (rawData.context.is_new_user) riskScore += 0.2;
+    if (rawData.context.is_new_user) {riskScore += 0.2;}
     
     // Account age risk
-    if (rawData.context.account_age_days < 30) riskScore += 0.1;
+    if (rawData.context.account_age_days < 30) {riskScore += 0.1;}
     
     // Historical behavior
     if (userProfile?.risk_indicators) {
@@ -589,7 +589,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
   private calculateVelocity(userProfile: {
     transaction_history: number[];
   } | undefined, hours: number): number {
-    if (!userProfile?.transaction_history) return 0;
+    if (!userProfile?.transaction_history) {return 0;}
     
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
     // In real implementation, we'd have timestamps. For now, simulate
@@ -645,7 +645,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
     latitude: number;
     longitude: number;
   }): number {
-    if (!userProfile?.location_history) return 1.0; // Unknown location = high risk
+    if (!userProfile?.location_history) {return 1.0;} // Unknown location = high risk
     
     const threshold = 10; // 10km threshold
     const nearbyLocations = userProfile.location_history.filter((loc: any) => 
@@ -669,7 +669,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
   private calculateTrafficDelayFactor(location: GeoCoordinates, philippinesContext: {
     traffic_condition?: 'light' | 'moderate' | 'heavy' | 'severe';
   } | undefined): number {
-    if (!philippinesContext?.traffic_condition) return 0;
+    if (!philippinesContext?.traffic_condition) {return 0;}
     
     const trafficMultipliers = {
       'light': 0.1,
@@ -686,7 +686,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
   }, philippinesContext: {
     traffic_condition?: 'light' | 'moderate' | 'heavy' | 'severe';
   } | undefined): number {
-    if (!location.speed) return 0;
+    if (!location.speed) {return 0;}
     
     // Philippines urban speed limits: 30-60 kmh
     const expectedSpeed = philippinesContext?.traffic_condition === 'heavy' ? 20 : 40;
@@ -700,7 +700,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
   } | undefined, device: {
     fingerprint: string;
   }): number {
-    if (!userProfile?.device_history) return 0.5; // Unknown = neutral
+    if (!userProfile?.device_history) {return 0.5;} // Unknown = neutral
     
     const recentDevices = userProfile.device_history.slice(-5); // Last 5 devices
     const currentDeviceCount = recentDevices.filter((d: string) => d === device.fingerprint).length;
@@ -715,7 +715,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
     let riskScore = 0;
     
     // High-risk device types
-    if (device.type === 'emulator' || device.type === 'rooted') riskScore += 0.5;
+    if (device.type === 'emulator' || device.type === 'rooted') {riskScore += 0.5;}
     
     // Suspicious user agents
     if (device.user_agent?.includes('bot') || device.user_agent?.includes('crawler')) {
@@ -736,7 +736,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
   }
 
   private calculateUserAgentRiskScore(userAgent?: string): number {
-    if (!userAgent) return 0.5;
+    if (!userAgent) {return 0.5;}
     
     const riskIndicators = ['bot', 'crawler', 'automated', 'headless'];
     const hasRiskIndicator = riskIndicators.some(indicator => 
@@ -749,7 +749,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
   private calculateDeviceChangeFrequency(userProfile: {
     device_history: string[];
   } | undefined): number {
-    if (!userProfile?.device_history || userProfile.device_history.length < 2) return 0;
+    if (!userProfile?.device_history || userProfile.device_history.length < 2) {return 0;}
     
     const uniqueDevices = new Set(userProfile.device_history).size;
     return uniqueDevices / userProfile.device_history.length;
@@ -758,7 +758,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
   private calculateTransactionPatternScore(userProfile: {
     transaction_history: number[];
   } | undefined, rawData: RawFeatureData): number {
-    if (!userProfile?.transaction_history) return 0.5;
+    if (!userProfile?.transaction_history) {return 0.5;}
     
     const avgAmount = userProfile.transaction_history.reduce((a: number, b: number) => a + b, 0) / 
                      userProfile.transaction_history.length;
@@ -806,7 +806,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
     const dateString = timestamp.toISOString().split('T')[0];
     const isHoliday = this.featureStore.reference_data.philippines_holidays.has(dateString);
     
-    if (!isHoliday) return 0;
+    if (!isHoliday) {return 0;}
     
     // Regional holiday impact multipliers
     const regionalMultipliers = {
@@ -823,14 +823,14 @@ export class FeatureEngineeringPipeline extends EventEmitter {
     const day = timestamp.getDate();
     const isPayday = day === 15 || day === 30 || day === 31;
     
-    if (!isPayday) return 0;
+    if (!isPayday) {return 0;}
     
     // Payday periods have different transaction patterns
     return day === 15 ? 0.8 : 1.0; // 15th typically higher activity than 30th
   }
 
   private calculateTrafficImpactScore(trafficCondition?: string): number {
-    if (!trafficCondition) return 0;
+    if (!trafficCondition) {return 0;}
     
     const trafficScores = {
       'light': 0.1,
@@ -843,7 +843,7 @@ export class FeatureEngineeringPipeline extends EventEmitter {
   }
 
   private calculateWeatherImpactScore(weatherCondition?: string): number {
-    if (!weatherCondition) return 0;
+    if (!weatherCondition) {return 0;}
     
     const weatherScores = {
       'clear': 0.1,

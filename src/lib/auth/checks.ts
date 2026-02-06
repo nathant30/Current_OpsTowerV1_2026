@@ -29,10 +29,10 @@ export interface AuthorizationInput {
  */
 export function inRegionScope(allowedRegions: string[] = [], regionId?: string): boolean {
   // No region specified = global resource, always allowed
-  if (!regionId) return true;
+  if (!regionId) {return true;}
   
   // Empty allowed regions = global access (for admin roles)
-  if (allowedRegions.length === 0) return true;
+  if (allowedRegions.length === 0) {return true;}
   
   // Check if user's regions include the target region
   return allowedRegions.includes(regionId);
@@ -46,7 +46,7 @@ export function sensitivityOK(input: AuthorizationInput): boolean {
   const { resource, user, context } = input;
   
   // Non-PII resources are always allowed at this step
-  if (!resource.contains_pii) return true;
+  if (!resource.contains_pii) {return true;}
   
   // PII resources require appropriate scope
   switch (user.pii_scope) {

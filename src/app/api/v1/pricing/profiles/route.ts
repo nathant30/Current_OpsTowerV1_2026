@@ -212,32 +212,32 @@ function calculateInitialHealthScore(profileData: CreatePricingProfileRequest): 
   let score = 0;
   
   // Base structure completeness (40 points)
-  if (profileData.baseFare > 0) score += 10;
-  if (profileData.perKm > 0) score += 15;
-  if (profileData.perMinute > 0) score += 10;
-  if (profileData.bookingFee >= 0) score += 5;
+  if (profileData.baseFare > 0) {score += 10;}
+  if (profileData.perKm > 0) {score += 15;}
+  if (profileData.perMinute > 0) {score += 10;}
+  if (profileData.bookingFee >= 0) {score += 5;}
   
   // Earnings routing clarity (20 points)
-  if (profileData.earningsRouting && profileData.driverCommissionPct > 0) score += 20;
+  if (profileData.earningsRouting && profileData.driverCommissionPct > 0) {score += 20;}
   
   // Service-specific logic (20 points)
   switch (profileData.serviceKey) {
     case 'tnvs':
-      if (profileData.bookingFee > 0 && profileData.perKm > 0) score += 20;
+      if (profileData.bookingFee > 0 && profileData.perKm > 0) {score += 20;}
       break;
     case 'taxi':
-      if (profileData.baseFare > 0) score += 20;
+      if (profileData.baseFare > 0) {score += 20;}
       break;
     case 'special':
     case 'pop':
     case 'twg':
-      if (profileData.baseFare > 0 || profileData.perKm > 0) score += 20;
+      if (profileData.baseFare > 0 || profileData.perKm > 0) {score += 20;}
       break;
   }
   
   // Transparency bonus (20 points)
-  if (profileData.description) score += 10;
-  if (profileData.tollPassthrough !== undefined) score += 10;
+  if (profileData.description) {score += 10;}
+  if (profileData.tollPassthrough !== undefined) {score += 10;}
   
   return Math.min(score, 100); // Cap at 100
 }

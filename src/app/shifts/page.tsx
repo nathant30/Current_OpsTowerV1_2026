@@ -122,7 +122,7 @@ const ShiftsCalendarPage = () => {
   }, [router]);
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) {return;}
     setShifts(MOCK_SHIFTS);
   }, [isClient, setShifts]);
 

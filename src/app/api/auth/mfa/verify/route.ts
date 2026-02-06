@@ -242,7 +242,7 @@ async function createMFAVerifiedToken(
 function verifyTOTPCode(userData: UserDataWithMFA, code: string): boolean {
   // Mock TOTP verification - in real implementation, use libraries like speakeasy
   // For demo purposes, accept any 6-digit code that matches simple pattern
-  if (!/^\d{6}$/.test(code)) return false;
+  if (!/^\d{6}$/.test(code)) {return false;}
   
   // Simple mock: accept codes that end with the last two digits of the user ID
   const userIdSuffix = userData.id.slice(-2);

@@ -75,7 +75,7 @@ class ConnectionHealthMonitorService {
 
   // Stop monitoring
   stop(): void {
-    if (!this.isRunning) return;
+    if (!this.isRunning) {return;}
     
     logger.info('Stopping health monitoring');
     
@@ -387,7 +387,7 @@ class ConnectionHealthMonitorService {
   // Broadcast health update via WebSocket
   private async broadcastHealthUpdate(report: SystemHealthReport): Promise<void> {
     const wsManager = getWebSocketManager();
-    if (!wsManager) return;
+    if (!wsManager) {return;}
 
     const healthData = {
       services: {

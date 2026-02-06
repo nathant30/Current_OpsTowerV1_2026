@@ -334,7 +334,7 @@ export class SyntheticDataGenerationEngine {
     
     for (const userId of userIds) {
       const user = this.syntheticUsers.get(userId);
-      if (!user) continue;
+      if (!user) {continue;}
 
       for (let i = 0; i < transactionsPerUser; i++) {
         const transaction = await this.createSyntheticTransaction(user);
@@ -878,10 +878,10 @@ export class SyntheticDataGenerationEngine {
   private generateQualityRecommendations(fidelity: number, diversity: number, privacy: number, utility: number): string[] {
     const recommendations = [];
     
-    if (fidelity < 0.8) recommendations.push('Improve GAN training with more epochs');
-    if (diversity < 0.7) recommendations.push('Increase noise injection and augmentation techniques');
-    if (privacy < 0.9) recommendations.push('Strengthen differential privacy parameters');
-    if (utility < 0.8) recommendations.push('Balance realism with data utility preservation');
+    if (fidelity < 0.8) {recommendations.push('Improve GAN training with more epochs');}
+    if (diversity < 0.7) {recommendations.push('Increase noise injection and augmentation techniques');}
+    if (privacy < 0.9) {recommendations.push('Strengthen differential privacy parameters');}
+    if (utility < 0.8) {recommendations.push('Balance realism with data utility preservation');}
     
     return recommendations;
   }

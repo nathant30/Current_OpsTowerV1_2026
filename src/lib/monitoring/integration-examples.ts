@@ -432,14 +432,14 @@ export class MonitoringScheduler {
     let score = 100;
 
     // Deduct for errors
-    if (health.errors.criticalErrors > 0) score -= 30;
-    if (health.errors.totalErrors > 50) score -= 20;
+    if (health.errors.criticalErrors > 0) {score -= 30;}
+    if (health.errors.totalErrors > 50) {score -= 20;}
 
     // Deduct for security threats
-    if (health.security.activeThreats > 0) score -= 20;
+    if (health.security.activeThreats > 0) {score -= 20;}
 
     // Deduct for active alerts
-    if (health.alerts.length > 5) score -= 10;
+    if (health.alerts.length > 5) {score -= 10;}
 
     return Math.max(0, score);
   }

@@ -105,8 +105,8 @@ describe('Safety Incident Response System', () => {
 
     // Mock Redis responses
     mockRedis.get.mockImplementation(async (key: string) => {
-      if (key.includes('booking:')) return JSON.stringify(mockActiveBooking);
-      if (key.includes('driver:')) return JSON.stringify(mockDriver);
+      if (key.includes('booking:')) {return JSON.stringify(mockActiveBooking);}
+      if (key.includes('driver:')) {return JSON.stringify(mockDriver);}
       if (key.includes('emergency_contacts')) {
         return JSON.stringify({
           police: '+632-117',

@@ -646,10 +646,10 @@ class FailoverManager extends EventEmitter {
     error?: Error
   ): void {
     const config = this.configs.get(configId);
-    if (!config) return;
+    if (!config) {return;}
 
     const provider = config.providers.find(p => p.id === providerId);
-    if (!provider) return;
+    if (!provider) {return;}
 
     if (success) {
       provider.healthStatus.consecutiveFailures = 0;

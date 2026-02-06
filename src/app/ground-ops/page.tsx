@@ -107,7 +107,7 @@ const GroundOpsPage = () => {
 
   // Load depot data
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) {return;}
     setDepots(MOCK_DEPOTS);
   }, [isClient, setDepots]);
 

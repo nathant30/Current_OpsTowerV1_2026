@@ -185,7 +185,7 @@ const VerificationReviewPage = ({ params }: { params: { id: string } }) => {
   const currentChecklist = currentDocument ? checklists[currentDocument.type] : [];
 
   const handleChecklistToggle = (itemId: string) => {
-    if (!currentDocument) return;
+    if (!currentDocument) {return;}
     setChecklists(prev => ({
       ...prev,
       [currentDocument.type]: prev[currentDocument.type].map(item =>
@@ -200,11 +200,11 @@ const VerificationReviewPage = ({ params }: { params: { id: string } }) => {
   const handleFullscreen = () => setIsFullscreen(!isFullscreen);
 
   const handlePrevDocument = () => {
-    if (currentDocIndex > 0) setCurrentDocIndex(currentDocIndex - 1);
+    if (currentDocIndex > 0) {setCurrentDocIndex(currentDocIndex - 1);}
   };
 
   const handleNextDocument = () => {
-    if (currentDocIndex < documents.length - 1) setCurrentDocIndex(currentDocIndex + 1);
+    if (currentDocIndex < documents.length - 1) {setCurrentDocIndex(currentDocIndex + 1);}
   };
 
   const allRequiredChecked = () => {
@@ -271,7 +271,7 @@ const VerificationReviewPage = ({ params }: { params: { id: string } }) => {
   };
 
   const addNote = () => {
-    if (!notes.trim()) return;
+    if (!notes.trim()) {return;}
 
     const auditEntry: AuditEntry = {
       id: `AUD-${Date.now()}`,

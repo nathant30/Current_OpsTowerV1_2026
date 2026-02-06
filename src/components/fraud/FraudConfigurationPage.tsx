@@ -321,7 +321,7 @@ const FraudConfigurationPage: React.FC = () => {
             {/* Threshold Categories */}
             {['detection', 'escalation', 'blocking', 'review'].map(category => {
               const categoryThresholds = thresholds.filter(t => t.category === category);
-              if (categoryThresholds.length === 0) return null;
+              if (categoryThresholds.length === 0) {return null;}
 
               return (
                 <Card key={category}>

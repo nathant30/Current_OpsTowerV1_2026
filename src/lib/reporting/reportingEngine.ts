@@ -366,7 +366,7 @@ class ReportingEngine {
 
   private scheduleReport(templateId: string): void {
     const template = this.templates.get(templateId);
-    if (!template) return;
+    if (!template) {return;}
 
     const intervals = {
       hourly: 60 * 60 * 1000,

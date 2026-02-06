@@ -120,7 +120,7 @@ export default function AccountDetailsPage() {
   };
 
   const formatAddress = (address: any) => {
-    if (!address) return 'N/A';
+    if (!address) {return 'N/A';}
     return `${address.street}, ${address.city}, ${address.province} ${address.postalCode}`;
   };
 

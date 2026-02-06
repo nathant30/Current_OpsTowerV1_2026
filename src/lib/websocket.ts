@@ -326,10 +326,10 @@ export class WebSocketManager {
   // Handle subscription requests
   private handleSubscription(socketId: string, channels: string[]): void {
     const authSocket = this.authenticatedSockets.get(socketId);
-    if (!authSocket) return;
+    if (!authSocket) {return;}
 
     const socket = this.io.sockets.sockets.get(socketId);
-    if (!socket) return;
+    if (!socket) {return;}
 
     for (const channel of channels) {
       // Check if user has permission for this channel
@@ -358,10 +358,10 @@ export class WebSocketManager {
   // Handle unsubscription requests
   private handleUnsubscription(socketId: string, channels: string[]): void {
     const authSocket = this.authenticatedSockets.get(socketId);
-    if (!authSocket) return;
+    if (!authSocket) {return;}
 
     const socket = this.io.sockets.sockets.get(socketId);
-    if (!socket) return;
+    if (!socket) {return;}
 
     for (const channel of channels) {
       authSocket.subscriptions.delete(channel);
@@ -381,7 +381,7 @@ export class WebSocketManager {
   // Check if user has permission for channel
   private hasChannelPermission(user: AuthPayload, channel: string): boolean {
     // Admin has access to all channels
-    if (user.role === 'admin') return true;
+    if (user.role === 'admin') {return true;}
 
     // Map channels to required permissions
     const channelPermissions: Record<string, string[]> = {
@@ -549,7 +549,7 @@ export class WebSocketManager {
     data: WebSocketEvents[K]
   ): void {
     const socketIds = this.regionSockets.get(regionId);
-    if (!socketIds) return;
+    if (!socketIds) {return;}
 
     for (const socketId of socketIds) {
       const socket = this.io.sockets.sockets.get(socketId);
@@ -593,7 +593,7 @@ export class WebSocketManager {
   // Handle socket disconnection
   private handleDisconnection(socketId: string): void {
     const authSocket = this.authenticatedSockets.get(socketId);
-    if (!authSocket) return;
+    if (!authSocket) {return;}
 
     // Remove from authenticated sockets
     this.authenticatedSockets.delete(socketId);
@@ -632,7 +632,7 @@ export class WebSocketManager {
       // Broadcast to all regions with drivers
       const regionIds = new Set(updates.map(update => update.regionId));
       regionIds.forEach(rid => {
-        if (rid) this.broadcastToRegion(rid, 'driver:batch_locations', event);
+        if (rid) {this.broadcastToRegion(rid, 'driver:batch_locations', event);}
       });
     }
   }
@@ -1466,7 +1466,7 @@ export class WebSocketManager {
       `;
 
       const params = [regionId, longitude, latitude, radiusMeters];
-      if (serviceType) params.push(serviceType);
+      if (serviceType) {params.push(serviceType);}
 
       // In production, this would use the database connection
       // For now, we'll broadcast to all drivers in the region

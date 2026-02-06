@@ -100,7 +100,7 @@ export default function PaymentTermsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete these payment terms?')) return;
+    if (!confirm('Are you sure you want to delete these payment terms?')) {return;}
 
     try {
       await billingApi.paymentTerms.delete(id);

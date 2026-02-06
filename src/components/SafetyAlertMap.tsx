@@ -79,7 +79,7 @@ export default function SafetyAlertMap({
 
   // Initialize map
   useEffect(() => {
-    if (!isLoaded || !mapRef.current || mapInstance.current || !window.google?.maps) return;
+    if (!isLoaded || !mapRef.current || mapInstance.current || !window.google?.maps) {return;}
 
     try {
       mapInstance.current = new google.maps.Map(mapRef.current, {
@@ -110,7 +110,7 @@ export default function SafetyAlertMap({
 
   // Add markers when map is ready and data changes
   useEffect(() => {
-    if (!mapInstance.current || !window.google?.maps) return;
+    if (!mapInstance.current || !window.google?.maps) {return;}
 
     // Clear existing markers
     markersRef.current.forEach(marker => marker.setMap(null));

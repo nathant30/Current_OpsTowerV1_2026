@@ -111,9 +111,9 @@ const NexusIntelligence = () => {
 
   // Health score color coding
   const getHealthColor = (score: number) => {
-    if (score >= 90) return 'text-green-700 bg-green-100 border-green-200';
-    if (score >= 80) return 'text-blue-700 bg-blue-100 border-blue-200';
-    if (score >= 70) return 'text-yellow-700 bg-yellow-100 border-yellow-200';
+    if (score >= 90) {return 'text-green-700 bg-green-100 border-green-200';}
+    if (score >= 80) {return 'text-blue-700 bg-blue-100 border-blue-200';}
+    if (score >= 70) {return 'text-yellow-700 bg-yellow-100 border-yellow-200';}
     return 'text-red-700 bg-red-100 border-red-200';
   };
 
@@ -192,9 +192,9 @@ const NexusIntelligence = () => {
   // Recommendations tab content
   const renderRecommendations = () => {
     const filteredRecs = recommendations.filter(rec => {
-      if (filters.domain && rec.domain !== filters.domain) return false;
-      if (filters.status && rec.status !== filters.status) return false;
-      if (filters.riskLevel && rec.riskLevel !== filters.riskLevel) return false;
+      if (filters.domain && rec.domain !== filters.domain) {return false;}
+      if (filters.status && rec.status !== filters.status) {return false;}
+      if (filters.riskLevel && rec.riskLevel !== filters.riskLevel) {return false;}
       return true;
     });
 

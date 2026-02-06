@@ -177,7 +177,7 @@ class RealTimeFraudEngine {
     alerts: FraudAlert[], 
     reasoning: string[]
   ): Promise<void> {
-    if (eventData.userType !== 'rider') return;
+    if (eventData.userType !== 'rider') {return;}
 
     // Check for rider incentive fraud
     try {
@@ -257,7 +257,7 @@ class RealTimeFraudEngine {
     alerts: FraudAlert[], 
     reasoning: string[]
   ): Promise<void> {
-    if (!eventData.data?.gpsPoints || eventData.data.gpsPoints.length < 2) return;
+    if (!eventData.data?.gpsPoints || eventData.data.gpsPoints.length < 2) {return;}
 
     try {
       const gpsSpoofingAlert = await gpsSpoofingDetector.analyzeGPSData(
@@ -373,7 +373,7 @@ class RealTimeFraudEngine {
    */
   private startBatchProcessor(): void {
     setInterval(async () => {
-      if (this.alertQueue.length === 0) return;
+      if (this.alertQueue.length === 0) {return;}
 
       const batchSize = Math.min(50, this.alertQueue.length);
       const batch = this.alertQueue.splice(0, batchSize);

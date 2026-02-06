@@ -424,7 +424,7 @@ class DashboardAPI {
   }
 
   private convertToCSV(data: SystemMetrics[]): string {
-    if (data.length === 0) return '';
+    if (data.length === 0) {return '';}
 
     const headers = [
       'timestamp',

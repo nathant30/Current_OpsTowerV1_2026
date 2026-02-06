@@ -275,7 +275,7 @@ export class GeospatialIntelligenceEngine {
     const violations: GeofenceRule[] = [];
 
     for (const [id, geofence] of this.geofences.entries()) {
-      if (!geofence.isActive) continue;
+      if (!geofence.isActive) {continue;}
 
       const isInside = this.isPointInPolygon(point, geofence.polygon);
       
@@ -434,7 +434,7 @@ export class GeospatialIntelligenceEngine {
     const processed = new Set<number>();
 
     for (let i = 0; i < points.length; i++) {
-      if (processed.has(i)) continue;
+      if (processed.has(i)) {continue;}
 
       const cluster: LocationCluster = {
         centroid: { ...points[i] },
@@ -455,7 +455,7 @@ export class GeospatialIntelligenceEngine {
       }
 
       for (let j = i + 1; j < points.length; j++) {
-        if (processed.has(j)) continue;
+        if (processed.has(j)) {continue;}
 
         const distance = this.calculateDistance(
           points[i].latitude, points[i].longitude,
@@ -508,8 +508,8 @@ export class GeospatialIntelligenceEngine {
   private calculateTimeBasedRisk(point: GeospatialPoint): number {
     const hour = point.timestamp.getHours();
     
-    if (hour >= 2 && hour <= 5) return 0.3;
-    if (hour >= 22 || hour <= 1) return 0.2;
+    if (hour >= 2 && hour <= 5) {return 0.3;}
+    if (hour >= 22 || hour <= 1) {return 0.2;}
     
     return 0.05;
   }
@@ -607,9 +607,9 @@ export class GeospatialIntelligenceEngine {
     risk += anomalies.routeDeviations.length * 0.15;
     risk += anomalies.suspiciousStops.length * 0.2;
 
-    if (metrics.detours > 3) risk += 0.2;
-    if (metrics.averageSpeed > 100) risk += 0.15;
-    if (metrics.actualDuration > metrics.estimatedDuration * 2) risk += 0.1;
+    if (metrics.detours > 3) {risk += 0.2;}
+    if (metrics.averageSpeed > 100) {risk += 0.15;}
+    if (metrics.actualDuration > metrics.estimatedDuration * 2) {risk += 0.1;}
 
     return Math.min(risk, 1.0);
   }
@@ -617,9 +617,9 @@ export class GeospatialIntelligenceEngine {
   private calculateRouteConfidence(route: GeospatialPoint[], metrics: RouteAnalysis['metrics']): number {
     let confidence = 0.8;
 
-    if (route.length < 10) confidence -= 0.2;
-    if (route.some(p => !p.accuracy || p.accuracy > 50)) confidence -= 0.1;
-    if (metrics.totalDistance < 1) confidence -= 0.1;
+    if (route.length < 10) {confidence -= 0.2;}
+    if (route.some(p => !p.accuracy || p.accuracy > 50)) {confidence -= 0.1;}
+    if (metrics.totalDistance < 1) {confidence -= 0.1;}
 
     return Math.max(confidence, 0.3);
   }
@@ -649,7 +649,7 @@ export class GeospatialIntelligenceEngine {
   }
 
   private calculateStopDuration(route: GeospatialPoint[], index: number): number {
-    if (index <= 0 || index >= route.length - 1) return 0;
+    if (index <= 0 || index >= route.length - 1) {return 0;}
 
     const beforeTime = route[index - 1].timestamp.getTime();
     const currentTime = route[index].timestamp.getTime();
@@ -664,7 +664,7 @@ export class GeospatialIntelligenceEngine {
         point.latitude, point.longitude,
         riskArea.center.lat, riskArea.center.lon
       );
-      if (distance <= riskArea.radius) return true;
+      if (distance <= riskArea.radius) {return true;}
     }
     return false;
   }
@@ -737,14 +737,14 @@ export class GeospatialIntelligenceEngine {
   private calculateClusterRisk(cluster: LocationCluster): number {
     let risk = 0;
 
-    if (cluster.patterns.includes('unusual_nighttime_activity')) risk += 0.3;
-    if (cluster.patterns.includes('high_user_convergence')) risk += 0.2;
-    if (cluster.density > 200) risk += 0.2;
+    if (cluster.patterns.includes('unusual_nighttime_activity')) {risk += 0.3;}
+    if (cluster.patterns.includes('high_user_convergence')) {risk += 0.2;}
+    if (cluster.density > 200) {risk += 0.2;}
 
     const nightActivity = cluster.timeDistribution.slice(0, 6).reduce((sum, val) => sum + val, 0);
-    if (nightActivity > 0.3) risk += 0.2;
+    if (nightActivity > 0.3) {risk += 0.2;}
 
-    if (this.isClusterInFraudArea(cluster)) risk += 0.3;
+    if (this.isClusterInFraudArea(cluster)) {risk += 0.3;}
 
     return Math.min(risk, 1.0);
   }

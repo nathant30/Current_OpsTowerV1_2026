@@ -185,12 +185,12 @@ export class IoTSensorFusionEngine {
     const speed = data.gps.speed;
     const gyroRate = data.gyroscope.rotationRate;
 
-    if (speed < 1 && accelMagnitude < 2) return 'stationary';
-    if (speed < 8 && accelMagnitude > 2 && accelMagnitude < 6) return 'walking';
-    if (speed > 15 && speed < 120 && gyroRate < 100) return 'driving';
-    if (speed > 8 && speed < 25 && accelMagnitude < 4) return 'riding';
+    if (speed < 1 && accelMagnitude < 2) {return 'stationary';}
+    if (speed < 8 && accelMagnitude > 2 && accelMagnitude < 6) {return 'walking';}
+    if (speed > 15 && speed < 120 && gyroRate < 100) {return 'driving';}
+    if (speed > 8 && speed < 25 && accelMagnitude < 4) {return 'riding';}
 
-    if (accelMagnitude > 20 || gyroRate > 500 || speed > 200) return 'anomalous';
+    if (accelMagnitude > 20 || gyroRate > 500 || speed > 200) {return 'anomalous';}
 
     return 'walking';
   }
@@ -198,21 +198,21 @@ export class IoTSensorFusionEngine {
   private async analyzeFraudRisk(data: SensorData, movementType: MovementPattern['movementType']): Promise<number> {
     let risk = 0;
 
-    if (movementType === 'anomalous') risk += 0.4;
+    if (movementType === 'anomalous') {risk += 0.4;}
 
     const speedGpsInconsistency = this.checkSpeedConsistency(data);
-    if (speedGpsInconsistency > this.anomalyThresholds.speedInconsistency) risk += 0.3;
+    if (speedGpsInconsistency > this.anomalyThresholds.speedInconsistency) {risk += 0.3;}
 
     const locationJump = await this.detectLocationJumps(data);
-    if (locationJump > this.anomalyThresholds.locationJump) risk += 0.3;
+    if (locationJump > this.anomalyThresholds.locationJump) {risk += 0.3;}
 
-    if (data.deviceMetrics.batteryLevel < 0.1 && data.deviceMetrics.screenBrightness > 0.8) risk += 0.1;
+    if (data.deviceMetrics.batteryLevel < 0.1 && data.deviceMetrics.screenBrightness > 0.8) {risk += 0.1;}
 
     const sensorNoiseLevel = this.calculateSensorNoise(data);
-    if (sensorNoiseLevel > this.anomalyThresholds.sensorNoise) risk += 0.2;
+    if (sensorNoiseLevel > this.anomalyThresholds.sensorNoise) {risk += 0.2;}
 
     const philippinesLocationCheck = this.isInPhilippinesRegion(data.gps.latitude, data.gps.longitude);
-    if (!philippinesLocationCheck) risk += 0.1;
+    if (!philippinesLocationCheck) {risk += 0.1;}
 
     return Math.min(risk, 1.0);
   }
@@ -269,7 +269,7 @@ export class IoTSensorFusionEngine {
   }
 
   private async generateSensorSignature(history: SensorData[]): Promise<number[]> {
-    if (history.length === 0) return [];
+    if (history.length === 0) {return [];}
 
     const signature: number[] = [];
     
@@ -345,9 +345,9 @@ export class IoTSensorFusionEngine {
 
   private calculateExpectedSpeed(data: SensorData): number {
     const accelMagnitude = data.accelerometer.magnitude;
-    if (accelMagnitude < 2) return 0;
-    if (accelMagnitude < 6) return Math.random() * 8 + 2;
-    if (accelMagnitude < 10) return Math.random() * 30 + 10;
+    if (accelMagnitude < 2) {return 0;}
+    if (accelMagnitude < 6) {return Math.random() * 8 + 2;}
+    if (accelMagnitude < 10) {return Math.random() * 30 + 10;}
     return Math.random() * 60 + 30;
   }
 
@@ -372,9 +372,9 @@ export class IoTSensorFusionEngine {
   private calculateMovementConfidence(data: SensorData, movementType: MovementPattern['movementType']): number {
     let confidence = 0.8;
     
-    if (data.gps.accuracy > 10) confidence -= 0.2;
-    if (data.deviceMetrics.networkStrength < 0.3) confidence -= 0.1;
-    if (movementType === 'anomalous') confidence -= 0.3;
+    if (data.gps.accuracy > 10) {confidence -= 0.2;}
+    if (data.deviceMetrics.networkStrength < 0.3) {confidence -= 0.1;}
+    if (movementType === 'anomalous') {confidence -= 0.3;}
     
     return Math.max(confidence, 0.1);
   }
@@ -404,13 +404,13 @@ export class IoTSensorFusionEngine {
   }
 
   private calculateVariance(values: number[]): number {
-    if (values.length === 0) return 0;
+    if (values.length === 0) {return 0;}
     const mean = values.reduce((a, b) => a + b, 0) / values.length;
     return values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length;
   }
 
   private async performFFT(signal: number[]): Promise<number[]> {
-    if (signal.length === 0) return [];
+    if (signal.length === 0) {return [];}
     
     const fftResult: number[] = [];
     for (let i = 0; i < Math.min(signal.length, 20); i++) {
@@ -420,14 +420,14 @@ export class IoTSensorFusionEngine {
   }
 
   private async extractGaitPattern(walkingData: SensorData[]): Promise<number[]> {
-    if (walkingData.length === 0) return [];
+    if (walkingData.length === 0) {return [];}
     
     const steps = walkingData.map(d => d.accelerometer.magnitude);
     return this.findPeaks(steps).slice(0, 10);
   }
 
   private async extractDrivingStyle(drivingData: SensorData[]): Promise<number[]> {
-    if (drivingData.length === 0) return [];
+    if (drivingData.length === 0) {return [];}
     
     const accelerations = drivingData.map(d => d.accelerometer.magnitude);
     const rotations = drivingData.map(d => d.gyroscope.rotationRate);
@@ -441,7 +441,7 @@ export class IoTSensorFusionEngine {
   }
 
   private async analyzeDeviceOrientation(history: SensorData[]): Promise<number[]> {
-    if (history.length === 0) return [];
+    if (history.length === 0) {return [];}
     
     const orientations = history.map(d => Math.atan2(d.accelerometer.y, d.accelerometer.x));
     return [
@@ -453,7 +453,7 @@ export class IoTSensorFusionEngine {
 
   private async extractTypingRhythm(history: SensorData[]): Promise<number[]> {
     const typingEvents = history.filter(d => d.accelerometer.magnitude > 5 && d.accelerometer.magnitude < 15);
-    if (typingEvents.length === 0) return [];
+    if (typingEvents.length === 0) {return [];}
     
     const intervals: number[] = [];
     for (let i = 1; i < typingEvents.length; i++) {
@@ -518,7 +518,7 @@ export class IoTSensorFusionEngine {
   }
 
   private async analyzeRoutePattern(trajectory: Array<{lat: number, lon: number, timestamp: Date, speed: number}>): Promise<any> {
-    if (trajectory.length < 2) return { isAnomalous: false, confidence: 0 };
+    if (trajectory.length < 2) {return { isAnomalous: false, confidence: 0 };}
     
     let totalDistance = 0;
     let speedAnomalies = 0;
@@ -530,7 +530,7 @@ export class IoTSensorFusionEngine {
       );
       totalDistance += distance;
       
-      if (trajectory[i].speed > 120) speedAnomalies++;
+      if (trajectory[i].speed > 120) {speedAnomalies++;}
     }
     
     return {
@@ -547,7 +547,7 @@ export class IoTSensorFusionEngine {
     
     for (const point of trajectory) {
       const key = `${Math.round(point.lat * 1000)},${Math.round(point.lon * 1000)}`;
-      if (seen.has(key)) duplicates++;
+      if (seen.has(key)) {duplicates++;}
       seen.add(key);
     }
     

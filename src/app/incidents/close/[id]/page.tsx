@@ -188,7 +188,7 @@ const IncidentClosePage = ({ params }: { params: { id: string } }) => {
 
   // Check if can close
   const canClose = () => {
-    if (!incident?.closeChecklist) return false;
+    if (!incident?.closeChecklist) {return false;}
 
     const requiredItems = incident.closeChecklist.filter(item => item.required);
     const completedRequired = requiredItems.filter(item => item.completed);
@@ -200,7 +200,7 @@ const IncidentClosePage = ({ params }: { params: { id: string } }) => {
 
   // Handle close
   const handleClose = () => {
-    if (!incident || !canClose()) return;
+    if (!incident || !canClose()) {return;}
 
     closeIncident(incident.id, {
       reason: closureReason,

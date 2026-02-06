@@ -508,7 +508,7 @@ class PhoneServiceManager {
     const callId = event.CallSid;
     const callStatus = event.CallStatus;
     
-    if (!callId) return;
+    if (!callId) {return;}
     
     // Update call status
     const status: Partial<CallStatus> = {
@@ -826,7 +826,7 @@ class PhoneServiceManager {
 
   private async updateCallStatus(callId: string, updates: Partial<CallStatus>): Promise<void> {
     const existing = await this.getCallStatus(callId);
-    if (!existing) return;
+    if (!existing) {return;}
     
     const updated = { ...existing, ...updates };
     await this.storeCallStatus(updated);
@@ -855,7 +855,7 @@ class PhoneServiceManager {
 
   private async handleConfirmation(callId: string, digits: string): Promise<void> {
     const status = await this.getCallStatus(callId);
-    if (!status) return;
+    if (!status) {return;}
     
     // Process confirmation based on digits
     if (digits === '1') {
@@ -934,7 +934,7 @@ class PhoneServiceManager {
   }
 
   private async processCallQueue(): Promise<void> {
-    if (this.callQueue.length === 0) return;
+    if (this.callQueue.length === 0) {return;}
     
     this.isProcessing = true;
     

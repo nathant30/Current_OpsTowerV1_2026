@@ -38,7 +38,7 @@ export default function EmergencyMap({ incident }: EmergencyMapProps) {
     };
 
     const initializeMap = () => {
-      if (!mapRef.current) return;
+      if (!mapRef.current) {return;}
 
       try {
         const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila

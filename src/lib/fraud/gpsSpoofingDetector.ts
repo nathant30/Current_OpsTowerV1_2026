@@ -125,7 +125,7 @@ export class GPSSpoofingDetector {
   }
 
   private async analyzeLocationAnomalies(analysis: GPSSpoofingDetection, gpsPoints: GPSPoint[]): Promise<void> {
-    if (gpsPoints.length < 2) return;
+    if (gpsPoints.length < 2) {return;}
 
     const locationJumps: GPSJump[] = [];
     let impossibleSpeedCount = 0;
@@ -207,7 +207,7 @@ export class GPSSpoofingDetector {
   }
 
   private async analyzeRoutePatterns(analysis: GPSSpoofingDetection, gpsPoints: GPSPoint[]): Promise<void> {
-    if (gpsPoints.length < 3) return;
+    if (gpsPoints.length < 3) {return;}
 
     let straightLineCount = 0;
     let totalDeviation = 0;
@@ -284,7 +284,7 @@ export class GPSSpoofingDetector {
     gpsPoints: GPSPoint[], 
     sensorData: any[]
   ): Promise<void> {
-    if (!sensorData || sensorData.length === 0) return;
+    if (!sensorData || sensorData.length === 0) {return;}
 
     // Match GPS points with sensor data
     let accelerometerMismatches = 0;
@@ -296,7 +296,7 @@ export class GPSSpoofingDetector {
       const currentGPS = gpsPoints[i];
       const sensor = sensorData[i];
 
-      if (!sensor) continue;
+      if (!sensor) {continue;}
 
       // Calculate expected acceleration from GPS
       const gpsAcceleration = this.calculateGPSAcceleration(prevGPS, currentGPS);
@@ -353,28 +353,28 @@ export class GPSSpoofingDetector {
     let score = 0;
 
     // Location anomaly scoring
-    if (analysis.impossibleSpeed) score += 25;
-    if (analysis.teleportation) score += 30;
+    if (analysis.impossibleSpeed) {score += 25;}
+    if (analysis.teleportation) {score += 30;}
     score += Math.min(20, analysis.locationJumps.length * 5);
 
     // Device indicator scoring
-    if (analysis.mockLocationApp) score += 35;
-    if (analysis.rootedDevice) score += 15;
-    if (analysis.developerOptions) score += 10;
+    if (analysis.mockLocationApp) {score += 35;}
+    if (analysis.rootedDevice) {score += 15;}
+    if (analysis.developerOptions) {score += 10;}
 
     // Route pattern scoring
-    if (analysis.straightLineMovement) score += 20;
-    if (analysis.routeDeviation > 100) score += 15;
-    if (analysis.unrealisticTraffic) score += 12;
+    if (analysis.straightLineMovement) {score += 20;}
+    if (analysis.routeDeviation > 100) {score += 15;}
+    if (analysis.unrealisticTraffic) {score += 12;}
 
     // Philippines context scoring
-    if (analysis.outsideServiceArea) score += 25;
+    if (analysis.outsideServiceArea) {score += 25;}
     score += Math.min(15, analysis.restrictedZones.length * 5);
 
     // Sensor mismatch scoring
-    if (analysis.accelerometerMismatch) score += 10;
-    if (analysis.gyroscopeMismatch) score += 8;
-    if (analysis.magnetometerAnomaly) score += 7;
+    if (analysis.accelerometerMismatch) {score += 10;}
+    if (analysis.gyroscopeMismatch) {score += 8;}
+    if (analysis.magnetometerAnomaly) {score += 7;}
 
     return Math.min(100, Math.max(0, score));
   }
@@ -524,7 +524,7 @@ export class GPSSpoofingDetector {
     const timeElapsed = (current.timestamp - prev.timestamp) / 1000;
     
     let bearingDiff = Math.abs(bearing2 - bearing1);
-    if (bearingDiff > 180) bearingDiff = 360 - bearingDiff;
+    if (bearingDiff > 180) {bearingDiff = 360 - bearingDiff;}
     
     return timeElapsed > 0 ? this.toRad(bearingDiff) / timeElapsed : 0;
   }

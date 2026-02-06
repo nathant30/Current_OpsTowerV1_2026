@@ -23,7 +23,7 @@ export const secureLog = {
 
 // Sanitize data for logging (remove sensitive fields)
 const sanitizeForLogging = (data: any): any => {
-  if (!data) return data;
+  if (!data) {return data;}
   
   const sensitiveFields = [
     'password', 'token', 'secret', 'key', 'authorization',
@@ -141,12 +141,12 @@ export const getSecurityConfig = () => {
 export const validateEmergencyData = (incident: any): boolean => {
   try {
     // Basic structure validation
-    if (!incident || typeof incident !== 'object') return false;
+    if (!incident || typeof incident !== 'object') {return false;}
     
     // Required fields validation
     const requiredFields = ['id', 'type', 'priority', 'driverId', 'location', 'timestamp'];
     for (const field of requiredFields) {
-      if (!(field in incident)) return false;
+      if (!(field in incident)) {return false;}
     }
     
     // Validate coordinates if present
@@ -158,11 +158,11 @@ export const validateEmergencyData = (incident: any): boolean => {
     
     // Validate incident type
     const validTypes = ['sos', 'accident', 'breakdown', 'safety', 'medical'];
-    if (!validTypes.includes(incident.type)) return false;
+    if (!validTypes.includes(incident.type)) {return false;}
     
     // Validate priority
     const validPriorities = ['critical', 'high', 'medium', 'low'];
-    if (!validPriorities.includes(incident.priority)) return false;
+    if (!validPriorities.includes(incident.priority)) {return false;}
     
     return true;
   } catch (error) {

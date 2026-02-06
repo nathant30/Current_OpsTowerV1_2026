@@ -135,9 +135,9 @@ describe('Driver Performance Analytics System', () => {
 
     // Mock Redis responses
     mockRedis.get.mockImplementation(async (key: string) => {
-      if (key.includes('driver_performance')) return JSON.stringify(mockDriverData);
-      if (key.includes('trip_history')) return JSON.stringify(mockTripHistory);
-      if (key.includes('rating_history')) return JSON.stringify(mockRatingHistory);
+      if (key.includes('driver_performance')) {return JSON.stringify(mockDriverData);}
+      if (key.includes('trip_history')) {return JSON.stringify(mockTripHistory);}
+      if (key.includes('rating_history')) {return JSON.stringify(mockRatingHistory);}
       if (key.includes('regional_averages')) {
         return JSON.stringify({
           averageRating: 4.2,

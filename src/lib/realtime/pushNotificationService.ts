@@ -194,7 +194,7 @@ class PushNotificationService {
     preferences: Partial<PushSubscription['preferences']>
   ): Promise<boolean> {
     const subscription = this.subscriptions.get(deviceId);
-    if (!subscription) return false;
+    if (!subscription) {return false;}
 
     subscription.preferences = { ...subscription.preferences, ...preferences };
     this.subscriptions.set(deviceId, subscription);
@@ -247,24 +247,24 @@ class PushNotificationService {
     
     return allSubscriptions.filter(sub => {
       // Check if subscription is enabled
-      if (!sub.enabled) return false;
+      if (!sub.enabled) {return false;}
 
       // Check category preferences
-      if (!sub.preferences[notification.category]) return false;
+      if (!sub.preferences[notification.category]) {return false;}
 
       // Check quiet hours
-      if (this.isInQuietHours(sub)) return false;
+      if (this.isInQuietHours(sub)) {return false;}
 
       // Check target filters
-      if (notification.targetUsers && !notification.targetUsers.includes(sub.userId)) return false;
-      if (notification.targetDevices && !notification.targetDevices.includes(sub.deviceType)) return false;
+      if (notification.targetUsers && !notification.targetUsers.includes(sub.userId)) {return false;}
+      if (notification.targetDevices && !notification.targetDevices.includes(sub.deviceType)) {return false;}
 
       // Get user's role and region from connected clients
       const connectedClient = this.getConnectedClient(sub.userId, sub.deviceId);
       if (connectedClient) {
-        if (notification.targetRoles && !notification.targetRoles.includes(connectedClient.role)) return false;
+        if (notification.targetRoles && !notification.targetRoles.includes(connectedClient.role)) {return false;}
         if (notification.targetRegions && connectedClient.location && 
-            !notification.targetRegions.includes(connectedClient.location.region)) return false;
+            !notification.targetRegions.includes(connectedClient.location.region)) {return false;}
       }
 
       return true;
@@ -279,7 +279,7 @@ class PushNotificationService {
   }
 
   private isInQuietHours(subscription: PushSubscription): boolean {
-    if (!subscription.preferences.quietHours.enabled) return false;
+    if (!subscription.preferences.quietHours.enabled) {return false;}
 
     const now = new Date();
     const timezone = subscription.preferences.quietHours.timezone || 'Asia/Manila';
@@ -329,10 +329,10 @@ class PushNotificationService {
 
   private shouldReceiveNotification(client: WebSocketClient, notification: PushNotification): boolean {
     // Check target filters
-    if (notification.targetRoles && !notification.targetRoles.includes(client.role)) return false;
-    if (notification.targetDevices && !notification.targetDevices.includes(client.deviceType)) return false;
+    if (notification.targetRoles && !notification.targetRoles.includes(client.role)) {return false;}
+    if (notification.targetDevices && !notification.targetDevices.includes(client.deviceType)) {return false;}
     if (notification.targetRegions && client.location && 
-        !notification.targetRegions.includes(client.location.region)) return false;
+        !notification.targetRegions.includes(client.location.region)) {return false;}
 
     return true;
   }
@@ -464,9 +464,9 @@ class PushNotificationService {
   }
 
   private getFraudType(metric: string): string {
-    if (metric.includes('gps')) return 'GPS Spoofing';
-    if (metric.includes('multi') || metric.includes('account')) return 'Multi-Account';
-    if (metric.includes('incentive')) return 'Incentive Fraud';
+    if (metric.includes('gps')) {return 'GPS Spoofing';}
+    if (metric.includes('multi') || metric.includes('account')) {return 'Multi-Account';}
+    if (metric.includes('incentive')) {return 'Incentive Fraud';}
     return 'Suspicious Activity';
   }
 
@@ -492,7 +492,7 @@ class PushNotificationService {
 
   updateTemplate(id: string, updates: Partial<NotificationTemplate>): boolean {
     const template = this.templates.get(id);
-    if (!template) return false;
+    if (!template) {return false;}
 
     this.templates.set(id, { ...template, ...updates });
     return true;

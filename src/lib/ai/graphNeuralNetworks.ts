@@ -289,7 +289,7 @@ class GraphNeuralNetwork {
 
   private computeNodeEmbedding(nodeId: string): void {
     const node = this.graph.get(nodeId);
-    if (!node) return;
+    if (!node) {return;}
 
     // Simple GNN-style embedding computation
     const neighborEmbeddings = this.getNeighborEmbeddings(nodeId);
@@ -351,7 +351,7 @@ class GraphNeuralNetwork {
     let idx = 0;
     
     Object.entries(properties).forEach(([key, value]) => {
-      if (idx >= this.embeddingDimension) return;
+      if (idx >= this.embeddingDimension) {return;}
       
       if (typeof value === 'number') {
         // Normalize numeric values
@@ -380,7 +380,7 @@ class GraphNeuralNetwork {
   }
 
   private aggregateEmbeddings(embeddings: number[][]): number[] {
-    if (embeddings.length === 0) return new Array(this.embeddingDimension).fill(0);
+    if (embeddings.length === 0) {return new Array(this.embeddingDimension).fill(0);}
     
     const aggregated = new Array(this.embeddingDimension).fill(0);
     
@@ -451,7 +451,7 @@ class GraphNeuralNetwork {
     
     // Simple connected component detection
     this.graph.forEach((node, nodeId) => {
-      if (visited.has(nodeId)) return;
+      if (visited.has(nodeId)) {return;}
       
       const component = this.exploreComponent(nodeId, visited);
       if (component.nodes.length >= 3) { // Minimum community size
@@ -469,7 +469,7 @@ class GraphNeuralNetwork {
     
     while (stack.length > 0) {
       const nodeId = stack.pop()!;
-      if (visited.has(nodeId)) continue;
+      if (visited.has(nodeId)) {continue;}
       
       visited.add(nodeId);
       nodes.push(nodeId);
@@ -494,7 +494,7 @@ class GraphNeuralNetwork {
     const avgRiskScore = communityNodes.reduce((sum, node) => sum + node.riskScore, 0) / communityNodes.length;
     
     // Only consider high-risk communities
-    if (avgRiskScore < 0.6) return null;
+    if (avgRiskScore < 0.6) {return null;}
 
     // Determine network type based on characteristics
     const networkType = this.classifyNetworkType(communityNodes, community.edges);
@@ -603,8 +603,8 @@ class GraphNeuralNetwork {
     confidence += avgEdgeStrength * 0.2;
     
     // Size and density bonus
-    if (nodes.length >= 5) confidence += 0.1;
-    if (edges.length / Math.max(nodes.length, 1) > 1.5) confidence += 0.1;
+    if (nodes.length >= 5) {confidence += 0.1;}
+    if (edges.length / Math.max(nodes.length, 1) > 1.5) {confidence += 0.1;}
     
     return Math.min(confidence, 0.98);
   }
@@ -830,7 +830,7 @@ class GraphNeuralNetwork {
   private calculateClusteringCoefficient(nodeId: string): number {
     // Simplified clustering coefficient calculation
     const neighbors = this.getNeighbors(nodeId);
-    if (neighbors.length < 2) return 0;
+    if (neighbors.length < 2) {return 0;}
 
     let triangles = 0;
     const maxTriangles = neighbors.length * (neighbors.length - 1) / 2;
@@ -876,9 +876,9 @@ class GraphNeuralNetwork {
     const nodes = community.nodes.map(id => this.graph.get(id)!);
     const avgRisk = nodes.reduce((sum, node) => sum + node.riskScore, 0) / nodes.length;
 
-    if (avgRisk >= 0.8) return 'critical';
-    if (avgRisk >= 0.6) return 'high';
-    if (avgRisk >= 0.4) return 'medium';
+    if (avgRisk >= 0.8) {return 'critical';}
+    if (avgRisk >= 0.6) {return 'high';}
+    if (avgRisk >= 0.4) {return 'medium';}
     return 'low';
   }
 

@@ -180,11 +180,11 @@ class BackupCommunicationManager {
     try {
       // Firebase Cloud Messaging as primary push provider
       const fcmResult = await this.sendFCMNotification(message);
-      if (fcmResult) return true;
+      if (fcmResult) {return true;}
       
       // Apple Push Notifications as backup
       const apnResult = await this.sendAPNNotification(message);
-      if (apnResult) return true;
+      if (apnResult) {return true;}
       
       return false;
       

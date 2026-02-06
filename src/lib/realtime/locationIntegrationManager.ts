@@ -90,7 +90,7 @@ class LocationIntegrationManager {
    * Initialize all location services
    */
   async initialize(): Promise<void> {
-    if (this.isInitialized) return;
+    if (this.isInitialized) {return;}
 
     logger.info('Initializing integrated location services', {}, { component: 'LocationIntegrationManager', action: 'initialize' });
 
@@ -302,7 +302,7 @@ class LocationIntegrationManager {
   private async getLocalTrafficConditions(locationData: DriverLocationData): Promise<TrafficCondition[]> {
     try {
       const regionTraffic = await philippinesTrafficService.getTrafficData(locationData.regionId);
-      if (!regionTraffic) return [];
+      if (!regionTraffic) {return [];}
 
       // Filter traffic conditions within 2km radius
       return regionTraffic.conditions.filter(condition => {

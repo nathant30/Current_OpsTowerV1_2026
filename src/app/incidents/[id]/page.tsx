@@ -43,7 +43,7 @@ const IncidentDetailsPage = ({ params }: { params: { id: string } }) => {
 
   // Handle file upload
   const handleFileUpload = async (files: FileList | null) => {
-    if (!files || !incident) return;
+    if (!files || !incident) {return;}
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
     const maxSize = 5 * 1024 * 1024; // 5MB
@@ -114,7 +114,7 @@ const IncidentDetailsPage = ({ params }: { params: { id: string } }) => {
 
   // Add comment
   const handleAddComment = () => {
-    if (!comment.trim() || !incident) return;
+    if (!comment.trim() || !incident) {return;}
 
     const timelineEvent: TimelineEvent = {
       id: `TL-${Date.now()}`,
@@ -130,8 +130,8 @@ const IncidentDetailsPage = ({ params }: { params: { id: string } }) => {
 
   // Format file size
   const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1024) {return `${bytes} B`;}
+    if (bytes < 1024 * 1024) {return `${(bytes / 1024).toFixed(1)} KB`;}
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 

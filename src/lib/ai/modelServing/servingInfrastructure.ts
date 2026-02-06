@@ -198,7 +198,7 @@ export class MLModelServingInfrastructure extends EventEmitter {
 
   private async processBatchJobAsync(jobId: string): Promise<void> {
     const job = this.batchJobs.get(jobId);
-    if (!job) return;
+    if (!job) {return;}
 
     try {
       job.status = 'processing';
@@ -281,20 +281,20 @@ export class MLModelServingInfrastructure extends EventEmitter {
     let riskScore = 0;
     
     // Transaction velocity check
-    if (features.velocity_1h > 10) riskScore += 0.3;
-    if (features.velocity_24h > 50) riskScore += 0.2;
+    if (features.velocity_1h > 10) {riskScore += 0.3;}
+    if (features.velocity_24h > 50) {riskScore += 0.2;}
     
     // Amount anomaly check
-    if (features.amount_zscore > 3) riskScore += 0.25;
+    if (features.amount_zscore > 3) {riskScore += 0.25;}
     
     // Location anomaly check
-    if (features.unusual_location_score > 0.8) riskScore += 0.2;
+    if (features.unusual_location_score > 0.8) {riskScore += 0.2;}
     
     // Time pattern check
-    if (features.time_pattern_deviation > 2) riskScore += 0.15;
+    if (features.time_pattern_deviation > 2) {riskScore += 0.15;}
 
     // Philippines-specific rules
-    if (features.region_encoded === 1 && features.hour_of_day < 5) riskScore += 0.1; // Metro Manila late night
+    if (features.region_encoded === 1 && features.hour_of_day < 5) {riskScore += 0.1;} // Metro Manila late night
     
     const probability = Math.min(riskScore + (Math.random() * 0.1), 1.0);
     const confidence = 0.85 + (Math.random() * 0.1);
@@ -312,9 +312,9 @@ export class MLModelServingInfrastructure extends EventEmitter {
     const baseRisk = Math.random() * 0.4 + 0.1; // 10-50% base risk
     let riskMultiplier = 1.0;
 
-    if (features.behavioral_anomaly_score > 0.7) riskMultiplier += 0.3;
-    if (features.device_consistency < 0.5) riskMultiplier += 0.2;
-    if (features.geofence_violations > 2) riskMultiplier += 0.15;
+    if (features.behavioral_anomaly_score > 0.7) {riskMultiplier += 0.3;}
+    if (features.device_consistency < 0.5) {riskMultiplier += 0.2;}
+    if (features.geofence_violations > 2) {riskMultiplier += 0.15;}
 
     const riskScore = Math.min(baseRisk * riskMultiplier, 1.0);
     
@@ -342,9 +342,9 @@ export class MLModelServingInfrastructure extends EventEmitter {
   private async runLocationAnomalyDetection(features: any): Promise<any> {
     let anomalyScore = 0;
     
-    if (features.distance_from_home > 100) anomalyScore += 0.3; // >100km from usual location
-    if (features.speed_anomaly > 0.8) anomalyScore += 0.25;     // Unusual speed patterns
-    if (features.location_frequency < 0.1) anomalyScore += 0.2; // Never been to this location
+    if (features.distance_from_home > 100) {anomalyScore += 0.3;} // >100km from usual location
+    if (features.speed_anomaly > 0.8) {anomalyScore += 0.25;}     // Unusual speed patterns
+    if (features.location_frequency < 0.1) {anomalyScore += 0.2;} // Never been to this location
     
     return {
       class: anomalyScore > 0.5 ? 'anomalous' : 'normal',
@@ -366,7 +366,7 @@ export class MLModelServingInfrastructure extends EventEmitter {
 
   // Philippines-Specific Business Rules
   private applyPhilippinesRules(prediction: any, context?: any): any {
-    if (!context?.philippines_context) return prediction;
+    if (!context?.philippines_context) {return prediction;}
 
     const { region, timezone, traffic_condition } = context.philippines_context;
     let adjustedRiskScore = prediction.risk_score;

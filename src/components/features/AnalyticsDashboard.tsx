@@ -187,10 +187,10 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
   // Get change color
   const getChangeColor = (trend: MetricCard['trend'], change: number) => {
-    if (change > 0 && trend === 'up') return 'text-green-600';
-    if (change > 0 && trend === 'down') return 'text-red-600';
-    if (change < 0 && trend === 'up') return 'text-red-600';
-    if (change < 0 && trend === 'down') return 'text-green-600';
+    if (change > 0 && trend === 'up') {return 'text-green-600';}
+    if (change > 0 && trend === 'down') {return 'text-red-600';}
+    if (change < 0 && trend === 'up') {return 'text-red-600';}
+    if (change < 0 && trend === 'down') {return 'text-green-600';}
     return 'text-gray-500';
   };
 

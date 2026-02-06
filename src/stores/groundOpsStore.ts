@@ -143,7 +143,7 @@ export const useGroundOpsStore = create<GroundOpsState>()(
         Object.values(state.vehiclesByState).forEach(vehicles => allVehicles.push(...vehicles));
 
         const vehicle = allVehicles.find(v => v.id === vehicleId);
-        if (!vehicle) return state;
+        if (!vehicle) {return state;}
 
         const oldState = vehicle.state;
         const updatedVehicle = {
@@ -171,7 +171,7 @@ export const useGroundOpsStore = create<GroundOpsState>()(
         Object.values(state.vehiclesByState).forEach(vehicles => allVehicles.push(...vehicles));
 
         const vehicle = allVehicles.find(v => v.id === vehicleId);
-        if (!vehicle) return state;
+        if (!vehicle) {return state;}
 
         const updatedVehicle = {
           ...vehicle,

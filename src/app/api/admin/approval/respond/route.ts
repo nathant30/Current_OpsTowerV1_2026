@@ -160,7 +160,7 @@ function canUserApproveWorkflow(userLevel: number, userRole: string, userPermiss
   };
   
   const requirements = workflowRequirements[workflowAction];
-  if (!requirements) return false;
+  if (!requirements) {return false;}
   
   // Check minimum level
   if (requirements.minLevel && userLevel < requirements.minLevel) {

@@ -407,7 +407,7 @@ function getActiveTrainingJobs() {
 
 function getModelPerformanceSummary() {
   const models = aiTrainingPipeline.listModels();
-  if (models.length === 0) return { average_accuracy: 0 };
+  if (models.length === 0) {return { average_accuracy: 0 };}
 
   const totalAccuracy = models.reduce((sum, model) => sum + model.metrics.accuracy, 0);
   return {
@@ -423,7 +423,7 @@ function getTotalPredictionsToday() {
 
 function getGlobalAverageResponseTime() {
   const endpoints = modelServingInfrastructure.getEndpoints();
-  if (endpoints.length === 0) return 0;
+  if (endpoints.length === 0) {return 0;}
 
   const totalTime = endpoints.reduce((sum, endpoint) => sum + endpoint.performance.avg_response_time_ms, 0);
   return Math.round(totalTime / endpoints.length);

@@ -512,9 +512,9 @@ export class ReinforcementLearningEngine {
   }
 
   private simulateActionWithParams(state: any, params: any): string {
-    if (state.fraudRisk > params.escalationThreshold) return 'escalate';
-    if (state.fraudRisk > params.fraudThreshold) return 'block';
-    if (state.fraudRisk > params.verificationThreshold) return 'verify';
+    if (state.fraudRisk > params.escalationThreshold) {return 'escalate';}
+    if (state.fraudRisk > params.fraudThreshold) {return 'block';}
+    if (state.fraudRisk > params.verificationThreshold) {return 'verify';}
     return 'allow';
   }
 

@@ -79,7 +79,7 @@ export function RegionAccessDrawer({
   };
 
   const handleSaveGrants = async () => {
-    if (!data || !hasChanges) return;
+    if (!data || !hasChanges) {return;}
 
     try {
       setSaving(true);
@@ -152,7 +152,7 @@ export function RegionAccessDrawer({
   };
 
   const handleDeleteOverride = async (overrideId: string) => {
-    if (!confirm('Are you sure you want to delete this override?')) return;
+    if (!confirm('Are you sure you want to delete this override?')) {return;}
 
     try {
       const response = await fetch(`/api/admin/users/${userId}/overrides?overrideId=${overrideId}`, {
@@ -184,16 +184,16 @@ export function RegionAccessDrawer({
     const end = new Date(endsAt);
     const diff = end.getTime() - now.getTime();
     
-    if (diff <= 0) return 'Expired';
+    if (diff <= 0) {return 'Expired';}
     
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     
-    if (days > 0) return `${days}d ${hours}h`;
+    if (days > 0) {return `${days}d ${hours}h`;}
     return `${hours}h`;
   };
 
-  if (!open) return null;
+  if (!open) {return null;}
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">

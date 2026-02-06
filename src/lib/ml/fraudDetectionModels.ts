@@ -376,7 +376,7 @@ class MLFraudDetectionEngine {
 
   private normalizeFeature(featureName: string, value: number): number {
     const stats = this.featureStats.get(featureName);
-    if (!stats) return Math.min(Math.max(value, 0), 1);
+    if (!stats) {return Math.min(Math.max(value, 0), 1);}
 
     // Z-score normalization, then sigmoid to 0-1 range
     const zscore = (value - stats.mean) / stats.std;
@@ -444,9 +444,9 @@ class MLFraudDetectionEngine {
   }
 
   private scoreToRiskLevel(score: number): 'low' | 'medium' | 'high' | 'critical' {
-    if (score >= 0.8) return 'critical';
-    if (score >= 0.6) return 'high';
-    if (score >= 0.3) return 'medium';
+    if (score >= 0.8) {return 'critical';}
+    if (score >= 0.6) {return 'high';}
+    if (score >= 0.3) {return 'medium';}
     return 'low';
   }
 
@@ -545,9 +545,9 @@ class MLFraudDetectionEngine {
     
     // Add some domain-specific confidence factors
     let confidenceBoost = 0;
-    if (features['location_impossible_speeds'] > 0.8) confidenceBoost += 0.1;
-    if (features['device_is_emulator'] > 0.8) confidenceBoost += 0.1;
-    if (features['device_multiple_accounts'] > 0.7) confidenceBoost += 0.08;
+    if (features['location_impossible_speeds'] > 0.8) {confidenceBoost += 0.1;}
+    if (features['device_is_emulator'] > 0.8) {confidenceBoost += 0.1;}
+    if (features['device_multiple_accounts'] > 0.7) {confidenceBoost += 0.08;}
     
     return Math.min(baseConfidence + confidenceBoost, 0.98);
   }

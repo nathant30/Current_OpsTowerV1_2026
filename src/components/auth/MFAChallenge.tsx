@@ -221,7 +221,7 @@ export default function MFAChallenge({
   };
 
   const handleResend = async () => {
-    if (!onResend || !canResend) return;
+    if (!onResend || !canResend) {return;}
 
     setCanResend(false);
     setResendCountdown(60);

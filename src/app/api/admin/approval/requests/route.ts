@@ -135,7 +135,7 @@ async function getApprovalRequestsFromDb(
   if (!query.include_expired) {
     const now = new Date();
     filteredRequests = filteredRequests.filter(req => {
-      if (!req.expires_at) return true;
+      if (!req.expires_at) {return true;}
       return new Date(req.expires_at) > now;
     });
   }

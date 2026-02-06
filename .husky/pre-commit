@@ -3,6 +3,22 @@
 
 echo "🔍 Running pre-commit checks..."
 
+# SECURITY: Scan for secrets before committing
+echo "🔒 Scanning for secrets with gitleaks..."
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --verbose
+  if [ $? -ne 0 ]; then
+    echo "❌ SECURITY VIOLATION: Secrets detected in staged files!"
+    echo "   Please remove all secrets and use environment variables instead."
+    echo "   See .env.example for required environment variables."
+    exit 1
+  fi
+  echo "✅ No secrets detected"
+else
+  echo "⚠️  gitleaks not installed - skipping secret scan"
+  echo "   Install with: brew install gitleaks (macOS) or apt-get install gitleaks (Linux)"
+fi
+
 # Run lint-staged for staged files
 npx lint-staged
 

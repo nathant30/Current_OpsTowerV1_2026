@@ -231,7 +231,7 @@ export function canUserApproveWorkflow(
   workflowAction: string
 ): boolean {
   const definition = getWorkflowDefinition(workflowAction);
-  if (!definition) return false;
+  if (!definition) {return false;}
   
   // Check minimum level
   if (definition.required_level && userLevel < definition.required_level) {
@@ -348,7 +348,7 @@ export function validateApprovalRequest(
  */
 export function generateApprovalRequestTemplate(action: string): Partial<CreateApprovalRequestBody> | null {
   const definition = getWorkflowDefinition(action);
-  if (!definition) return null;
+  if (!definition) {return null;}
   
   const templates: Record<string, any> = {
     'configure_alerts': {

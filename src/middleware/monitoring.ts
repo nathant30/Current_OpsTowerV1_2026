@@ -302,11 +302,11 @@ function trackSecurityEvents(
 
 // Get duration bucket for analysis
 function getDurationBucket(duration: number): string {
-  if (duration < 100) return '0-100ms';
-  if (duration < 500) return '100-500ms';
-  if (duration < 1000) return '500ms-1s';
-  if (duration < 5000) return '1s-5s';
-  if (duration < 10000) return '5s-10s';
+  if (duration < 100) {return '0-100ms';}
+  if (duration < 500) {return '100-500ms';}
+  if (duration < 1000) {return '500ms-1s';}
+  if (duration < 5000) {return '1s-5s';}
+  if (duration < 10000) {return '5s-10s';}
   return '10s+';
 }
 

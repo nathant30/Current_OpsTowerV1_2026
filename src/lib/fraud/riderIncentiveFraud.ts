@@ -73,7 +73,7 @@ export class RiderIncentiveFraudDetector {
   }
 
   private async analyzeRidePatterns(analysis: RiderIncentiveFraud, rides: any[]): Promise<void> {
-    if (rides.length === 0) return;
+    if (rides.length === 0) {return;}
 
     const recentRides = rides.filter(ride => 
       new Date(ride.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // Last 7 days
@@ -118,7 +118,7 @@ export class RiderIncentiveFraudDetector {
   }
 
   private async analyzePromoUsage(analysis: RiderIncentiveFraud, promoUsage: any[]): Promise<void> {
-    if (promoUsage.length === 0) return;
+    if (promoUsage.length === 0) {return;}
 
     // Count unique promo codes used
     const uniquePromoCodes = new Set(promoUsage.map(p => p.promoCode));
@@ -144,7 +144,7 @@ export class RiderIncentiveFraudDetector {
   }
 
   private async analyzeReferralBehavior(analysis: RiderIncentiveFraud, referrals: any[]): Promise<void> {
-    if (referrals.length === 0) return;
+    if (referrals.length === 0) {return;}
 
     // Check for suspicious referral patterns
     const recentReferrals = referrals.filter(r => 
@@ -223,8 +223,8 @@ export class RiderIncentiveFraudDetector {
     // In production, use proper geographic service
     
     if (lat >= 12.0 && lat <= 19.0 && lng >= 120.0 && lng <= 125.0) {
-      if (lat >= 16.0) return 'Northern Luzon';
-      if (lat >= 14.0) return 'Central Luzon';
+      if (lat >= 16.0) {return 'Northern Luzon';}
+      if (lat >= 14.0) {return 'Central Luzon';}
       return 'Southern Luzon';
     }
     
@@ -304,7 +304,7 @@ export class RiderIncentiveFraudDetector {
   }
 
   private calculateVariance(numbers: number[]): number {
-    if (numbers.length === 0) return 0;
+    if (numbers.length === 0) {return 0;}
     
     const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
     const variance = numbers.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / numbers.length;
@@ -316,34 +316,34 @@ export class RiderIncentiveFraudDetector {
     let score = 0;
 
     // Ride pattern scoring
-    if (analysis.unusualRideFrequency) score += 20;
-    if (analysis.shortRidePattern) score += 25;
-    if (analysis.sameRouteRepeating) score += 15;
-    if (analysis.unusualTiming) score += 10;
+    if (analysis.unusualRideFrequency) {score += 20;}
+    if (analysis.shortRidePattern) {score += 25;}
+    if (analysis.sameRouteRepeating) {score += 15;}
+    if (analysis.unusualTiming) {score += 10;}
 
     // Promo abuse scoring
-    if (analysis.promoCodeAbuse > 20) score += 30;
-    else if (analysis.promoCodeAbuse > 10) score += 15;
-    else if (analysis.promoCodeAbuse > 5) score += 8;
+    if (analysis.promoCodeAbuse > 20) {score += 30;}
+    else if (analysis.promoCodeAbuse > 10) {score += 15;}
+    else if (analysis.promoCodeAbuse > 5) {score += 8;}
 
     // Referral fraud scoring
-    if (analysis.referralFraud) score += 25;
+    if (analysis.referralFraud) {score += 25;}
 
     // Bonus hunting scoring
-    if (analysis.bonusHunting) score += 20;
+    if (analysis.bonusHunting) {score += 20;}
 
     // Completion rate penalty
-    if (analysis.rideCompletionRate < 0.7) score += 15;
-    if (analysis.rideCompletionRate < 0.5) score += 25;
+    if (analysis.rideCompletionRate < 0.7) {score += 15;}
+    if (analysis.rideCompletionRate < 0.5) {score += 25;}
 
     // Geographic anomalies
-    if (analysis.crossRegionRides) score += 12;
-    if (analysis.remoteAreaTargeting) score += 18;
+    if (analysis.crossRegionRides) {score += 12;}
+    if (analysis.remoteAreaTargeting) {score += 18;}
 
     // Cancellation pattern penalties
     analysis.cancelationPattern.forEach(pattern => {
-      if (pattern === 'frequent_quick_cancellation') score += 15;
-      if (pattern.includes('dominant_reason')) score += 10;
+      if (pattern === 'frequent_quick_cancellation') {score += 15;}
+      if (pattern.includes('dominant_reason')) {score += 10;}
     });
 
     return Math.min(100, Math.max(0, score));

@@ -319,7 +319,7 @@ async function calculateCurrentETA(ride: any): Promise<any> {
 
 // Get route data for mapping (simplified - would integrate with mapping service)
 async function getRouteData(ride: any): Promise<any> {
-  if (!ride.driver_longitude || !ride.driver_latitude) return null;
+  if (!ride.driver_longitude || !ride.driver_latitude) {return null;}
 
   try {
     // In production, this would call Google Maps/MapBox routing API
@@ -328,7 +328,7 @@ async function getRouteData(ride: any): Promise<any> {
       { lat: ride.dropoff_latitude, lng: ride.dropoff_longitude } :
       { lat: ride.pickup_latitude, lng: ride.pickup_longitude };
 
-    if (!destination.lat || !destination.lng) return null;
+    if (!destination.lat || !destination.lng) {return null;}
 
     return {
       origin: {

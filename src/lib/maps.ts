@@ -607,7 +607,7 @@ export class RealTimeMapController {
   }
 
   private setupEventListeners(): void {
-    if (!this.map) return;
+    if (!this.map) {return;}
 
     this.map.addListener('bounds_changed', () => {
       const bounds = this.map!.getBounds();
@@ -656,7 +656,7 @@ export class RealTimeMapController {
   }
 
   toggleTraffic(visible?: boolean): void {
-    if (!this.map) return;
+    if (!this.map) {return;}
     
     const trafficLayer = new google.maps.TrafficLayer();
     this.viewState.controls.showTraffic = visible ?? !this.viewState.controls.showTraffic;

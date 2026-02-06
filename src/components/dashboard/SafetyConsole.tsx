@@ -33,7 +33,7 @@ const SafetyConsole = memo<SafetyConsoleProps>(({
   onAddNote
 }) => {
   const renderEmergencyModal = () => {
-    if (!modalLocked || !selectedIncident) return null;
+    if (!modalLocked || !selectedIncident) {return null;}
 
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -130,7 +130,7 @@ const SafetyConsole = memo<SafetyConsoleProps>(({
   };
 
   const renderSafetyDrawer = () => {
-    if (!safetyDrawerOpen || !selectedIncident) return null;
+    if (!safetyDrawerOpen || !selectedIncident) {return null;}
 
     return (
       <div className="fixed bottom-0 right-0 w-96 h-80 bg-white border-t-2 border-l-2 border-slate-200 shadow-2xl z-40 rounded-tl-2xl">
