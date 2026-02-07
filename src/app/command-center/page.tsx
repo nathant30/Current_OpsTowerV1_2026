@@ -362,7 +362,7 @@ const CommandCenterPage = () => {
                 <AlertTriangle className="h-5 w-5" />
                 Critical Alerts
               </span>
-              <Badge variant="destructive">{alerts.filter(a => !a.resolved).length}</Badge>
+              <Badge variant="destructive">{(alerts || []).filter(a => !a.resolved).length}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -373,7 +373,7 @@ const CommandCenterPage = () => {
                   <p>No active alerts</p>
                 </div>
               ) : (
-                alerts.map((alert) => (
+                (alerts || []).map((alert) => (
                   <div
                     key={alert.id}
                     className={`p-4 rounded-lg border-l-4 ${
@@ -433,7 +433,7 @@ const CommandCenterPage = () => {
                   <p>No recent activity</p>
                 </div>
               ) : (
-                activities.map((activity) => (
+                (activities || []).map((activity) => (
                   <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50">
                     <div
                       className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${
