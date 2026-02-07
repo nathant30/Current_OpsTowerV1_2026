@@ -334,17 +334,17 @@ const CommandCenterPage = () => {
             <div className="grid grid-cols-3 gap-4 max-w-md mx-auto text-sm">
               <div className="bg-white rounded-lg p-3">
                 <div className="h-2 w-2 bg-green-500 rounded-full mx-auto mb-2"></div>
-                <p className="font-medium text-gray-900">{vehicles.filter(v => v.status === 'available').length}</p>
+                <p className="font-medium text-gray-900">{(vehicles || []).filter(v => v.status === 'available').length}</p>
                 <p className="text-gray-600">Available</p>
               </div>
               <div className="bg-white rounded-lg p-3">
                 <div className="h-2 w-2 bg-blue-500 rounded-full mx-auto mb-2"></div>
-                <p className="font-medium text-gray-900">{vehicles.filter(v => v.status === 'on_trip').length}</p>
+                <p className="font-medium text-gray-900">{(vehicles || []).filter(v => v.status === 'on_trip').length}</p>
                 <p className="text-gray-600">On Trip</p>
               </div>
               <div className="bg-white rounded-lg p-3">
                 <div className="h-2 w-2 bg-gray-500 rounded-full mx-auto mb-2"></div>
-                <p className="font-medium text-gray-900">{vehicles.filter(v => v.status === 'offline').length}</p>
+                <p className="font-medium text-gray-900">{(vehicles || []).filter(v => v.status === 'offline').length}</p>
                 <p className="text-gray-600">Offline</p>
               </div>
             </div>
