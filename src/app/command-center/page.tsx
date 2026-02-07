@@ -354,7 +354,7 @@ const CommandCenterPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {alerts.length === 0 ? (
+              {!alerts || alerts.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <Bell className="h-12 w-12 mx-auto mb-2 opacity-50" />
                   <p>No active alerts</p>
@@ -414,7 +414,7 @@ const CommandCenterPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {activities.length === 0 ? (
+              {!activities || activities.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <Activity className="h-12 w-12 mx-auto mb-2 opacity-50" />
                   <p>No recent activity</p>
