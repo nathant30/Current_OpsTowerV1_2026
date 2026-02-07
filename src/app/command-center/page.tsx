@@ -192,6 +192,18 @@ const CommandCenterPage = () => {
     );
   }
 
+  // Prevent SSR issues with Zustand store
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <Activity className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-neutral-600">Loading Command Center...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 p-6 bg-slate-50 min-h-screen">
       {/* Header */}
