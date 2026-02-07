@@ -108,11 +108,12 @@ const CommandCenterPage = () => {
   }, [router]);
 
   // Zustand store
+  const storeData = useCommandCenterStore();
   const {
     kpis,
-    vehicles,
-    alerts,
-    activities,
+    vehicles = [],
+    alerts = [],
+    activities = [],
     connected,
     connectionQuality,
     godMode,
@@ -125,7 +126,7 @@ const CommandCenterPage = () => {
     setConnectionState,
     toggleGodMode,
     toggleSound,
-  } = useCommandCenterStore();
+  } = storeData || {};
 
   // WebSocket connection
   const {
