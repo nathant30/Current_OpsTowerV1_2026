@@ -388,6 +388,14 @@ class DatabaseService {
 // Singleton instance
 export const database = new DatabaseService();
 
+// Export getDb function for backwards compatibility
+export async function getDb() {
+  if (!database) {
+    throw new Error('Database not initialized');
+  }
+  return database;
+}
+
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   await database.close();

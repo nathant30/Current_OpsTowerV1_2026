@@ -7,7 +7,7 @@
  * @module lib/payments/maya/client
  */
 
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import {
   MayaCheckoutRequest,
   MayaCheckoutResponse,

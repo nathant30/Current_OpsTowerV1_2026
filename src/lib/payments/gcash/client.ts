@@ -7,7 +7,7 @@
  * @module lib/payments/gcash/client
  */
 
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import {
   EBANXPaymentRequest,
   EBANXPaymentResponse,

@@ -147,7 +147,7 @@ export class GCashPaymentService {
           const statusResponse = await this.client.getPaymentStatus(paymentHash);
 
           // Get payment from database
-          const paymentResult = await db.query(
+          const paymentResult = await query(
             `SELECT id, transaction_id, status FROM payments WHERE provider_transaction_id = $1`,
             [paymentHash]
           );
@@ -215,7 +215,7 @@ export class GCashPaymentService {
     
     try {
       // Get current payment
-      const paymentResult = await db.query(
+      const paymentResult = await query(
         `SELECT status FROM payments WHERE transaction_id = $1`,
         [transactionId]
       );
@@ -265,7 +265,7 @@ export class GCashPaymentService {
     
     try {
       // Get from database
-      const result = await db.query(
+      const result = await query(
         `SELECT
           transaction_id, status, amount, currency, provider_transaction_id,
           created_at, updated_at, completed_at, failure_reason
@@ -333,7 +333,7 @@ export class GCashPaymentService {
     
     try {
       // Get payment
-      const paymentResult = await db.query(
+      const paymentResult = await query(
         `SELECT id, provider_transaction_id, amount, currency, status FROM payments WHERE transaction_id = $1`,
         [request.transactionId]
       );
@@ -486,7 +486,7 @@ export class GCashPaymentService {
   ): Promise<string> {
     
     try {
-      const result = await db.query(
+      const result = await query(
         `INSERT INTO webhook_events (
           provider, event_type, payload, headers, signature, signature_verified,
           processed, received_at
