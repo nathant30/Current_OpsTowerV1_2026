@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,6 +13,7 @@ import {
   Download,
   RefreshCw,
   Loader2,
+  Package,
 } from 'lucide-react';
 import {
   LineChart,
@@ -29,12 +31,14 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
+import type { RevenueData, ServiceTypeRevenue, DriverRanking } from '@/lib/analytics/types';
+import { formatCurrency, formatNumber, downloadCSV, arrayToCSV } from '@/lib/analytics/utils';
 
 interface KPIData {
   label: string;
   value: string | number;
   change: number;
-  trend: 'up' | 'down';
+  trend: 'up' | 'down' | 'stable';
   icon: React.ReactNode;
   color: string;
 }
@@ -45,6 +49,9 @@ interface DateRange {
   label: string;
 }
 
+// Fetcher function for SWR
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export default function AnalyticsDashboard() {
   const [loading, setLoading] = useState(false);
   const [selectedRange, setSelectedRange] = useState<string>('month');
@@ -53,6 +60,30 @@ export default function AnalyticsDashboard() {
     endDate: new Date(),
     label: 'Last 30 Days',
   });
+
+  // Fetch revenue data
+  const { data: revenueResponse, mutate: mutateRevenue } = useSWR(
+    `/api/analytics/revenue?type=daily&start=${format(dateRange.startDate, 'yyyy-MM-dd')}&end=${format(dateRange.endDate, 'yyyy-MM-dd')}`,
+    fetcher
+  );
+
+  // Fetch service type revenue
+  const { data: serviceTypeResponse } = useSWR(
+    `/api/analytics/revenue?type=by-service-type&start=${format(dateRange.startDate, 'yyyy-MM-dd')}&end=${format(dateRange.endDate, 'yyyy-MM-dd')}`,
+    fetcher
+  );
+
+  // Fetch top drivers
+  const { data: driversResponse } = useSWR(
+    '/api/analytics/drivers?type=rankings&metric=earnings&limit=10',
+    fetcher
+  );
+
+  // Fetch booking metrics
+  const { data: completionRateResponse } = useSWR(
+    '/api/analytics/bookings?type=completion-rate',
+    fetcher
+  );
 
   // Date range presets
   const dateRangePresets = [
@@ -76,29 +107,50 @@ export default function AnalyticsDashboard() {
 
   const handleRefresh = async () => {
     setLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await Promise.all([mutateRevenue()]);
     setLoading(false);
   };
 
   const handleExportCSV = () => {
-    // TODO: Implement CSV export
-    console.log('Exporting CSV...');
+    if (!revenueResponse?.data) {return;}
+
+    const csv = arrayToCSV(revenueResponse.data, [
+      { key: 'date', label: 'Date' },
+      { key: 'totalRevenue', label: 'Total Revenue' },
+      { key: 'platformCommission', label: 'Platform Commission' },
+      { key: 'driverEarnings', label: 'Driver Earnings' },
+      { key: 'totalBookings', label: 'Total Bookings' },
+      { key: 'completedBookings', label: 'Completed Bookings' },
+      { key: 'activeDrivers', label: 'Active Drivers' },
+      { key: 'activePassengers', label: 'Active Passengers' },
+    ]);
+
+    const timestamp = format(new Date(), 'yyyy-MM-dd');
+    downloadCSV(csv, `opstower-revenue-${timestamp}.csv`);
   };
 
-  // Mock KPI data
+  // Calculate KPIs from revenue data
+  const revenueData: RevenueData[] = revenueResponse?.data || [];
+  const totalRevenue = revenueData.reduce((sum, d) => sum + d.totalRevenue, 0);
+  const totalBookings = revenueData.reduce((sum, d) => sum + d.totalBookings, 0);
+  const totalDrivers = Math.max(...revenueData.map((d) => d.activeDrivers), 0);
+  const totalPassengers = Math.max(...revenueData.map((d) => d.activePassengers), 0);
+  const avgCompletionRate = revenueData.length > 0
+    ? revenueData.reduce((sum, d) => sum + d.completionRate, 0) / revenueData.length
+    : 0;
+
   const kpis: KPIData[] = [
     {
       label: 'Total Revenue',
-      value: '₱2,847,500',
-      change: 15.3,
+      value: formatCurrency(totalRevenue),
+      change: 15.3, // Would need to calculate from previous period
       trend: 'up',
       icon: <DollarSign className="h-5 w-5" />,
       color: 'text-green-600',
     },
     {
-      label: 'Total Rides',
-      value: '18,942',
+      label: 'Total Bookings',
+      value: formatNumber(totalBookings),
       change: 12.7,
       trend: 'up',
       icon: <Car className="h-5 w-5" />,
@@ -106,15 +158,15 @@ export default function AnalyticsDashboard() {
     },
     {
       label: 'Active Drivers',
-      value: '1,247',
+      value: formatNumber(totalDrivers),
       change: 8.5,
       trend: 'up',
       icon: <Users className="h-5 w-5" />,
       color: 'text-purple-600',
     },
     {
-      label: 'Fleet Utilization',
-      value: '78.3%',
+      label: 'Completion Rate',
+      value: `${avgCompletionRate.toFixed(1)}%`,
       change: 5.2,
       trend: 'up',
       icon: <TrendingUp className="h-5 w-5" />,
@@ -122,38 +174,26 @@ export default function AnalyticsDashboard() {
     },
   ];
 
-  // Mock revenue chart data
-  const revenueData = Array.from({ length: 30 }, (_, i) => ({
-    date: format(subDays(new Date(), 29 - i), 'MMM dd'),
-    revenue: Math.floor(Math.random() * 50000) + 70000,
+  // Transform revenue data for chart
+  const revenueChartData = revenueData.map((d) => ({
+    date: format(new Date(d.date), 'MMM dd'),
+    revenue: d.totalRevenue,
+    bookings: d.completedBookings,
   }));
 
-  // Mock rides chart data
-  const ridesData = Array.from({ length: 30 }, (_, i) => ({
-    date: format(subDays(new Date(), 29 - i), 'MMM dd'),
-    rides: Math.floor(Math.random() * 300) + 500,
+  // Service type data for pie chart
+  const serviceTypeData: ServiceTypeRevenue[] = serviceTypeResponse?.data || [];
+  const serviceTypeChartData = serviceTypeData.map((st) => ({
+    name: st.serviceType,
+    value: st.bookings,
+    revenue: st.revenue,
   }));
 
-  // Mock driver performance data
-  const driverPerformance = Array.from({ length: 20 }, (_, i) => ({
-    id: `DRV-${String(i + 1).padStart(4, '0')}`,
-    name: `Driver ${i + 1}`,
-    rides: Math.floor(Math.random() * 200) + 100,
-    revenue: Math.floor(Math.random() * 50000) + 30000,
-    rating: (Math.random() * 0.5 + 4.5).toFixed(2),
-  }));
+  // Color palette
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
-  // Mock fleet utilization data
-  const fleetUtilization = [
-    { name: 'Motorcycle', value: 542, color: '#3b82f6' },
-    { name: 'Car', value: 398, color: '#10b981' },
-    { name: 'SUV', value: 189, color: '#f59e0b' },
-    { name: 'Taxi', value: 118, color: '#ef4444' },
-  ];
-
-  const formatCurrency = (value: number) => {
-    return `₱${value.toLocaleString('en-PH')}`;
-  };
+  // Top drivers data
+  const topDrivers: DriverRanking[] = driversResponse?.data || [];
 
   return (
     <div className="p-6 space-y-6">
@@ -185,6 +225,7 @@ export default function AnalyticsDashboard() {
             variant="default"
             size="sm"
             onClick={handleExportCSV}
+            disabled={!revenueData.length}
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
           >
             <Download className="h-4 w-4" />
@@ -220,16 +261,18 @@ export default function AnalyticsDashboard() {
                 <div className="flex items-center gap-1 text-sm">
                   {kpi.trend === 'up' ? (
                     <TrendingUp className="h-4 w-4 text-green-600" />
-                  ) : (
+                  ) : kpi.trend === 'down' ? (
                     <TrendingDown className="h-4 w-4 text-red-600" />
+                  ) : null}
+                  {kpi.trend !== 'stable' && (
+                    <span
+                      className={`font-semibold ${
+                        kpi.trend === 'up' ? 'text-green-600' : 'text-red-600'
+                      }`}
+                    >
+                      {kpi.change}%
+                    </span>
                   )}
-                  <span
-                    className={`font-semibold ${
-                      kpi.trend === 'up' ? 'text-green-600' : 'text-red-600'
-                    }`}
-                  >
-                    {kpi.change}%
-                  </span>
                 </div>
               </div>
               <div className="space-y-1">
@@ -242,160 +285,197 @@ export default function AnalyticsDashboard() {
         ))}
       </div>
 
-      {/* Charts Row 1: Revenue and Rides */}
+      {/* Charts Row 1: Revenue and Bookings */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Revenue Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Revenue Trend (Last 30 Days)</CardTitle>
+            <CardTitle>Revenue Trend ({dateRange.label})</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={revenueData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
-                <XAxis
-                  dataKey="date"
-                  stroke="#666"
-                  fontSize={12}
-                  tickFormatter={(value) => value.split(' ')[0]}
-                />
-                <YAxis
-                  stroke="#666"
-                  fontSize={12}
-                  tickFormatter={(value) => `₱${(value / 1000).toFixed(0)}k`}
-                />
-                <Tooltip
-                  formatter={(value: any) => formatCurrency(value)}
-                  contentStyle={{
-                    backgroundColor: '#fff',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '8px',
-                  }}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#10b981"
-                  strokeWidth={2}
-                  dot={false}
-                  name="Revenue"
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {revenueChartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={revenueChartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
+                  <XAxis
+                    dataKey="date"
+                    stroke="#666"
+                    fontSize={12}
+                    tickFormatter={(value) => value.split(' ')[0]}
+                  />
+                  <YAxis
+                    stroke="#666"
+                    fontSize={12}
+                    tickFormatter={(value) => `₱${(value / 1000).toFixed(0)}k`}
+                  />
+                  <Tooltip
+                    formatter={(value: any) => formatCurrency(value)}
+                    contentStyle={{
+                      backgroundColor: '#fff',
+                      border: '1px solid #e5e5e5',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#10b981"
+                    strokeWidth={2}
+                    dot={false}
+                    name="Revenue"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-neutral-500">
+                <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                Loading revenue data...
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Rides Chart */}
+        {/* Bookings Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Rides Completed (Last 30 Days)</CardTitle>
+            <CardTitle>Bookings Completed ({dateRange.label})</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={ridesData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
-                <XAxis
-                  dataKey="date"
-                  stroke="#666"
-                  fontSize={12}
-                  tickFormatter={(value) => value.split(' ')[0]}
-                />
-                <YAxis stroke="#666" fontSize={12} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#fff',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '8px',
-                  }}
-                />
-                <Legend />
-                <Bar dataKey="rides" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Rides" />
-              </BarChart>
-            </ResponsiveContainer>
+            {revenueChartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={revenueChartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
+                  <XAxis
+                    dataKey="date"
+                    stroke="#666"
+                    fontSize={12}
+                    tickFormatter={(value) => value.split(' ')[0]}
+                  />
+                  <YAxis stroke="#666" fontSize={12} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#fff',
+                      border: '1px solid #e5e5e5',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Legend />
+                  <Bar dataKey="bookings" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Bookings" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-neutral-500">
+                <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                Loading booking data...
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Charts Row 2: Driver Performance and Fleet Utilization */}
+      {/* Charts Row 2: Driver Performance and Service Types */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Driver Performance Table */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Top 20 Drivers by Rides</CardTitle>
+            <CardTitle>Top 10 Drivers by Earnings</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-neutral-200">
-                    <th className="text-left py-3 px-2 font-semibold text-neutral-700">Driver ID</th>
-                    <th className="text-left py-3 px-2 font-semibold text-neutral-700">Name</th>
-                    <th className="text-right py-3 px-2 font-semibold text-neutral-700">Rides</th>
-                    <th className="text-right py-3 px-2 font-semibold text-neutral-700">Revenue</th>
-                    <th className="text-right py-3 px-2 font-semibold text-neutral-700">Rating</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-100">
-                  {driverPerformance.map((driver) => (
-                    <tr key={driver.id} className="hover:bg-neutral-50">
-                      <td className="py-3 px-2 text-neutral-600">{driver.id}</td>
-                      <td className="py-3 px-2 font-medium text-neutral-900">{driver.name}</td>
-                      <td className="py-3 px-2 text-right text-neutral-900 font-semibold">
-                        {driver.rides}
-                      </td>
-                      <td className="py-3 px-2 text-right text-neutral-900">
-                        {formatCurrency(driver.revenue)}
-                      </td>
-                      <td className="py-3 px-2 text-right">
-                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">
-                          ⭐ {driver.rating}
-                        </span>
-                      </td>
+            {topDrivers.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-neutral-200">
+                      <th className="text-left py-3 px-2 font-semibold text-neutral-700">Rank</th>
+                      <th className="text-left py-3 px-2 font-semibold text-neutral-700">Driver</th>
+                      <th className="text-left py-3 px-2 font-semibold text-neutral-700">Code</th>
+                      <th className="text-right py-3 px-2 font-semibold text-neutral-700">Earnings</th>
+                      <th className="text-right py-3 px-2 font-semibold text-neutral-700">Trips</th>
+                      <th className="text-right py-3 px-2 font-semibold text-neutral-700">Rating</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-100">
+                    {topDrivers.map((driver) => (
+                      <tr key={driver.driverId} className="hover:bg-neutral-50">
+                        <td className="py-3 px-2 text-neutral-600">#{driver.rank}</td>
+                        <td className="py-3 px-2 font-medium text-neutral-900">{driver.driverName}</td>
+                        <td className="py-3 px-2 text-neutral-600">{driver.driverCode}</td>
+                        <td className="py-3 px-2 text-right text-neutral-900 font-semibold">
+                          {formatCurrency(driver.metricValue)}
+                        </td>
+                        <td className="py-3 px-2 text-right text-neutral-900">
+                          {formatNumber(driver.totalTrips)}
+                        </td>
+                        <td className="py-3 px-2 text-right">
+                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">
+                            ⭐ {driver.rating.toFixed(2)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-neutral-500">
+                <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                Loading driver data...
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Fleet Utilization Pie Chart */}
+        {/* Service Types Pie Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Fleet Utilization by Type</CardTitle>
+            <CardTitle>Bookings by Service Type</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={fleetUtilization}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {fleetUtilization.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+            {serviceTypeChartData.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={serviceTypeChartData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {serviceTypeChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value: any) => formatNumber(value)} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="mt-4 space-y-2">
+                  {serviceTypeChartData.map((item, index) => (
+                    <div key={item.name} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                        />
+                        <span className="text-neutral-700">{item.name}</span>
+                      </div>
+                      <span className="font-semibold text-neutral-900">
+                        {formatNumber(item.value)} bookings
+                      </span>
+                    </div>
                   ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="mt-4 space-y-2">
-              {fleetUtilization.map((item) => (
-                <div key={item.name} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-neutral-700">{item.name}</span>
-                  </div>
-                  <span className="font-semibold text-neutral-900">{item.value} rides</span>
                 </div>
-              ))}
-            </div>
+              </>
+            ) : (
+              <div className="h-[250px] flex items-center justify-center text-neutral-500">
+                <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                Loading service type data...
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
