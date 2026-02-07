@@ -326,7 +326,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                       onChange={(e) => setSelectedServiceType(e.target.value)}
                       className="px-2 py-1 border border-gray-300 rounded-md bg-white text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      {serviceTypes.map((service) => (
+                      {(serviceTypes || []).map((service) => (
                         <option key={service.id} value={service.id}>
                           {service.icon} {service.name}
                         </option>
