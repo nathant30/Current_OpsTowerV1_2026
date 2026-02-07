@@ -209,14 +209,14 @@ export const RidesharingSidebar: React.FC<RidesharingSidebarProps> = ({
   const handleItemClick = (itemId: string, section: string) => {
     // Use Next.js router for navigation
     if (itemId === 'dashboard') {
-      router.push('/dashboard');
+      router.push('/command-center');
     } else {
       router.push(`/${itemId}`);
     }
-    
+
     // Call section change handler
     onSectionChange?.(section);
-    
+
     // Also call the callback for backward compatibility
     onItemSelect?.(itemId);
   };

@@ -128,7 +128,7 @@ const BondsManagementPage = () => {
   useEffect(() => {
     setIsClient(true);
     if (!isFeatureEnabled('bonds')) {
-      router.push('/dashboard');
+      router.push('/command-center');
     }
   }, [router]);
 

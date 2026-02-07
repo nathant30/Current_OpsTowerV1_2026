@@ -193,7 +193,7 @@ const DriverIncentivesPage = () => {
   useEffect(() => {
     setIsClient(true);
     if (!isFeatureEnabled('driverIncentives')) {
-      router.push('/dashboard');
+      router.push('/command-center');
     }
   }, [router]);
 

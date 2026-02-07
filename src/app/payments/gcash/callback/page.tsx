@@ -92,7 +92,7 @@ function GCashCallbackContent() {
         status={status}
         timestamp={new Date().toISOString()}
         provider="gcash"
-        onClose={() => router.push('/dashboard')}
+        onClose={() => router.push('/command-center')}
       />
     </div>
   );

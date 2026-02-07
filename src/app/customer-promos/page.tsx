@@ -166,7 +166,7 @@ const CustomerPromosPage = () => {
   useEffect(() => {
     setIsClient(true);
     if (!isFeatureEnabled('customerPromos')) {
-      router.push('/dashboard');
+      router.push('/command-center');
     }
   }, [router]);
 

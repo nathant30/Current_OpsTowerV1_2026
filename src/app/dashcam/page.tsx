@@ -148,7 +148,7 @@ const DashcamFootagePage = () => {
   useEffect(() => {
     setIsClient(true);
     if (!isFeatureEnabled('dashcam')) {
-      router.push('/dashboard');
+      router.push('/command-center');
     }
   }, [router]);
 

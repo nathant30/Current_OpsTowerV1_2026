@@ -260,7 +260,7 @@ const TrustScorePage = () => {
   // Check feature flag
   useEffect(() => {
     if (!isFeatureEnabled('trust-score')) {
-      router.push('/dashboard');
+      router.push('/command-center');
     }
   }, [router]);
 

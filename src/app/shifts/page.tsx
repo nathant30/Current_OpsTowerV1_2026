@@ -117,7 +117,7 @@ const ShiftsCalendarPage = () => {
   useEffect(() => {
     setIsClient(true);
     if (!isFeatureEnabled('shifts')) {
-      router.push('/dashboard');
+      router.push('/command-center');
     }
   }, [router]);
 

@@ -120,7 +120,7 @@ const IdentityVerificationListPage = () => {
   useEffect(() => {
     setIsClient(true);
     if (!isFeatureEnabled('identityVerification')) {
-      router.push('/dashboard');
+      router.push('/command-center');
     }
   }, [router]);
 

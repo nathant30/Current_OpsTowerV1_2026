@@ -101,7 +101,7 @@ const GroundOpsPage = () => {
   useEffect(() => {
     setIsClient(true);
     if (!isFeatureEnabled('groundOps')) {
-      router.push('/dashboard');
+      router.push('/command-center');
     }
   }, [router]);
 

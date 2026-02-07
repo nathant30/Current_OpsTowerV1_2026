@@ -99,7 +99,7 @@ function PaymentCallbackContent() {
         status={status}
         timestamp={new Date().toISOString()}
         provider={provider}
-        onClose={() => router.push('/dashboard')}
+        onClose={() => router.push('/command-center')}
       />
     </div>
   );

@@ -12,8 +12,8 @@ export default function HomePage() {
   useEffect(() => {
     if (!isLoading) {
       if (isAuthenticated) {
-        // Redirect authenticated users to dashboard
-        router.replace('/dashboard');
+        // Redirect authenticated users to command center
+        router.replace('/command-center');
       } else {
         // Redirect unauthenticated users to login
         router.replace('/login');

@@ -43,9 +43,9 @@ export default function RBACLoginPage() {
         
         // Redirect based on role
         if (data.data.user.role === 'expansion_manager') {
-          router.push('/dashboard?rbac=true');
+          router.push('/command-center?rbac=true');
         } else {
-          router.push('/dashboard?rbac=true');
+          router.push('/command-center?rbac=true');
         }
       } else {
         setError(data.message || 'Login failed');

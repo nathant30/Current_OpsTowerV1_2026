@@ -103,7 +103,7 @@ const CommandCenterPage = () => {
   useEffect(() => {
     setIsClient(true);
     if (!isFeatureEnabled('commandCenter')) {
-      router.push('/dashboard');
+      router.push('/command-center');
     }
   }, [router]);
 

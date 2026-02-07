@@ -157,7 +157,7 @@ const IncidentsListPage = () => {
   useEffect(() => {
     setIsClient(true);
     if (!isFeatureEnabled('incidents')) {
-      router.push('/dashboard');
+      router.push('/command-center');
     }
   }, [router]);
 
