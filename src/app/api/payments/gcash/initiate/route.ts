@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * GCash Payment Initiation API Route
  *
@@ -118,7 +119,7 @@ export async function POST(request: NextRequest) {
       message: 'GCash payment initiated successfully',
     });
   } catch (error) {
-    console.error('GCash payment initiation failed:', error);
+    logger.error('GCash payment initiation failed:', error);
 
     // Handle EBANX API errors
     if (error instanceof EBANXAPIError) {

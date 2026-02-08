@@ -1,7 +1,7 @@
 // /api/auth/logout - User Logout API
 import { NextRequest } from 'next/server';
-import { 
-  createApiResponse, 
+import {
+  createApiResponse,
   createApiError,
   asyncHandler,
   handleOptionsRequest
@@ -9,9 +9,10 @@ import {
 import { authManager, getUserFromRequest } from '@/lib/auth';
 import { auditLogger, AuditEventType, SecurityLevel } from '@/lib/security/auditLogger';
 import { logger } from '@/lib/security/productionLogger';
+import { withAuthSecurity } from '@/lib/security/apiSecurityWrapper';
 
 // POST /api/auth/logout - Logout user and invalidate session
-export const POST = asyncHandler(async (request: NextRequest) => {
+export const POST = withAuthSecurity(asyncHandler(async (request: NextRequest) => {
   const clientIP = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
   const userAgent = request.headers.get('user-agent') || 'unknown';
 
@@ -78,7 +79,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
       'POST'
     );
   }
-});
+}));
 
 // OPTIONS handler for CORS
 export const OPTIONS = handleOptionsRequest;

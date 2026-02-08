@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * Maya Payment Status Query API Route
  *
@@ -57,7 +58,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Maya payment status query failed:', error);
+    logger.error('Maya payment status query failed:', error);
 
     return NextResponse.json(
       {

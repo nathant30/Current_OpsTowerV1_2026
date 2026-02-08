@@ -1,7 +1,7 @@
 // /api/drivers/[id] - Individual Driver Management API
 import { NextRequest } from 'next/server';
-import { 
-  createApiResponse, 
+import {
+  createApiResponse,
   createApiError,
   createNotFoundError,
   createValidationError,
@@ -12,10 +12,11 @@ import {
 import { withAuthAndRateLimit } from '@/lib/auth';
 import { MockDataService } from '@/lib/mockData';
 import { UpdateDriverRequest } from '@/types';
+import { withProtectedSecurity } from '@/lib/security/apiSecurityWrapper';
 
 
 // GET /api/drivers/[id] - Get driver by ID
-export const GET = asyncHandler(async (request: NextRequest, context?: { params: { id: string } }) => {
+export const GET = withProtectedSecurity(asyncHandler(async (request: NextRequest, context?: { params: { id: string } }) => {
   // Get user from request for authentication
   const { getUserFromRequest } = await import('@/lib/auth');
   const user = await getUserFromRequest(request);
@@ -59,10 +60,10 @@ export const GET = asyncHandler(async (request: NextRequest, context?: { params:
     { driver },
     'Driver retrieved successfully'
   );
-});
+}), ['drivers:read']);
 
 // PUT /api/drivers/[id] - Update driver
-export const PUT = asyncHandler(async (request: NextRequest, context?: { params: { id: string } }) => {
+export const PUT = withProtectedSecurity(asyncHandler(async (request: NextRequest, context?: { params: { id: string } }) => {
   // Get user from request for authentication
   const { getUserFromRequest } = await import('@/lib/auth');
   const user = await getUserFromRequest(request);
@@ -129,10 +130,10 @@ export const PUT = asyncHandler(async (request: NextRequest, context?: { params:
     { driver: updatedDriver },
     'Driver updated successfully'
   );
-});
+}), ['drivers:write']);
 
 // PATCH /api/drivers/[id] - Partial update driver
-export const PATCH = asyncHandler(async (request: NextRequest, context?: { params: { id: string } }) => {
+export const PATCH = withProtectedSecurity(asyncHandler(async (request: NextRequest, context?: { params: { id: string } }) => {
   // Get user from request for authentication
   const { getUserFromRequest } = await import('@/lib/auth');
   const user = await getUserFromRequest(request);
@@ -202,10 +203,10 @@ export const PATCH = asyncHandler(async (request: NextRequest, context?: { param
     { driver: updatedDriver },
     'Driver updated successfully'
   );
-});
+}), ['drivers:write']);
 
 // DELETE /api/drivers/[id] - Delete driver
-export const DELETE = asyncHandler(async (request: NextRequest, context?: { params: { id: string } }) => {
+export const DELETE = withProtectedSecurity(asyncHandler(async (request: NextRequest, context?: { params: { id: string } }) => {
   // Get user from request for authentication
   const { getUserFromRequest } = await import('@/lib/auth');
   const user = await getUserFromRequest(request);
@@ -278,7 +279,7 @@ export const DELETE = asyncHandler(async (request: NextRequest, context?: { para
     { deleted: true, driverId: id },
     'Driver deleted successfully'
   );
-});
+}), ['drivers:delete']);
 
 // OPTIONS handler for CORS
 export const OPTIONS = handleOptionsRequest;

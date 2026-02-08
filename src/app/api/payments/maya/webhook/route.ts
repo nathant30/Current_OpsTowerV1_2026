@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * Maya Webhook Handler API Route
  *
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
     const result = await mayaService.handleWebhook(webhookPayload);
 
     if (!result.success) {
-      console.error('Webhook processing failed:', result.error);
+      logger.error('Webhook processing failed:', result.error);
       return NextResponse.json(
         {
           success: false,
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Log successful processing
-    console.log('Webhook processed successfully:', {
+    logger.info('Webhook processed successfully:', {
       paymentId: result.paymentId,
       transactionId: result.transactionId,
       statusChange: `${result.previousStatus} -> ${result.newStatus}`,
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Maya webhook handler error:', error);
+    logger.error('Maya webhook handler error:', error);
 
     // Return 500 to trigger Maya retry
     return NextResponse.json(

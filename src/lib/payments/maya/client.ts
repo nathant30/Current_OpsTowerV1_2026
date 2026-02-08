@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * Maya API Client for Payment Integration
  *
@@ -69,7 +70,7 @@ export class MayaClient {
     }
 
     if (!this.config.webhookSecret) {
-      console.warn(
+      logger.warn(
         'Maya webhook secret is not set. Webhook signature verification will not work. Set MAYA_WEBHOOK_SECRET environment variable.'
       );
     }
@@ -290,14 +291,14 @@ export class MayaClient {
   verifyWebhookSignature(payload: MayaWebhookPayload): boolean {
     try {
       if (!this.config.webhookSecret) {
-        console.error('Maya webhook secret is not configured');
+        logger.error('Maya webhook secret is not configured');
         return false;
       }
 
       const signature = payload.headers['x-maya-signature'];
 
       if (!signature) {
-        console.error('Missing webhook signature header');
+        logger.error('Missing webhook signature header');
         return false;
       }
 
@@ -313,7 +314,7 @@ export class MayaClient {
         Buffer.from(expectedSignature)
       );
     } catch (error) {
-      console.error('Webhook signature verification failed:', error);
+      logger.error('Webhook signature verification failed:', error);
       return false;
     }
   }
@@ -383,7 +384,7 @@ export class MayaClient {
         (error instanceof TypeError || // Network error
           (error instanceof MayaAPIError && error.statusCode && error.statusCode >= 500))
       ) {
-        console.warn(
+        logger.warn(
           `Maya API request failed (attempt ${retryCount + 1}/${this.config.maxRetries}), retrying...`
         );
 

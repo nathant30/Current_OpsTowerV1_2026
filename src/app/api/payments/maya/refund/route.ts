@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * Maya Payment Refund API Route
  *
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Maya refund request failed:', error);
+    logger.error('Maya refund request failed:', error);
 
     // Validation error
     if (error instanceof z.ZodError) {

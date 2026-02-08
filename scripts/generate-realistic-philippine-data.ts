@@ -201,12 +201,12 @@ export const PHILIPPINE_VEHICLES = {
     { make: 'Mazda', model: '2', years: [2019, 2020, 2021, 2022], colors: ['Red', 'White', 'Blue', 'Gray'] }
   ],
   motorcycles: [
-    { make: 'Honda', model: 'Click 160', colors: ['Black', 'Red', 'White', 'Blue'] },
-    { make: 'Yamaha', model: 'NMAX', colors: ['Gray', 'Blue', 'Black', 'White'] },
-    { make: 'Suzuki', model: 'Raider R150', colors: ['Black', 'Red', 'Blue'] },
-    { make: 'Honda', model: 'TMX 155', colors: ['Black', 'Red', 'White'] },
-    { make: 'Yamaha', model: 'Mio i125', colors: ['Pink', 'White', 'Blue', 'Black'] },
-    { make: 'Suzuki', model: 'Smash 115', colors: ['Black', 'Blue', 'Red'] }
+    { make: 'Honda', model: 'Click 160', years: [2018, 2019, 2020, 2021, 2022, 2023], colors: ['Black', 'Red', 'White', 'Blue'] },
+    { make: 'Yamaha', model: 'NMAX', years: [2018, 2019, 2020, 2021, 2022, 2023], colors: ['Gray', 'Blue', 'Black', 'White'] },
+    { make: 'Suzuki', model: 'Raider R150', years: [2018, 2019, 2020, 2021, 2022], colors: ['Black', 'Red', 'Blue'] },
+    { make: 'Honda', model: 'TMX 155', years: [2019, 2020, 2021, 2022, 2023], colors: ['Black', 'Red', 'White'] },
+    { make: 'Yamaha', model: 'Mio i125', years: [2019, 2020, 2021, 2022, 2023], colors: ['Pink', 'White', 'Blue', 'Black'] },
+    { make: 'Suzuki', model: 'Smash 115', years: [2018, 2019, 2020, 2021, 2022], colors: ['Black', 'Blue', 'Red'] }
   ]
 };
 
@@ -301,7 +301,7 @@ export function generateRealisticDriver(id: number, regionCode: string = 'MMD') 
     vehicleInfo: {
       make: vehicle.make,
       model: vehicle.model,
-      year: vehicleType === 'car' ? randomFromArray(vehicle.years) : 2020 + randomInt(0, 4),
+      year: randomFromArray(vehicle.years),
       plateNumber: generatePlateNumber(vehicleType),
       color: randomFromArray(vehicle.colors),
       type: vehicleType,

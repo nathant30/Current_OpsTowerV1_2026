@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * EBANX API Client for GCash Integration
  *
@@ -258,7 +259,7 @@ export class EBANXClient {
       const signature = payload.headers['x-ebanx-signature'];
 
       if (!signature) {
-        console.error('Missing webhook signature header');
+        logger.error('Missing webhook signature header');
         return false;
       }
 
@@ -274,7 +275,7 @@ export class EBANXClient {
         Buffer.from(expectedSignature)
       );
     } catch (error) {
-      console.error('Webhook signature verification failed:', error);
+      logger.error('Webhook signature verification failed:', error);
       return false;
     }
   }
@@ -328,7 +329,7 @@ export class EBANXClient {
         (error instanceof TypeError || // Network error
           error instanceof EBANXAPIError && error.code === 'HTTP_ERROR')
       ) {
-        console.warn(
+        logger.warn(
           `EBANX API request failed (attempt ${retryCount + 1}/${this.config.maxRetries}), retrying...`
         );
 

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * Maya Payment Initiation API Route
  *
@@ -118,7 +119,7 @@ export async function POST(request: NextRequest) {
       message: 'Maya payment initiated successfully',
     });
   } catch (error) {
-    console.error('Maya payment initiation failed:', error);
+    logger.error('Maya payment initiation failed:', error);
 
     // Handle Maya API errors
     if (error instanceof MayaAPIError) {

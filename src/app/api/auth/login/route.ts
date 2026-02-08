@@ -1,7 +1,7 @@
 // /api/auth/login - User Authentication API
 import { NextRequest } from 'next/server';
-import { 
-  createApiResponse, 
+import {
+  createApiResponse,
   createApiError,
   createValidationError,
   validateRequiredFields,
@@ -12,6 +12,7 @@ import { authManager } from '@/lib/auth';
 import { MockDataService } from '@/lib/mockData';
 import { auditLogger, AuditEventType, SecurityLevel } from '@/lib/security/auditLogger';
 import { secureLog } from '@/lib/security/securityUtils';
+import { withAuthSecurity } from '@/lib/security/apiSecurityWrapper';
 
 interface LoginRequest {
   email: string;
@@ -39,7 +40,7 @@ interface LoginResponse {
 }
 
 // POST /api/auth/login - Authenticate user and return JWT tokens
-export const POST = asyncHandler(async (request: NextRequest) => {
+export const POST = withAuthSecurity(asyncHandler(async (request: NextRequest) => {
   let body: LoginRequest;
   
   try {
@@ -246,7 +247,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
       'POST'
     );
   }
-});
+}));
 
 // OPTIONS handler for CORS
 export const OPTIONS = handleOptionsRequest;

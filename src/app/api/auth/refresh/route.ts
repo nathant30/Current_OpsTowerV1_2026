@@ -1,7 +1,7 @@
 // /api/auth/refresh - Token Refresh API
 import { NextRequest } from 'next/server';
-import { 
-  createApiResponse, 
+import {
+  createApiResponse,
   createApiError,
   createValidationError,
   validateRequiredFields,
@@ -12,6 +12,7 @@ import { authManager } from '@/lib/auth';
 import { MockDataService } from '@/lib/mockData';
 import { auditLogger, AuditEventType, SecurityLevel } from '@/lib/security/auditLogger';
 import { logger } from '@/lib/security/productionLogger';
+import { withAuthSecurity } from '@/lib/security/apiSecurityWrapper';
 
 interface RefreshTokenRequest {
   refreshToken: string;
@@ -34,7 +35,7 @@ interface RefreshTokenResponse {
 }
 
 // POST /api/auth/refresh - Refresh access token using refresh token
-export const POST = asyncHandler(async (request: NextRequest) => {
+export const POST = withAuthSecurity(asyncHandler(async (request: NextRequest) => {
   const body = await request.json() as RefreshTokenRequest;
   const clientIP = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
   const userAgent = request.headers.get('user-agent') || 'unknown';
@@ -167,7 +168,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
       'POST'
     );
   }
-});
+}));
 
 // OPTIONS handler for CORS
 export const OPTIONS = handleOptionsRequest;

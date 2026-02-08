@@ -1,7 +1,7 @@
 // /api/auth/validate - Token Validation API
 import { NextRequest } from 'next/server';
-import { 
-  createApiResponse, 
+import {
+  createApiResponse,
   createApiError,
   asyncHandler,
   handleOptionsRequest
@@ -10,6 +10,7 @@ import { authManager, getUserFromRequest } from '@/lib/auth';
 import { MockDataService } from '@/lib/mockData';
 import { auditLogger, AuditEventType, SecurityLevel } from '@/lib/security/auditLogger';
 import { logger } from '@/lib/security/productionLogger';
+import { withAuthSecurity } from '@/lib/security/apiSecurityWrapper';
 
 interface ValidateTokenResponse {
   user: {
@@ -29,7 +30,7 @@ interface ValidateTokenResponse {
 }
 
 // POST /api/auth/validate - Validate JWT token and return user info
-export const POST = asyncHandler(async (request: NextRequest) => {
+export const POST = withAuthSecurity(asyncHandler(async (request: NextRequest) => {
   const clientIP = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
   const userAgent = request.headers.get('user-agent') || 'unknown';
 
@@ -145,7 +146,7 @@ export const POST = asyncHandler(async (request: NextRequest) => {
       'POST'
     );
   }
-});
+}));
 
 // OPTIONS handler for CORS
 export const OPTIONS = handleOptionsRequest;

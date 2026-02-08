@@ -5,6 +5,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from './security/productionLogger';
+import { tokenManager, type TokenPayload as TokenManagerPayload } from './auth/token-manager';
 // Removed Redis dependency for demo - using in-memory session store
 // import { redis } from './redis';
 
@@ -202,35 +203,26 @@ const JWT_CONFIG = {
 
 export class AuthManager {
   
-  // Generate JWT tokens
+  // Generate JWT tokens using new TokenManager with rotation and blacklisting
   async generateTokens(payload: Omit<AuthPayload, 'iat' | 'exp' | 'iss' | 'aud'>): Promise<{
     accessToken: string;
     refreshToken: string;
     expiresIn: number;
   }> {
     const sessionId = payload.sessionId || this.generateSessionId();
-    
-    const tokenPayload: Partial<AuthPayload> = {
-      ...payload,
+
+    const tokenPayload: Partial<TokenManagerPayload> = {
+      userId: payload.userId,
+      userType: payload.userType,
+      role: payload.role,
+      regionId: payload.regionId,
       sessionId,
+      deviceId: payload.deviceId,
       permissions: ROLE_PERMISSIONS[payload.role] || []
     };
 
-    const accessToken = jwt.sign(tokenPayload, JWT_CONFIG.accessTokenSecret, {
-      expiresIn: JWT_CONFIG.accessTokenExpiry,
-      issuer: JWT_CONFIG.issuer,
-      audience: JWT_CONFIG.audience
-    });
-
-    const refreshToken = jwt.sign(
-      { userId: payload.userId, sessionId },
-      JWT_CONFIG.refreshTokenSecret,
-      {
-        expiresIn: JWT_CONFIG.refreshTokenExpiry,
-        issuer: JWT_CONFIG.issuer,
-        audience: JWT_CONFIG.audience
-      }
-    );
+    // Use new token manager with rotation and blacklisting support
+    const tokens = await tokenManager.generateTokenPair(tokenPayload as Omit<TokenManagerPayload, 'iat' | 'exp' | 'iss' | 'aud' | 'tokenId' | 'fingerprint'>);
 
     // Store session in Redis (with fallback to in-memory for demo)
     try {
@@ -259,24 +251,25 @@ export class AuthManager {
       });
     }
 
-    // Calculate expiry time
-    const decoded = jwt.decode(accessToken) as JwtPayload;
-    const expiresIn = decoded.exp ? (decoded.exp * 1000) - Date.now() : 3600000;
-
     return {
-      accessToken,
-      refreshToken,
-      expiresIn: Math.floor(expiresIn / 1000) // Return in seconds
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      expiresIn: tokens.expiresIn
     };
   }
 
-  // Verify JWT token
+  // Verify JWT token using new TokenManager with blacklist checking
   async verifyToken(token: string): Promise<AuthPayload | null> {
     try {
-      const decoded = jwt.verify(token, JWT_CONFIG.accessTokenSecret, {
-        issuer: JWT_CONFIG.issuer,
-        audience: JWT_CONFIG.audience
-      }) as AuthPayload;
+      // Use token manager for validation with blacklist checking
+      const validation = await tokenManager.validateAccessToken(token, { checkBlacklist: true });
+
+      if (!validation.valid || !validation.payload) {
+        logger.warn('Token validation failed', { reason: validation.error });
+        return null;
+      }
+
+      const decoded = validation.payload as any as AuthPayload;
 
       // Verify session exists in Redis (with fallback to in-memory)
       let session = null;
@@ -286,9 +279,24 @@ export class AuthManager {
         // Fallback to in-memory session
         session = inMemorySessions.get(decoded.sessionId) || null;
       }
-      
+
       if (!session) {
         throw new Error('Session not found');
+      }
+
+      // Check session timeout (30 minutes of inactivity)
+      const inactivityTimeout = 30 * 60 * 1000; // 30 minutes
+      const timeSinceActivity = Date.now() - session.lastActivity;
+
+      if (timeSinceActivity > inactivityTimeout) {
+        logger.warn('Session expired due to inactivity', {
+          sessionId: decoded.sessionId,
+          userId: decoded.userId,
+          inactiveMinutes: Math.floor(timeSinceActivity / 60000)
+        });
+        // Clean up expired session
+        await this.logout(decoded.sessionId);
+        return null;
       }
 
       // Update last activity
@@ -310,16 +318,22 @@ export class AuthManager {
     }
   }
 
-  // Refresh access token
+  // Refresh access token with automatic rotation
   async refreshToken(refreshToken: string): Promise<{
     accessToken: string;
+    refreshToken?: string;
     expiresIn: number;
   } | null> {
     try {
-      const decoded = jwt.verify(refreshToken, JWT_CONFIG.refreshTokenSecret, {
-        issuer: JWT_CONFIG.issuer,
-        audience: JWT_CONFIG.audience
-      }) as { userId: string; sessionId: string };
+      // First validate the refresh token
+      const validation = await tokenManager.validateRefreshToken(refreshToken);
+
+      if (!validation.valid || !validation.payload) {
+        logger.warn('Refresh token validation failed', { reason: validation.error });
+        return null;
+      }
+
+      const decoded = validation.payload as any;
 
       // Get session from Redis (with fallback to in-memory)
       let session = null;
@@ -329,33 +343,59 @@ export class AuthManager {
         // Fallback to in-memory session
         session = inMemorySessions.get(decoded.sessionId) || null;
       }
-      
+
       if (!session) {
         throw new Error('Session not found');
       }
 
-      // Generate new access token with current session data
-      const tokenPayload: Partial<AuthPayload> = {
+      // Check session timeout before refreshing
+      const inactivityTimeout = 30 * 60 * 1000; // 30 minutes
+      const timeSinceActivity = Date.now() - session.lastActivity;
+
+      if (timeSinceActivity > inactivityTimeout) {
+        logger.warn('Cannot refresh - session expired due to inactivity', {
+          sessionId: decoded.sessionId,
+          userId: session.userId,
+        });
+        await this.logout(decoded.sessionId);
+        return null;
+      }
+
+      // Prepare session data for new tokens
+      const sessionData: Omit<TokenManagerPayload, 'iat' | 'exp' | 'iss' | 'aud' | 'tokenId' | 'fingerprint'> = {
         userId: session.userId,
         userType: session.userType,
-        role: this.getUserRole(session.userId), // You'll need to implement this
+        role: this.getUserRole(session.userId),
         regionId: session.regionId,
         sessionId: decoded.sessionId,
+        deviceId: session.deviceId,
         permissions: session.permissions
       };
 
-      const accessToken = jwt.sign(tokenPayload, JWT_CONFIG.accessTokenSecret, {
-        expiresIn: JWT_CONFIG.accessTokenExpiry,
-        issuer: JWT_CONFIG.issuer,
-        audience: JWT_CONFIG.audience
+      // Use token manager with automatic rotation
+      const newTokens = await tokenManager.refreshTokens(refreshToken, sessionData);
+
+      // Update session activity
+      try {
+        await memorySession.updateSessionActivity(decoded.sessionId);
+      } catch (redisError) {
+        if (inMemorySessions.has(decoded.sessionId)) {
+          const sessionData = inMemorySessions.get(decoded.sessionId);
+          sessionData.lastActivity = Date.now();
+          inMemorySessions.set(decoded.sessionId, sessionData);
+        }
+      }
+
+      logger.info('Tokens refreshed successfully', {
+        userId: session.userId,
+        sessionId: decoded.sessionId,
+        rotated: newTokens.rotated
       });
 
-      const decodedNew = jwt.decode(accessToken) as JwtPayload;
-      const expiresIn = decodedNew.exp ? (decodedNew.exp * 1000) - Date.now() : 3600000;
-
       return {
-        accessToken,
-        expiresIn: Math.floor(expiresIn / 1000)
+        accessToken: newTokens.accessToken,
+        refreshToken: newTokens.rotated ? newTokens.refreshToken : undefined,
+        expiresIn: newTokens.expiresIn
       };
     } catch (error) {
       logger.error('Token refresh failed', { error });
@@ -363,13 +403,36 @@ export class AuthManager {
     }
   }
 
-  // Logout user (invalidate session)
-  async logout(sessionId: string): Promise<void> {
+  // Logout user (invalidate session and blacklist tokens)
+  async logout(sessionId: string, tokenId?: string): Promise<void> {
     try {
+      // Get session to find associated token
+      let session = null;
+      try {
+        session = await memorySession.getSession(sessionId);
+      } catch (redisError) {
+        session = inMemorySessions.get(sessionId) || null;
+      }
+
+      // Blacklist the access token if provided
+      if (tokenId && session) {
+        await tokenManager.blacklistToken(tokenId, session.userId, Date.now() + (15 * 60 * 1000));
+        logger.info('Token blacklisted on logout', { tokenId, sessionId, userId: session.userId });
+      }
+
+      // Delete session
       await memorySession.deleteSession(sessionId);
-    } catch (redisError) {
-      // Fallback to in-memory session deletion
       inMemorySessions.delete(sessionId);
+
+      logger.info('User logged out successfully', { sessionId });
+    } catch (error) {
+      logger.error('Logout error', { error, sessionId });
+      // Still try to clean up session even if blacklisting fails
+      try {
+        await memorySession.deleteSession(sessionId);
+      } catch {
+        inMemorySessions.delete(sessionId);
+      }
     }
   }
 

@@ -7,8 +7,9 @@ import { connectionHealthMonitor } from '@/lib/connectionHealthMonitor';
 import { locationScheduler } from '@/lib/locationScheduler';
 import { metricsCollector } from '@/lib/metricsCollector';
 import { logger } from '@/lib/security/productionLogger';
+import { withPublicSecurity } from '@/lib/security/apiSecurityWrapper';
 
-export async function GET(request: NextRequest) {
+export const GET = withPublicSecurity(async (request: NextRequest) => {
   try {
     // Get WebSocket manager stats
     const wsManager = getWebSocketManager();
@@ -162,10 +163,10 @@ export async function GET(request: NextRequest) {
       }
     });
   }
-}
+});
 
 // Health check endpoint (simpler version for load balancers)
-export async function HEAD(request: NextRequest) {
+export const HEAD = withPublicSecurity(async (request: NextRequest) => {
   try {
     const wsManager = getWebSocketManager();
     const locationHealthy = locationScheduler.isHealthy();
@@ -184,10 +185,10 @@ export async function HEAD(request: NextRequest) {
   } catch (error) {
     return new NextResponse(null, { status: 503 });
   }
-}
+});
 
 // Force health check (POST request)
-export async function POST(request: NextRequest) {
+export const POST = withPublicSecurity(async (request: NextRequest) => {
   try {
     // Trigger manual health checks
     const [healthReport, metricsData] = await Promise.all([
@@ -222,4 +223,4 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString()
     }, { status: 500 });
   }
-}
+});

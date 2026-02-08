@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * Payment Orchestration Service
  *
@@ -257,20 +258,20 @@ export class PaymentOrchestrator {
 
       return response;
     } catch (error) {
-      console.error('Payment initiation failed:', error);
+      logger.error('Payment initiation failed:', error);
 
       // Try fallback provider if configured
       if (request.preferredProvider && error instanceof Error) {
         const fallbackProvider = this.getFallbackProvider(request.preferredProvider);
         if (fallbackProvider) {
-          console.log(`Attempting fallback to ${fallbackProvider}...`);
+          logger.info(`Attempting fallback to ${fallbackProvider}...`);
           try {
             return await this.initiatePayment({
               ...request,
               preferredProvider: fallbackProvider,
             });
           } catch (fallbackError) {
-            console.error('Fallback payment also failed:', fallbackError);
+            logger.error('Fallback payment also failed:', fallbackError);
           }
         }
       }
@@ -331,7 +332,7 @@ export class PaymentOrchestrator {
         },
       };
     } catch (error) {
-      console.error('Failed to get payment status:', error);
+      logger.error('Failed to get payment status:', error);
       throw error;
     }
   }
@@ -383,7 +384,7 @@ export class PaymentOrchestrator {
         createdAt: refundResponse.createdAt,
       };
     } catch (error) {
-      console.error('Refund processing failed:', error);
+      logger.error('Refund processing failed:', error);
       throw error;
     }
   }
@@ -401,7 +402,7 @@ export class PaymentOrchestrator {
         throw new Error(`Unsupported webhook provider: ${provider}`);
       }
     } catch (error) {
-      console.error('Webhook routing failed:', error);
+      logger.error('Webhook routing failed:', error);
       throw error;
     }
   }
@@ -514,7 +515,7 @@ export class PaymentOrchestrator {
         },
       };
     } catch (error) {
-      console.error('Failed to get payment analytics:', error);
+      logger.error('Failed to get payment analytics:', error);
       throw error;
     }
   }
@@ -535,7 +536,7 @@ export class PaymentOrchestrator {
 
       return result.rows[0].default_payment_method as PaymentProvider;
     } catch (error) {
-      console.error('Failed to get default payment method:', error);
+      logger.error('Failed to get default payment method:', error);
       return null;
     }
   }
@@ -550,7 +551,7 @@ export class PaymentOrchestrator {
         [userId, provider]
       );
     } catch (error) {
-      console.error('Failed to set default payment method:', error);
+      logger.error('Failed to set default payment method:', error);
       throw error;
     }
   }
@@ -660,7 +661,7 @@ export class PaymentOrchestrator {
         features: [],
       };
     } catch (error) {
-      console.error(`Provider availability check failed for ${provider}:`, error);
+      logger.error(`Provider availability check failed for ${provider}:`, error);
       return {
         provider,
         available: false,
@@ -731,7 +732,7 @@ export class PaymentOrchestrator {
         ]
       );
     } catch (error) {
-      console.error('Failed to log orchestration event:', error);
+      logger.error('Failed to log orchestration event:', error);
       // Don't throw - logging failure shouldn't break payment flow
     }
   }

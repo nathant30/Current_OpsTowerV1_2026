@@ -2,8 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { metricsCollector } from '@/lib/monitoring/metricsCollector';
 import { logger } from '@/lib/security/productionLogger';
+import { withPublicSecurity } from '@/lib/security/apiSecurityWrapper';
 
-export async function GET(request: NextRequest) {
+export const GET = withPublicSecurity(async (request: NextRequest) => {
   try {
     // Get query parameters
     const { searchParams } = new URL(request.url);
@@ -38,9 +39,9 @@ export async function GET(request: NextRequest) {
     logger.error(`Metrics endpoint error: ${error instanceof Error ? error.message : error}`);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});
 
 // Health check for metrics endpoint
-export async function HEAD() {
+export const HEAD = withPublicSecurity(async () => {
   return new NextResponse(null, { status: 200 });
-}
+});

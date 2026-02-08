@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * GCash Webhook Handler API Route
  *
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
     const results = await service.handleWebhook(payload);
 
     // Log results
-    console.log('Webhook processed:', {
+    logger.info('Webhook processed:', {
       notificationType: body.notification_type,
       hashCodes: body.hash_codes,
       results,
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error('Webhook processing failed:', error);
+    logger.error('Webhook processing failed:', error);
 
     // Return 200 OK even on error to prevent EBANX retry storms
     // Log error internally for investigation

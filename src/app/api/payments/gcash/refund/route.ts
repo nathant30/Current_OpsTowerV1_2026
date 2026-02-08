@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * GCash Refund API Route
  *
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
       message: 'Refund request created successfully. Pending approval.',
     });
   } catch (error) {
-    console.error('Refund request failed:', error);
+    logger.error('Refund request failed:', error);
 
     // Handle validation errors
     if (error instanceof Error) {

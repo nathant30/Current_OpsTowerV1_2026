@@ -1,0 +1,74 @@
+name: Daily BSP Compliance Report
+
+on:
+  # Run daily at 1:00 AM UTC
+  schedule:
+    - cron: '0 1 * * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  generate-bsp-report:
+    name: Generate BSP Daily Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Trigger BSP Report Generation
+        run: |
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            ${{ secrets.APP_URL }}/api/cron/bsp-daily)
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          echo "HTTP Status: $http_code"
+          echo "Response Body:"
+          echo "$body" | jq '.' || echo "$body"
+
+          if [ "$http_code" != "200" ]; then
+            echo "Error: BSP report generation failed with status $http_code"
+            exit 1
+          fi
+
+          # Check if successful
+          if ! echo "$body" | jq -e '.success == true' > /dev/null; then
+            echo "Error: Report generation was not successful"
+            exit 1
+          fi
+
+          echo "✓ BSP daily report generated successfully"
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "BSP daily report generation failed!"
+          echo "Check application logs for details."
+          # Add notification service here (Slack, Discord, email, etc.)
+
+  verify-report:
+    name: Verify Report Generated
+    needs: generate-bsp-report
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check Report Status
+        run: |
+          # Optional: Query API to verify report was created
+          response=$(curl -s \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.APP_URL }}/api/compliance/bsp/reports?limit=1")
+
+          echo "Recent reports:"
+          echo "$response" | jq '.' || echo "$response"
+
+          if echo "$response" | jq -e '.success == true' > /dev/null; then
+            report_count=$(echo "$response" | jq '.reports | length')
+            echo "✓ Found $report_count recent report(s)"
+          else
+            echo "⚠ Warning: Could not verify report status"
+          fi

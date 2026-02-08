@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * GCash Payment Status Query API Route
  *
@@ -77,7 +78,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Payment status query failed:', error);
+    logger.error('Payment status query failed:', error);
 
     if (error instanceof Error && error.message.includes('not found')) {
       return NextResponse.json(

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * Payment History API Route
  *
@@ -140,7 +141,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Payment history fetch failed:', error);
+    logger.error('Payment history fetch failed:', error);
 
     return NextResponse.json(
       {

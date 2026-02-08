@@ -1,3 +1,4 @@
+import { logger } from '@/lib/security/productionLogger';
 /**
  * GCash Payment Service Layer
  *
@@ -108,7 +109,7 @@ export class GCashPaymentService {
       return paymentResponse;
     } catch (error) {
       // Log error
-      console.error('Payment initiation failed:', error);
+      logger.error('Payment initiation failed:', error);
 
       throw error;
     }
@@ -153,7 +154,7 @@ export class GCashPaymentService {
           );
 
           if (paymentResult.rows.length === 0) {
-            console.warn(`Payment not found for hash: ${paymentHash}`);
+            logger.warn(`Payment not found for hash: ${paymentHash}`);
             continue;
           }
 
@@ -179,7 +180,7 @@ export class GCashPaymentService {
             timestamp: new Date(),
           });
         } catch (error) {
-          console.error(`Failed to process webhook for hash ${paymentHash}:`, error);
+          logger.error(`Failed to process webhook for hash ${paymentHash}:`, error);
 
           results.push({
             success: false,
@@ -195,7 +196,7 @@ export class GCashPaymentService {
 
       return results;
     } catch (error) {
-      console.error('Webhook processing failed:', error);
+      logger.error('Webhook processing failed:', error);
       throw error;
     }
   }
@@ -246,7 +247,7 @@ export class GCashPaymentService {
         source: 'webhook',
       });
     } catch (error) {
-      console.error('Failed to update payment status:', error);
+      logger.error('Failed to update payment status:', error);
       throw error;
     }
   }
@@ -295,7 +296,7 @@ export class GCashPaymentService {
             payment.status = newStatus;
           }
         } catch (error) {
-          console.warn('Failed to sync with EBANX:', error);
+          logger.warn('Failed to sync with EBANX:', error);
           // Continue with database status
         }
       }
@@ -313,7 +314,7 @@ export class GCashPaymentService {
         failureReason: payment.failure_reason,
       };
     } catch (error) {
-      console.error('Failed to get payment status:', error);
+      logger.error('Failed to get payment status:', error);
       throw error;
     }
   }
@@ -403,7 +404,7 @@ export class GCashPaymentService {
         createdAt: new Date(),
       };
     } catch (error) {
-      console.error('Refund processing failed:', error);
+      logger.error('Refund processing failed:', error);
       throw error;
     }
   }
@@ -433,7 +434,7 @@ export class GCashPaymentService {
         source: 'system',
       });
     } catch (error) {
-      console.error('Failed to handle timeout:', error);
+      logger.error('Failed to handle timeout:', error);
       throw error;
     }
   }
@@ -468,7 +469,7 @@ export class GCashPaymentService {
         ]
       );
     } catch (error) {
-      console.error('Failed to log transaction:', error);
+      logger.error('Failed to log transaction:', error);
       // Don't throw - logging failure shouldn't break payment flow
     }
   }
@@ -504,7 +505,7 @@ export class GCashPaymentService {
 
       return result.rows[0].id;
     } catch (error) {
-      console.error('Failed to store webhook event:', error);
+      logger.error('Failed to store webhook event:', error);
       throw error;
     }
   }

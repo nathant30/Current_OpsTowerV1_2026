@@ -1,13 +1,14 @@
 // /api/health - Health Check API
 import { NextRequest } from 'next/server';
-import { 
+import {
   createApiResponse,
   asyncHandler,
   handleOptionsRequest
 } from '@/lib/api-utils';
+import { withPublicSecurity } from '@/lib/security/apiSecurityWrapper';
 
 // GET /api/health - Health check endpoint
-export const GET = asyncHandler(async (request: NextRequest) => {
+export const GET = withPublicSecurity(asyncHandler(async (request: NextRequest) => {
   const healthData = {
     status: 'healthy' as const,
     timestamp: new Date(),
@@ -38,7 +39,7 @@ export const GET = asyncHandler(async (request: NextRequest) => {
   };
   
   return createApiResponse(healthData, 'System is healthy and all services are operational');
-});
+}));
 
 // OPTIONS handler for CORS
 export const OPTIONS = handleOptionsRequest;

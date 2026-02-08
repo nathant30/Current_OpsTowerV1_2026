@@ -3,9 +3,9 @@
 
 import { NextRequest } from 'next/server';
 import { logger } from '@/lib/security/productionLogger';
-import { 
-  createApiResponse, 
-  createApiError, 
+import {
+  createApiResponse,
+  createApiError,
   createValidationError,
   validateRequiredFields,
   asyncHandler,
@@ -14,6 +14,7 @@ import {
 import { getDatabase } from '@/lib/database';
 import { redis } from '@/lib/redis';
 import { getWebSocketManager } from '@/lib/websocket';
+import { getLTFRBComplianceService } from '@/lib/compliance/ltfrb/ltfrb-service';
 
 const db = getDatabase();
 
@@ -154,18 +155,18 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
 
         case 'completed':
           updateFields.completed_at = 'NOW()';
-          
+
           if (body.completionDetails) {
             if (body.completionDetails.customerRating) {
               updateFields.customer_rating = body.completionDetails.customerRating;
               updateParams.push(body.completionDetails.customerRating);
             }
-            
+
             if (body.completionDetails.driverRating) {
               updateFields.driver_rating = body.completionDetails.driverRating;
               updateParams.push(body.completionDetails.driverRating);
             }
-            
+
             if (body.completionDetails.actualFare) {
               updateFields.total_fare = body.completionDetails.actualFare;
               updateParams.push(body.completionDetails.actualFare);
@@ -182,7 +183,7 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
           // Free up the driver
           if (currentRide.driver_id) {
             await client.query(`
-              UPDATE drivers 
+              UPDATE drivers
               SET status = 'active', updated_at = NOW()
               WHERE id = $1
             `, [currentRide.driver_id]);
@@ -284,9 +285,59 @@ export const PATCH = asyncHandler(async (request: NextRequest, { params }: { par
       };
     });
 
+    // Log trip to LTFRB if completed
+    if (body.status === 'completed') {
+      try {
+        const ltfrbService = getLTFRBComplianceService();
+
+        // Get vehicle information
+        const vehicleQuery = await db.query(
+          'SELECT plate_number FROM vehicles WHERE id = (SELECT vehicle_id FROM drivers WHERE id = $1)',
+          [result.updatedRide.driver_id]
+        );
+        const vehicle = vehicleQuery.rows[0];
+
+        // Calculate trip duration
+        const tripStartTime = result.previousRide.actual_pickup_time || result.previousRide.accepted_at;
+        const tripEndTime = result.updatedRide.completed_at;
+
+        // Calculate distance if available
+        const distanceQuery = await db.query(`
+          SELECT ST_Distance(
+            ST_GeogFromText(ST_AsText(pickup_location)),
+            ST_GeogFromText(ST_AsText(dropoff_location))
+          ) / 1000 as distance_km
+          FROM bookings WHERE id = $1
+        `, [rideId]);
+        const distanceKm = distanceQuery.rows[0]?.distance_km || 0;
+
+        await ltfrbService.logTripForLTFRB({
+          rideId: rideId,
+          tripDate: new Date(result.updatedRide.completed_at),
+          tripStartTime: new Date(tripStartTime),
+          tripEndTime: new Date(tripEndTime),
+          driverId: result.updatedRide.driver_id,
+          vehicleId: result.previousRide.vehicle_id || null,
+          plateNumber: vehicle?.plate_number || 'UNKNOWN',
+          passengerId: result.updatedRide.customer_id,
+          totalFare: result.updatedRide.total_fare || 0,
+          distanceKm: distanceKm,
+          tripStatus: 'completed'
+        });
+
+        logger.info('Trip logged to LTFRB', { rideId, driverId: result.updatedRide.driver_id });
+      } catch (ltfrbError) {
+        // Log error but don't fail the ride completion
+        logger.error('Failed to log trip to LTFRB', {
+          rideId,
+          error: ltfrbError instanceof Error ? ltfrbError.message : String(ltfrbError)
+        });
+      }
+    }
+
     // Update Redis cache
     await redis.setex(
-      `ride_status:${rideId}`, 
+      `ride_status:${rideId}`,
       3600, // 1 hour
       JSON.stringify({
         status: body.status,
